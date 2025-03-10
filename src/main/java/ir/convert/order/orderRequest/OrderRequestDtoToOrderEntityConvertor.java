@@ -1,25 +1,25 @@
-package ir.convert;
-
+package ir.convert.order.orderRequest;
 
 import com.fasterxml.jackson.databind.DeserializationFeature;
 import com.fasterxml.jackson.databind.ObjectMapper;
-import ir.entity.Car;
+import ir.dto.order.OrderRequestDto;
+import ir.entity.Order;
 import org.springframework.stereotype.Component;
 
 import java.util.List;
 import java.util.function.Function;
 
 @Component
-public class ConvertToCar<CarDTO> implements Function<CarDTO, Car> {
+public class OrderRequestDtoToOrderEntityConvertor implements Function<OrderRequestDto, Order> {
 
     @Override
-    public Car apply(CarDTO carDto) {
+    public Order apply(OrderRequestDto carDto) {
         return new ObjectMapper()
                 .disable(DeserializationFeature.FAIL_ON_UNKNOWN_PROPERTIES)
-                .convertValue(carDto, Car.class);
+                .convertValue(carDto, Order.class);
     }
 
-    public List<Car> convertList(List<CarDTO> carDTOs) {
+    public List<Order> convertList(List<OrderRequestDto> carDTOs) {
         return carDTOs.stream()
                 .map(this)
                 .toList();

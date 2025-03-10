@@ -1,16 +1,25 @@
 package ir.entity;
 
+import ir.entity.enums.UserStatus;
 import jakarta.persistence.*;
-import lombok.Data;
+import lombok.*;
 
-@Data
+import java.util.List;
+
+
+@EqualsAndHashCode(callSuper = true)
+@Getter
+@Setter
+@NoArgsConstructor
+@AllArgsConstructor
 @Entity
-@Table(name = "customers")
-public class Customer {
+public class Customer extends User {
+    private String address;
+    private Double credit;
 
-    @Id
-    @GeneratedValue(strategy = GenerationType.IDENTITY)
-    private Long id;
-    private String firstName;
-    private String lastName;
+    @Enumerated(EnumType.STRING)
+    private UserStatus status;
+
+    @OneToMany(mappedBy = "customer")
+    private List<Order> orders;
 }
