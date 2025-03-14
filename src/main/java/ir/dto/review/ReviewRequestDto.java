@@ -4,10 +4,11 @@ import ir.entity.Customer;
 import ir.entity.Expert;
 import ir.entity.Order;
 
-public class ReviewRequestDto {
-    private Integer rating;
-    private String comment;
-    private Order order;
-    private Customer customer;
-    private Expert expert;
+public record ReviewRequestDto(
+        Integer rating,
+        String comment,
+        Order order,
+        Customer customer,
+        Expert expert) {
+
 }

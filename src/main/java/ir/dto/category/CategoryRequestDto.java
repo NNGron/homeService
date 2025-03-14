@@ -5,11 +5,12 @@ import ir.entity.Order;
 
 import java.util.List;
 
-public class CategoryRequestDto {
-    private String name;
-    private String description;
-    private Double basePrice;
-    private Category parentCategory;
-    private List<Category> subCategories;
-    private List<Order> orders;
+
+public record CategoryRequestDto(
+        String name,
+        String description,
+        Double basePrice,
+        Category parentCategory,
+        List<Category> subCategories,
+        List<Order> orders) {
 }

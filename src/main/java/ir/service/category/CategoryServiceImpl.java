@@ -5,6 +5,7 @@ import ir.dto.category.CategoryResponseDto;
 import ir.entity.Category;
 import ir.repository.CategoryRepository;
 import lombok.AllArgsConstructor;
+import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
@@ -26,5 +27,10 @@ public class CategoryServiceImpl implements CategoryService {
         return categoryRepository.findByName(name);
     }
 
+    @Override
+    public List<CategoryResponseDto> findAll(Pageable pageable) {
+        List<Category> categoryList = categoryRepository.findAll(pageable).getContent();
+        return categoryEntityToCategoryResponseDtoConvertor.convertList(categoryList);
+    }
 
 }
