@@ -1,9 +1,7 @@
 package ir.service.user;
 
 import ir.convert.user.userResponse.UserEntityToUserResponseDtoConvertor;
-import ir.dto.user.UserFilterDto;
-import ir.dto.user.UserRequestDto;
-import ir.dto.user.UserResponseDto;
+import ir.dto.user.*;
 import ir.entity.Customer;
 import ir.entity.Expert;
 import ir.entity.User;
@@ -21,6 +19,7 @@ import org.springframework.data.jpa.domain.Specification;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
+import java.util.Optional;
 
 @AllArgsConstructor
 @Slf4j
@@ -75,5 +74,20 @@ public class UserService {
         }
         UserResponseDto responseDto = userEntityToUserResponseDtoConvertor.apply(user);
         return responseDto;
+    }
+
+    public UserMessageDto updateUser(UserUpdatePasswordDto userUpdatePasswordDto) {
+        String password = userUpdatePasswordDto.newPassword();
+        String email = userUpdatePasswordDto.email();
+        Optional<User> byEmail = userRepository.findByEmail(email);
+        if (byEmail.isPresent()) {
+            User user = byEmail.get();
+            user.setPassword(password);
+            userRepository.save(user);
+        } else {
+            log.error("User with email {} not found", email);
+            throw new RuntimeException("User not found");
+        }
+        return new UserMessageDto("Password updated successfully");
     }
 }
