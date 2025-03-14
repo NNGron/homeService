@@ -2,6 +2,7 @@ package ir.controller;
 
 
 import ir.dto.user.UserFilterDto;
+import ir.dto.user.UserRequestDto;
 import ir.dto.user.UserResponseDto;
 import ir.service.user.UserService;
 import lombok.AllArgsConstructor;
@@ -19,7 +20,7 @@ public class UserController {
 
     private final UserService userService;
 
-    @PostMapping("")
+    @PostMapping("/filter")
     public ResponseEntity<Page<UserResponseDto>> getAllCategories(@RequestBody UserFilterDto filterDto,
                                                                   @RequestParam(defaultValue = "0") int pageNumber,
                                                                   @RequestParam(defaultValue = "10") int size,
@@ -32,4 +33,11 @@ public class UserController {
         Page<UserResponseDto> userResponseDtos = userService.getFilteredUsers(filterDto,pageable);
         return ResponseEntity.ok(userResponseDtos);
     }
+
+    @PostMapping("/save")
+    public ResponseEntity<String> saveUser(@RequestBody UserRequestDto requestDto) {
+        userService.saveUser(requestDto);
+        return ResponseEntity.ok("okok");
+    }
+
 }

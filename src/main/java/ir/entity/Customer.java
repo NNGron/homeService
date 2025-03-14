@@ -14,7 +14,7 @@ import java.util.List;
 @AllArgsConstructor
 @Entity
 public class Customer extends User {
-    private String address;
+
     private Double credit;
 
     @Enumerated(EnumType.STRING)

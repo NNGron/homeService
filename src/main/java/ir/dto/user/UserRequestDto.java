@@ -1,6 +1,6 @@
 package ir.dto.user;
 
-import ir.entity.enums.Role;
+import ir.entity.enums.UserType;
 import lombok.Getter;
 import lombok.Setter;
 
@@ -12,5 +12,9 @@ public class UserRequestDto {
     private String firstName;
     private String lastName;
     private String email;
-    private Role role;
+    private String address;
+    private Double credit;
+    private String skills;
+    private UserType userType;
+    private byte[] photo;
 }
