@@ -12,4 +12,6 @@ import java.util.Optional;
 public interface CategoryRepository extends JpaRepository<Category, Long>, JpaSpecificationExecutor<Category> {
 
    Optional<List<Category>> findByName(String name);
+   List<Category> findCategoriesByParentCategoryIsNull();
+   List<Category> findCategoriesByParentCategoryIsNotNull();
 }

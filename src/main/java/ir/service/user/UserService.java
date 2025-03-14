@@ -1,6 +1,7 @@
 package ir.service.user;
 
 import ir.convert.user.userResponse.UserEntityToUserResponseDtoConvertor;
+import ir.dto.category.CategoryResponseDto;
 import ir.dto.user.*;
 import ir.entity.Customer;
 import ir.entity.Expert;
@@ -8,8 +9,10 @@ import ir.entity.User;
 import ir.entity.enums.Role;
 import ir.entity.enums.UserStatus;
 import ir.entity.enums.UserType;
+import ir.repository.CategoryRepository;
 import ir.repository.user.UserRepository;
 import ir.repository.user.UserSpecification;
+import ir.service.category.CategoryService;
 import lombok.AllArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.data.domain.Page;
@@ -26,6 +29,7 @@ import java.util.Optional;
 @Service
 public class UserService {
     private final UserRepository userRepository;
+    private final CategoryService categoryService;
     private final UserEntityToUserResponseDtoConvertor userEntityToUserResponseDtoConvertor;
 
 
@@ -66,7 +70,17 @@ public class UserService {
             expert.setAddress(userRequestDto.getAddress());
             expert.setCredit(userRequestDto.getCredit());
             expert.setPhoto(userRequestDto.getPhoto());
-            expert.setSkills(userRequestDto.getSkills());
+
+            String skills = userRequestDto.getSkills();
+            String[] skillNames = skills.split(",\\s*");
+            List<CategoryResponseDto> allSubCategories = categoryService.findAllSubCategories();
+            List<String> categoryNames = allSubCategories.stream().map(CategoryResponseDto::getName).toList();
+            for (String skill : skillNames) {
+                if (!categoryNames.contains(skill)) {
+                    throw new RuntimeException("Skill is invalid");
+                }
+            }
+            expert.setSkills(skills);
             expert.setStatus(UserStatus.NEW);
             expert.setRole(Role.USER);
             Expert savedExpert = userRepository.save(expert);
