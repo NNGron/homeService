@@ -10,8 +10,8 @@ import ir.entity.User;
 import ir.entity.enums.Role;
 import ir.entity.enums.UserStatus;
 import ir.entity.enums.UserType;
-import ir.repository.UserRepository;
-import ir.repository.UserSpecification;
+import ir.repository.user.UserRepository;
+import ir.repository.user.UserSpecification;
 import lombok.AllArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.data.domain.Page;
@@ -33,17 +33,15 @@ public class UserService {
     public Page<UserResponseDto> getFilteredUsers(UserFilterDto filterDto, Pageable pageable) {
         Specification<User> spec = UserSpecification.filterUsers(filterDto);
         Page<User> userPage = userRepository.findAll(spec, pageable);
-
         List<User> userList = userPage.getContent();
-
         // Convert List<User> to List<UserResponseDto>
         List<UserResponseDto> userResponseDtos = userEntityToUserResponseDtoConvertor.convertList(userList);
-
         // Return as Page<UserResponseDto>
         return new PageImpl<>(userResponseDtos, pageable, userPage.getTotalElements());
     }
 
-    public void saveUser(UserRequestDto userRequestDto) {
+    public UserResponseDto saveUser(UserRequestDto userRequestDto) {
+        User user = null;
         UserType userType = userRequestDto.getUserType();
         if (userType != null && userType.equals(UserType.CUSTOMER)) {
             Customer customer = new Customer();
@@ -57,6 +55,7 @@ public class UserService {
             customer.setStatus(UserStatus.NEW);
             customer.setRole(Role.USER);
             Customer savedCustomer = userRepository.save(customer);
+            user = customer;
         }
         if (userType != null && userType.equals(UserType.EXPERT)) {
             Expert expert = new Expert();
@@ -72,7 +71,9 @@ public class UserService {
             expert.setStatus(UserStatus.NEW);
             expert.setRole(Role.USER);
             Expert savedExpert = userRepository.save(expert);
+            user = expert;
         }
-
+        UserResponseDto responseDto = userEntityToUserResponseDtoConvertor.apply(user);
+        return responseDto;
     }
 }

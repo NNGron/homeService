@@ -1,4 +1,4 @@
-package ir.repository;
+package ir.repository.user;
 
 import ir.entity.User;
 import org.springframework.data.jpa.repository.JpaRepository;

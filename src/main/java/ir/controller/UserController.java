@@ -1,6 +1,5 @@
 package ir.controller;
 
-
 import ir.dto.user.UserFilterDto;
 import ir.dto.user.UserRequestDto;
 import ir.dto.user.UserResponseDto;
@@ -17,8 +16,13 @@ import org.springframework.web.bind.annotation.*;
 @AllArgsConstructor
 @RequestMapping("/v1/users")
 public class UserController {
-
     private final UserService userService;
+
+    @PostMapping("/save")
+    public ResponseEntity<UserResponseDto> saveUser(@RequestBody UserRequestDto requestDto) {
+        UserResponseDto responseDto = userService.saveUser(requestDto);
+        return ResponseEntity.ok(responseDto);
+    }
 
     @PostMapping("/filter")
     public ResponseEntity<Page<UserResponseDto>> getAllCategories(@RequestBody UserFilterDto filterDto,
@@ -33,11 +37,4 @@ public class UserController {
         Page<UserResponseDto> userResponseDtos = userService.getFilteredUsers(filterDto,pageable);
         return ResponseEntity.ok(userResponseDtos);
     }
-
-    @PostMapping("/save")
-    public ResponseEntity<String> saveUser(@RequestBody UserRequestDto requestDto) {
-        userService.saveUser(requestDto);
-        return ResponseEntity.ok("okok");
-    }
-
 }

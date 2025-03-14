@@ -1,4 +1,4 @@
-package ir.repository;
+package ir.repository.user;
 
 import ir.dto.user.UserFilterDto;
 import ir.entity.User;
@@ -28,9 +28,14 @@ public class UserSpecification {
             }
 
             if (!StringUtils.isEmpty(userFilterDto.skills())) {
-                predicates.add(criteriaBuilder.like(criteriaBuilder.lower(root.get("skills")), "%" + userFilterDto.skills().toLowerCase() + "%"));
-            }
+                String[] skillArray = userFilterDto.skills().split(",\\s*"); // Split by comma and remove spaces
+                List<Predicate> skillPredicates = new ArrayList<>();
 
+                for (String skill : skillArray) {
+                    skillPredicates.add(criteriaBuilder.like(criteriaBuilder.lower(root.get("skills")), "%" + skill.toLowerCase() + "%"));
+                }
+                predicates.add(criteriaBuilder.or(skillPredicates.toArray(new Predicate[0])));
+            }
             return criteriaBuilder.and(predicates.toArray(new Predicate[0]));
         };
     }
