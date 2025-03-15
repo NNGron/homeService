@@ -6,14 +6,18 @@ import ir.dto.category.CategoryResponseDto;
 import ir.dto.category.MainCategoryRequestDto;
 import ir.dto.category.SubCategoryRequestDto;
 import ir.entity.Category;
+import ir.exception.CustomException;
+import ir.exception.ErrorCode;
 import ir.repository.CategoryRepository;
 import lombok.AllArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
 import java.util.Optional;
 
+@Slf4j
 @Service
 @AllArgsConstructor
 public class CategoryServiceImpl implements CategoryService {
@@ -71,6 +75,11 @@ public class CategoryServiceImpl implements CategoryService {
 
     @Override
     public CategoryResponseDto saveSubCategory(SubCategoryRequestDto subCategoryRequestDto) {
+        log.info("Start saving sub-category: {}", subCategoryRequestDto.name());
+        Optional<Category> optionalCategory = findSubCategoryByName(subCategoryRequestDto.name());
+        if(optionalCategory.isPresent()) {
+            throw new CustomException("Sub category is already exist", ErrorCode.ALREADY_EXIST.getCode());
+        }
         String parentName = subCategoryRequestDto.parentName();
         Optional<List<Category>> byName = categoryRepository.findByName(parentName);
         if (byName.isPresent()) {
@@ -84,9 +93,12 @@ public class CategoryServiceImpl implements CategoryService {
             CategoryResponseDto categoryResponseDto = categoryEntityToCategoryResponseDtoConvertor.apply(savedSubCategory);
             return categoryResponseDto;
         } else {
-            throw new RuntimeException("Category not found");
+            log.error("Main category not found: {}", parentName);
+            throw new CustomException("Main category not found", ErrorCode.MAIN_CATEGORY_INVALID.getCode());
         }
-
     }
 
+    private Optional<Category> findSubCategoryByName(String name) {
+         return categoryRepository.findCategoryByNameAndParentCategoryIsNotNull(name);
+    }
 }
