@@ -16,6 +16,10 @@ public interface CategoryService {
 
     List<CategoryResponseDto> findAllSubCategories();
 
+    List<CategoryResponseDto> findAllSubCategoriesByNames(List<String> categoryNames);
+
+    List<Category> findSubCategoriesByNames(List<String> categoryNames);
+
     Optional<List<Category>> findAllByName(String name);
 
     List<CategoryResponseDto> findAll(Pageable pageable);

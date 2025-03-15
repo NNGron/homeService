@@ -1,7 +1,9 @@
 package ir.repository.user;
 
 import ir.dto.user.UserFilterDto;
+import ir.entity.Category;
 import ir.entity.User;
+import jakarta.persistence.criteria.Join;
 import jakarta.persistence.criteria.Predicate;
 import org.apache.commons.lang3.StringUtils;
 import org.springframework.data.jpa.domain.Specification;
@@ -11,7 +13,7 @@ import java.util.List;
 
 public class UserSpecification {
 
-    public static Specification<User> filterUsers(UserFilterDto userFilterDto) {
+    public static Specification<User> filterUsers(UserFilterDto userFilterDto, List<Category> categoryList) {
         return (root, query, criteriaBuilder) -> {
             List<Predicate> predicates = new ArrayList<>();
 
@@ -27,14 +29,9 @@ public class UserSpecification {
                 predicates.add(criteriaBuilder.like(criteriaBuilder.lower(root.get("email")), "%" + userFilterDto.email().toLowerCase() + "%"));
             }
 
-            if (!StringUtils.isEmpty(userFilterDto.skills())) {
-                String[] skillArray = userFilterDto.skills().split(",\\s*"); // Split by comma and remove spaces
-                List<Predicate> skillPredicates = new ArrayList<>();
-
-                for (String skill : skillArray) {
-                    skillPredicates.add(criteriaBuilder.like(criteriaBuilder.lower(root.get("skills")), "%" + skill.toLowerCase() + "%"));
-                }
-                predicates.add(criteriaBuilder.or(skillPredicates.toArray(new Predicate[0])));
+            if (categoryList != null && !categoryList.isEmpty()) {
+                Join<User, Category> categoryJoin = root.join("categories");
+                predicates.add(categoryJoin.in(categoryList));
             }
             return criteriaBuilder.and(predicates.toArray(new Predicate[0]));
         };

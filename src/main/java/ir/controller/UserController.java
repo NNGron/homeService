@@ -1,5 +1,6 @@
 package ir.controller;
 
+import ir.dto.category.CategoryResponseDto;
 import ir.dto.user.*;
 import ir.service.user.UserService;
 import jakarta.validation.Valid;
@@ -10,6 +11,8 @@ import org.springframework.data.domain.Pageable;
 import org.springframework.data.domain.Sort;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
+
+import java.util.List;
 
 @RestController
 @AllArgsConstructor
@@ -23,6 +26,20 @@ public class UserController {
         return ResponseEntity.ok(responseDto);
     }
 
+    @GetMapping("/all")
+    public ResponseEntity<List<UserResponseDto>> getAllUsers(@RequestParam(defaultValue = "0") int pageNumber,
+                                                                      @RequestParam(defaultValue = "10") int size,
+                                                                      @RequestParam(defaultValue = "firstName") String sortBy,
+                                                                      @RequestParam(defaultValue = "asc") String sortDir) {
+
+        Sort.Direction direction = sortDir.equalsIgnoreCase("desc") ? Sort.Direction.DESC : Sort.Direction.ASC;
+        Pageable pageable = PageRequest.of(pageNumber, size, Sort.by(direction, sortBy));
+
+        List<UserResponseDto> aLldUsers = userService.getALldUsers(pageable);
+        return ResponseEntity.ok(aLldUsers);
+    }
+
+
     @PutMapping("/update-password")
     public ResponseEntity<UserMessageDto> updatePassword(@RequestBody UserUpdatePasswordDto updatePasswordDto) {
         UserMessageDto userMessageDto = userService.updateUser(updatePasswordDto);
@@ -30,7 +47,7 @@ public class UserController {
     }
 
     @PostMapping("/filter")
-    public ResponseEntity<Page<UserResponseDto>> getAllCategories(@Valid @RequestBody UserFilterDto filterDto,
+    public ResponseEntity<List<UserResponseDto>> getAllCategories(@Valid @RequestBody UserFilterDto filterDto,
                                                                   @RequestParam(defaultValue = "0") int pageNumber,
                                                                   @RequestParam(defaultValue = "10") int size,
                                                                   @RequestParam(defaultValue = "firstName") String sortBy,
@@ -39,7 +56,7 @@ public class UserController {
         Sort.Direction direction = sortDir.equalsIgnoreCase("desc") ? Sort.Direction.DESC : Sort.Direction.ASC;
         Pageable pageable = PageRequest.of(pageNumber, size, Sort.by(direction, sortBy));
 
-        Page<UserResponseDto> userResponseDtos = userService.getFilteredUsers(filterDto,pageable);
+        List<UserResponseDto> userResponseDtos = userService.getFilteredUsers(filterDto, pageable);
         return ResponseEntity.ok(userResponseDtos);
     }
 }

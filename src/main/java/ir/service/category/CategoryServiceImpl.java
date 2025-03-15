@@ -40,6 +40,17 @@ public class CategoryServiceImpl implements CategoryService {
     }
 
     @Override
+    public List<CategoryResponseDto> findAllSubCategoriesByNames(List<String> categoryNames) {
+        List<Category> categoryList = categoryRepository.findCategoriesByNameInAndParentCategoryIsNotNull(categoryNames);
+        return categoryEntityToCategoryResponseDtoConvertor.convertList(categoryList);
+    }
+
+    @Override
+    public List<Category> findSubCategoriesByNames(List<String> categoryNames) {
+        return categoryRepository.findCategoriesByNameInAndParentCategoryIsNotNull(categoryNames);
+    }
+
+    @Override
     public Optional<List<Category>> findAllByName(String name) {
         return categoryRepository.findByName(name);
     }

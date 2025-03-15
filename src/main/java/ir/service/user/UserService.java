@@ -1,15 +1,14 @@
 package ir.service.user;
 
 import ir.convert.user.userResponse.UserEntityToUserResponseDtoConvertor;
-import ir.dto.category.CategoryResponseDto;
 import ir.dto.user.*;
+import ir.entity.Category;
 import ir.entity.Customer;
 import ir.entity.Expert;
 import ir.entity.User;
 import ir.entity.enums.Role;
 import ir.entity.enums.UserStatus;
 import ir.entity.enums.UserType;
-import ir.repository.CategoryRepository;
 import ir.repository.user.UserRepository;
 import ir.repository.user.UserSpecification;
 import ir.service.category.CategoryService;
@@ -32,15 +31,20 @@ public class UserService {
     private final CategoryService categoryService;
     private final UserEntityToUserResponseDtoConvertor userEntityToUserResponseDtoConvertor;
 
+    public List<UserResponseDto>  getALldUsers(Pageable pageable) {
+        Page<User> userPage = userRepository.findAll(pageable);
+        List<User> userList = userPage.getContent();
+        return userEntityToUserResponseDtoConvertor.convertList(userList);
+    }
 
-    public Page<UserResponseDto> getFilteredUsers(UserFilterDto filterDto, Pageable pageable) {
-        Specification<User> spec = UserSpecification.filterUsers(filterDto);
+    public List<UserResponseDto>   getFilteredUsers(UserFilterDto filterDto, Pageable pageable) {
+        List<String> categoryNames = filterDto.categoryNames();
+        List<Category> categoryList = categoryNames!= null ? categoryService.findSubCategoriesByNames(categoryNames) : List.of();
+
+        Specification<User> spec = UserSpecification.filterUsers(filterDto, categoryList);
         Page<User> userPage = userRepository.findAll(spec, pageable);
         List<User> userList = userPage.getContent();
-        // Convert List<User> to List<UserResponseDto>
-        List<UserResponseDto> userResponseDtos = userEntityToUserResponseDtoConvertor.convertList(userList);
-        // Return as Page<UserResponseDto>
-        return new PageImpl<>(userResponseDtos, pageable, userPage.getTotalElements());
+        return userEntityToUserResponseDtoConvertor.convertList(userList);
     }
 
     public UserResponseDto saveUser(UserRequestDto userRequestDto) {
@@ -58,7 +62,7 @@ public class UserService {
             customer.setStatus(UserStatus.NEW);
             customer.setRole(Role.USER);
             Customer savedCustomer = userRepository.save(customer);
-            user = customer;
+            user = savedCustomer;
         }
         if (userType != null && userType.equals(UserType.EXPERT)) {
             Expert expert = new Expert();
@@ -71,20 +75,17 @@ public class UserService {
             expert.setCredit(userRequestDto.getCredit());
             expert.setPhoto(userRequestDto.getPhoto());
 
-            String skills = userRequestDto.getSkills();
-            String[] skillNames = skills.split(",\\s*");
-            List<CategoryResponseDto> allSubCategories = categoryService.findAllSubCategories();
-            List<String> categoryNames = allSubCategories.stream().map(CategoryResponseDto::getName).toList();
-            for (String skill : skillNames) {
-                if (!categoryNames.contains(skill)) {
-                    throw new RuntimeException("Skill is invalid");
-                }
+            List<String> subCategoryNames = userRequestDto.getSubCategoryNames();
+            List<Category> categoryList = categoryService.findSubCategoriesByNames(subCategoryNames);
+            if( categoryList == null || categoryList.isEmpty()){
+                throw new RuntimeException("category is invalid");
             }
-            expert.setSkills(skills);
+            expert.setCategories(categoryList);
+
             expert.setStatus(UserStatus.NEW);
             expert.setRole(Role.USER);
             Expert savedExpert = userRepository.save(expert);
-            user = expert;
+            user = savedExpert;
         }
         UserResponseDto responseDto = userEntityToUserResponseDtoConvertor.apply(user);
         return responseDto;

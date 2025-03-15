@@ -5,6 +5,8 @@ import jakarta.validation.constraints.NotBlank;
 import lombok.Getter;
 import lombok.Setter;
 
+import java.util.List;
+
 @Setter
 @Getter
 public class UserRequestDto {
@@ -17,7 +19,7 @@ public class UserRequestDto {
     private String email;
     private String address;
     private Double credit;
-    private String skills;
+    private List<String> subCategoryNames;//Expert Skills
     private UserType userType;
     private byte[] photo;
 }

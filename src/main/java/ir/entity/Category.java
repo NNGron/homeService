@@ -24,4 +24,7 @@ public class Category extends BaseEntity {
 
     @OneToMany(mappedBy = "category")
     private List<Order> orders;
+
+    @ManyToMany(mappedBy = "categories")
+    private List<Expert> experts;
 }

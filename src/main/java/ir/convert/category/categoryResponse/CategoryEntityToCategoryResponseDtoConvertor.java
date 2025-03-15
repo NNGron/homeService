@@ -1,7 +1,5 @@
 package ir.convert.category.categoryResponse;
 
-import com.fasterxml.jackson.databind.DeserializationFeature;
-import com.fasterxml.jackson.databind.ObjectMapper;
 import ir.dto.category.CategoryResponseDto;
 import ir.entity.Category;
 import org.springframework.stereotype.Component;
@@ -15,9 +13,18 @@ public class CategoryEntityToCategoryResponseDtoConvertor implements Function<Ca
 
     @Override
     public CategoryResponseDto apply(Category category) {
-        return new ObjectMapper()
-                .disable(DeserializationFeature.FAIL_ON_UNKNOWN_PROPERTIES)
-                .convertValue(category, CategoryResponseDto.class);
+        CategoryResponseDto categoryResponseDto = new CategoryResponseDto();
+        categoryResponseDto.setName(category.getName());
+        categoryResponseDto.setBasePrice(category.getBasePrice());
+        categoryResponseDto.setDescription(category.getDescription());
+
+        if ( category.getParentCategory() != null ) {
+            CategoryResponseDto parentResponseDto = new CategoryResponseDto();
+            parentResponseDto.setName(category.getParentCategory() != null ? category.getParentCategory().getName() : "");
+            categoryResponseDto.setParentCategory(parentResponseDto);
+        }
+
+        return categoryResponseDto;
     }
 
     public List<CategoryResponseDto> convertList(List<Category> categories) {

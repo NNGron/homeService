@@ -14,7 +14,7 @@ import java.util.List;
 @Entity
 @Table(name = "experts")
 public class Expert extends User {
-    private String skills;
+
     private Double rating;
     private Double credit;
 
@@ -26,4 +26,13 @@ public class Expert extends User {
 
     @OneToMany(mappedBy = "expert")
     private List<Offer> offers;
+
+    @ManyToMany
+    @JoinTable(
+            name = "expert_category",
+            joinColumns = @JoinColumn(name = "expert_id"),
+            inverseJoinColumns = @JoinColumn(name = "category_id")
+    )
+    private List<Category> categories;
+
 }
