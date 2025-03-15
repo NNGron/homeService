@@ -16,7 +16,7 @@ public class SwaggerOpenAPIConfig {
                         .description("api for testing purposes")
                         .contact(new Contact().name("sanaz").email("sanaz@yahoo.com"))
 
-                        );
+                );
 
     }
 }

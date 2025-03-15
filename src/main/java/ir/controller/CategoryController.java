@@ -1,7 +1,7 @@
 package ir.controller;
 
-import ir.dto.category.MainCategoryRequestDto;
 import ir.dto.category.CategoryResponseDto;
+import ir.dto.category.MainCategoryRequestDto;
 import ir.dto.category.SubCategoryRequestDto;
 import ir.service.category.CategoryService;
 import lombok.AllArgsConstructor;

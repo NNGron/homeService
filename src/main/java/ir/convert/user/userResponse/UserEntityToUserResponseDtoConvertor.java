@@ -17,6 +17,7 @@ import java.util.function.Function;
 @Component
 public class UserEntityToUserResponseDtoConvertor implements Function<User, UserResponseDto> {
     private final CategoryEntityToCategoryResponseDtoConvertor categoryEntityToCategoryResponseDtoConvertor;
+
     @Override
     public UserResponseDto apply(User user) {
         List<CategoryResponseDto> categoryResponseDtos = null;
@@ -26,14 +27,14 @@ public class UserEntityToUserResponseDtoConvertor implements Function<User, User
             categoryResponseDtos = categoryEntityToCategoryResponseDtoConvertor.convertList(categoryList);
         }
 
-       return UserResponseDto
-               .builder()
-               .userName(user.getUserName())
-               .lastName(user.getLastName())
-               .email(user.getEmail())
-               .firstName(user.getFirstName())
-               .categories(categoryResponseDtos)
-               .build();
+        return UserResponseDto
+                .builder()
+                .userName(user.getUserName())
+                .lastName(user.getLastName())
+                .email(user.getEmail())
+                .firstName(user.getFirstName())
+                .categories(categoryResponseDtos)
+                .build();
     }
 
     public List<UserResponseDto> convertList(List<User> users) {

@@ -14,10 +14,10 @@ import lombok.*;
 public class Offer extends BaseEntity {
     @ManyToOne
     private Order order;
-    
+
     @ManyToOne
     private Expert expert;
-    
+
     private Double proposedPrice;
     private Integer estimatedTime;
     private String startTime;

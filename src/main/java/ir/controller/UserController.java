@@ -26,9 +26,9 @@ public class UserController {
 
     @GetMapping("/all")
     public ResponseEntity<List<UserResponseDto>> getAllUsers(@RequestParam(defaultValue = "0") int pageNumber,
-                                                                      @RequestParam(defaultValue = "10") int size,
-                                                                      @RequestParam(defaultValue = "firstName") String sortBy,
-                                                                      @RequestParam(defaultValue = "asc") String sortDir) {
+                                                             @RequestParam(defaultValue = "10") int size,
+                                                             @RequestParam(defaultValue = "firstName") String sortBy,
+                                                             @RequestParam(defaultValue = "asc") String sortDir) {
 
         Sort.Direction direction = sortDir.equalsIgnoreCase("desc") ? Sort.Direction.DESC : Sort.Direction.ASC;
         Pageable pageable = PageRequest.of(pageNumber, size, Sort.by(direction, sortBy));

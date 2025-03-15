@@ -17,6 +17,6 @@ public class CategoryResponseDto {
     private String name;
     private String description;
     private Double basePrice;
-//    private List<CategoryResponseDto> subCategories;
+    //    private List<CategoryResponseDto> subCategories;
     private List<OrderResponseDto> orders;
 }

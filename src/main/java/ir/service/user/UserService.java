@@ -9,6 +9,8 @@ import ir.entity.User;
 import ir.entity.enums.Role;
 import ir.entity.enums.UserStatus;
 import ir.entity.enums.UserType;
+import ir.exception.CustomException;
+import ir.exception.ErrorCode;
 import ir.repository.user.UserRepository;
 import ir.repository.user.UserSpecification;
 import ir.service.category.CategoryService;
@@ -30,7 +32,7 @@ public class UserService {
     private final CategoryService categoryService;
     private final UserEntityToUserResponseDtoConvertor userEntityToUserResponseDtoConvertor;
 
-    public List<UserResponseDto>  getALldUsers(Pageable pageable) {
+    public List<UserResponseDto> getALldUsers(Pageable pageable) {
         Page<User> userPage = userRepository.findAll(pageable);
         List<User> userList = userPage.getContent();
         return userEntityToUserResponseDtoConvertor.convertList(userList);
@@ -74,7 +76,7 @@ public class UserService {
 
     public List<UserResponseDto> getFilteredUsers(UserFilterDto filterDto, Pageable pageable) {
         List<String> categoryNames = filterDto.categoryNames();
-        List<Category> categoryList = categoryNames!= null ? categoryService.findSubCategoriesByNames(categoryNames) : List.of();
+        List<Category> categoryList = categoryNames != null ? categoryService.findSubCategoriesByNames(categoryNames) : List.of();
 
         Specification<User> spec = UserSpecification.filterUsers(filterDto, categoryList);
         Page<User> userPage = userRepository.findAll(spec, pageable);
@@ -83,6 +85,7 @@ public class UserService {
     }
 
     public UserResponseDto saveUser(UserRequestDto userRequestDto) {
+        log.info("Start saving user: {}", userRequestDto);
         User user = null;
         UserType userType = userRequestDto.getUserType();
         if (userType != null && userType.equals(UserType.CUSTOMER)) {
@@ -112,8 +115,9 @@ public class UserService {
 
             List<String> subCategoryNames = userRequestDto.getSubCategoryNames();
             List<Category> categoryList = categoryService.findSubCategoriesByNames(subCategoryNames);
-            if( categoryList == null || categoryList.isEmpty()){
-                throw new RuntimeException("category is invalid");
+            if (categoryList == null || categoryList.isEmpty()) {
+                log.error("Could not find categories by given names.");
+                throw new CustomException("Category is invalid", ErrorCode.CATEGORY_INVALID.getCode());
             }
             expert.setCategories(categoryList);
 

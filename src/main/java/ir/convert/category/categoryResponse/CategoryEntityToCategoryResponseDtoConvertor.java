@@ -18,7 +18,7 @@ public class CategoryEntityToCategoryResponseDtoConvertor implements Function<Ca
         categoryResponseDto.setBasePrice(category.getBasePrice());
         categoryResponseDto.setDescription(category.getDescription());
 
-        if ( category.getParentCategory() != null ) {
+        if (category.getParentCategory() != null) {
             CategoryResponseDto parentResponseDto = new CategoryResponseDto();
             parentResponseDto.setName(category.getParentCategory() != null ? category.getParentCategory().getName() : "");
             categoryResponseDto.setParentCategory(parentResponseDto);

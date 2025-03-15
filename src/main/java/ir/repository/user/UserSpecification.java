@@ -5,7 +5,6 @@ import ir.entity.Category;
 import ir.entity.User;
 import jakarta.persistence.criteria.Join;
 import jakarta.persistence.criteria.Predicate;
-import org.apache.commons.lang3.StringUtils;
 import org.springframework.data.jpa.domain.Specification;
 
 import java.util.ArrayList;
