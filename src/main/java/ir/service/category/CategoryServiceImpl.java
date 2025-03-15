@@ -67,6 +67,11 @@ public class CategoryServiceImpl implements CategoryService {
 
     @Override
     public CategoryResponseDto save(MainCategoryRequestDto categoryRequestDto) {
+        String name = categoryRequestDto.name();
+        Optional<Category> optionalCategory = findMainCategoryByName(name);
+        if (optionalCategory.isPresent()) {
+            throw new CustomException("Main category is already exist", ErrorCode.ALREADY_EXIST.getCode());
+        }
         Category category = categoryRequestDtoToCategoryEntityConvertor.apply(categoryRequestDto);
         Category savedCategory = categoryRepository.save(category);
         CategoryResponseDto categoryResponseDto = categoryEntityToCategoryResponseDtoConvertor.apply(savedCategory);
@@ -101,4 +106,9 @@ public class CategoryServiceImpl implements CategoryService {
     private Optional<Category> findSubCategoryByName(String name) {
          return categoryRepository.findCategoryByNameAndParentCategoryIsNotNull(name);
     }
+
+    private Optional<Category> findMainCategoryByName(String name) {
+        return categoryRepository.findCategoryByNameAndParentCategoryIsNull(name);
+    }
+
 }
