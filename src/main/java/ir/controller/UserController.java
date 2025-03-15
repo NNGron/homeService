@@ -1,11 +1,9 @@
 package ir.controller;
 
-import ir.dto.category.CategoryResponseDto;
 import ir.dto.user.*;
 import ir.service.user.UserService;
 import jakarta.validation.Valid;
 import lombok.AllArgsConstructor;
-import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.domain.Sort;
@@ -39,6 +37,17 @@ public class UserController {
         return ResponseEntity.ok(aLldUsers);
     }
 
+    @DeleteMapping("/expert-category")
+    public ResponseEntity<UserResponseDto> deleteExpertCategory(@RequestParam String email, @RequestParam List<String> categoryNames) {
+        UserResponseDto userResponseDto = userService.deleteCategoryFromUser(email, categoryNames);
+        return ResponseEntity.ok(userResponseDto);
+    }
+
+    @PutMapping("/expert-categories")
+    public ResponseEntity<UserResponseDto> addExpertToCategories(@RequestParam String email, @RequestParam List<String> categoryNames) {
+        UserResponseDto userResponseDto = userService.addExpertToCategories(email, categoryNames);
+        return ResponseEntity.ok(userResponseDto);
+    }
 
     @PutMapping("/update-password")
     public ResponseEntity<UserMessageDto> updatePassword(@RequestBody UserUpdatePasswordDto updatePasswordDto) {

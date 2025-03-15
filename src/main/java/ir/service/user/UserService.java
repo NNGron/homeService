@@ -15,7 +15,6 @@ import ir.service.category.CategoryService;
 import lombok.AllArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.data.domain.Page;
-import org.springframework.data.domain.PageImpl;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.jpa.domain.Specification;
 import org.springframework.stereotype.Service;
@@ -37,7 +36,43 @@ public class UserService {
         return userEntityToUserResponseDtoConvertor.convertList(userList);
     }
 
-    public List<UserResponseDto>   getFilteredUsers(UserFilterDto filterDto, Pageable pageable) {
+    public UserResponseDto deleteCategoryFromUser(String email, List<String> categoryNames) {
+        Optional<User> optionalUser = userRepository.findByEmail(email);
+        List<Category> shouldBeRemoveCategoryList = categoryService.findSubCategoriesByNames(categoryNames);
+        Expert expert = null;
+        if (optionalUser.isPresent()) {
+            User user = optionalUser.get();
+            if (user instanceof Expert) {
+                expert = (Expert) user;
+                List<Category> categories = expert.getCategories();
+                categories.removeAll(shouldBeRemoveCategoryList);
+                expert.setCategories(categories);
+                expert = userRepository.save(expert);
+            }
+        }
+        UserResponseDto responseDto = userEntityToUserResponseDtoConvertor.apply(expert);
+        return responseDto;
+    }
+
+    public UserResponseDto addExpertToCategories(String email, List<String> categoryNames) {
+        Optional<User> optionalUser = userRepository.findByEmail(email);
+        List<Category> shouldBeAdd = categoryService.findSubCategoriesByNames(categoryNames);
+        Expert expert = null;
+        if (optionalUser.isPresent()) {
+            User user = optionalUser.get();
+            if (user instanceof Expert) {
+                expert = (Expert) user;
+                List<Category> categories = expert.getCategories();
+                categories.addAll(shouldBeAdd);
+                expert.setCategories(categories);
+                expert = userRepository.save(expert);
+            }
+        }
+        UserResponseDto responseDto = userEntityToUserResponseDtoConvertor.apply(expert);
+        return responseDto;
+    }
+
+    public List<UserResponseDto> getFilteredUsers(UserFilterDto filterDto, Pageable pageable) {
         List<String> categoryNames = filterDto.categoryNames();
         List<Category> categoryList = categoryNames!= null ? categoryService.findSubCategoriesByNames(categoryNames) : List.of();
 
