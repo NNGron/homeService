@@ -20,7 +20,9 @@ import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.jpa.domain.Specification;
 import org.springframework.stereotype.Service;
+import org.springframework.web.multipart.MultipartFile;
 
+import java.io.IOException;
 import java.util.List;
 import java.util.Optional;
 
@@ -111,7 +113,6 @@ public class UserService {
             expert.setEmail(userRequestDto.getEmail());
             expert.setAddress(userRequestDto.getAddress());
             expert.setCredit(userRequestDto.getCredit());
-            expert.setPhoto(userRequestDto.getPhoto());
 
             List<String> subCategoryNames = userRequestDto.getSubCategoryNames();
             List<Category> categoryList = categoryService.findSubCategoriesByNames(subCategoryNames);
@@ -143,5 +144,23 @@ public class UserService {
             throw new RuntimeException("User not found");
         }
         return new UserMessageDto("Password updated successfully");
+    }
+
+    public UserMessageDto uploadImage(String email, MultipartFile image) {
+        if (image.getSize() > 300 * 1024){
+            throw new CustomException("Image size must to be less than 300KB", ErrorCode.PHOTO_INVALID.getCode());
+        }
+        userRepository.findByEmail(email).ifPresent(user -> {
+            if(user instanceof Expert){
+                Expert expert = (Expert) user;
+                try {
+                    expert.setPhoto(image.getBytes());
+                    userRepository.save(expert);
+                } catch (IOException e) {
+                    throw new CustomException("Can not upload image", ErrorCode.IMAGE_CAN_NOT_UPLOAD.getCode());
+                }
+            }
+        });
+        return new UserMessageDto("Image uploaded successfully");
     }
 }

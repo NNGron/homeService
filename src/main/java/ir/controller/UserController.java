@@ -7,8 +7,10 @@ import lombok.AllArgsConstructor;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.domain.Sort;
+import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
+import org.springframework.web.multipart.MultipartFile;
 
 import java.util.List;
 
@@ -68,4 +70,13 @@ public class UserController {
         List<UserResponseDto> userResponseDtos = userService.getFilteredUsers(filterDto, pageable);
         return ResponseEntity.ok(userResponseDtos);
     }
+
+    @PostMapping(value = "/upload-image", consumes = MediaType.MULTIPART_FORM_DATA_VALUE)
+    public ResponseEntity<UserMessageDto> uploadImage(@RequestPart("image") MultipartFile image,
+                                                       @RequestParam String email) {
+        UserMessageDto userMessageDto = userService.uploadImage(email, image);// new
+        return ResponseEntity.ok(userMessageDto);
+    }
+
+
 }

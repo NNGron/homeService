@@ -18,3 +18,8 @@ spring:
     properties:
       hibernate:
         show_sql: true
+
+  servlet:
+    multipart:
+      max-file-size: 300KB
+      max-request-size: 300KB

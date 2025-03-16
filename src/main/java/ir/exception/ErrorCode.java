@@ -52,6 +52,8 @@ public enum ErrorCode {
     CATEGORY_INVALID(40),
     MAIN_CATEGORY_INVALID(41),
     ALREADY_EXIST(42),
+    PHOTO_INVALID(43),
+    IMAGE_CAN_NOT_UPLOAD(44),
 
     // 5xx: Server Errors
     INTERNAL_SERVER_ERROR(500),
