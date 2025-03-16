@@ -1,17 +1,12 @@
 package ir.service.order;
 
 import ir.convert.order.OrderResponse.OrderEntityToOrderResponseDtoConvertor;
-import ir.dto.category.SubCategoryRequestDto;
 import ir.dto.order.OrderRequestDto;
 import ir.dto.order.OrderResponseDto;
-import ir.entity.Category;
-import ir.entity.Customer;
-import ir.entity.Order;
-import ir.entity.User;
+import ir.entity.*;
 import ir.entity.enums.OrderStatus;
 import ir.exception.CustomException;
 import ir.exception.ErrorCode;
-import ir.repository.CategoryRepository;
 import ir.repository.OrderRepository;
 import ir.service.category.CategoryService;
 import ir.service.user.UserService;
@@ -19,6 +14,8 @@ import lombok.AllArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
 
+import java.util.ArrayList;
+import java.util.List;
 import java.util.Optional;
 
 @Slf4j
@@ -55,4 +52,24 @@ public class OrderServiceImpl implements OrderService {
         }
         throw new CustomException("User not found with provided email and password", ErrorCode.NOT_FOUND.getCode());
     }
+
+    @Override
+    public List<Order> findOrdersByCategories(List<Category> categories, OrderStatus orderStatus) {
+        Optional<List<Order>> optionalOrderList = orderRepository.findAllByCategoryInAndStatus(categories, orderStatus);
+        return optionalOrderList.orElse(new ArrayList<>());
+    }
+
+    @Override
+    public List<OrderResponseDto> getOrder(String email, String password) {
+        User user = userService.findByEmailAndPassword(email, password);
+        if (user != null) {
+            Expert expert = (Expert) user;
+            List<Category> categories = expert.getCategories();
+            List<Order> ordersByCategories = findOrdersByCategories(categories, OrderStatus.WAITING_FOR_PROPOSALS);
+            List<OrderResponseDto> orderResponseDtos = orderEntityToOrderResponseDtoConvertor.convertList(ordersByCategories);
+            return orderResponseDtos;
+        }
+        throw new CustomException("User not found with provided email and password", ErrorCode.NOT_FOUND.getCode());
+    }
+
 }

@@ -14,6 +14,7 @@ public class OrderEntityToOrderResponseDtoConvertor implements Function<Order, O
     @Override
     public OrderResponseDto apply(Order order) {
         OrderResponseDto orderResponseDto = new OrderResponseDto();
+        orderResponseDto.setId(order.getId());
         orderResponseDto.setOrderAddress(order.getOrderAddress());
         orderResponseDto.setOrderDate(order.getOrderDate());
         orderResponseDto.setExecutionDate(order.getExecutionDate());

@@ -1,6 +1,8 @@
 package ir.controller;
 
+import ir.dto.order.OrderResponseDto;
 import ir.dto.user.*;
+import ir.service.order.OrderService;
 import ir.service.user.UserService;
 import jakarta.validation.Valid;
 import lombok.AllArgsConstructor;
@@ -19,6 +21,7 @@ import java.util.List;
 @RequestMapping("/v1/users")
 public class UserController {
     private final UserService userService;
+    private final OrderService orderService;
 
     @PostMapping("/save")
     public ResponseEntity<UserResponseDto> saveUser(@Valid @RequestBody UserRequestDto requestDto) {
@@ -78,5 +81,11 @@ public class UserController {
         return ResponseEntity.ok(userMessageDto);
     }
 
+
+    @GetMapping("/orders")
+    public ResponseEntity<List<OrderResponseDto>> getAllUsers(@RequestParam String email,@RequestParam String password) {
+        List<OrderResponseDto> orders = orderService.getOrder(email, password);
+        return ResponseEntity.ok(orders);
+    }
 
 }

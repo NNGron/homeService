@@ -1,11 +1,10 @@
 package ir.service.user;
 
+import ir.convert.order.OrderResponse.OrderEntityToOrderResponseDtoConvertor;
 import ir.convert.user.userResponse.UserEntityToUserResponseDtoConvertor;
+import ir.dto.order.OrderResponseDto;
 import ir.dto.user.*;
-import ir.entity.Category;
-import ir.entity.Customer;
-import ir.entity.Expert;
-import ir.entity.User;
+import ir.entity.*;
 import ir.entity.enums.Role;
 import ir.entity.enums.UserStatus;
 import ir.entity.enums.UserType;
@@ -14,6 +13,7 @@ import ir.exception.ErrorCode;
 import ir.repository.user.UserRepository;
 import ir.repository.user.UserSpecification;
 import ir.service.category.CategoryService;
+import ir.service.order.OrderService;
 import lombok.AllArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.data.domain.Page;
@@ -35,6 +35,7 @@ public class UserService {
     private final UserRepository userRepository;
     private final CategoryService categoryService;
     private final UserEntityToUserResponseDtoConvertor userEntityToUserResponseDtoConvertor;
+    private final OrderEntityToOrderResponseDtoConvertor orderEntityToOrderResponseDtoConvertor;
 
     public List<UserResponseDto> getALldUsers(Pageable pageable) {
         Page<User> userPage = userRepository.findAll(pageable);
@@ -168,5 +169,4 @@ public class UserService {
         return userRepository.findByEmailAndPassword(email, password)
                 .orElseThrow(() -> new CustomException("User not found with provided email and password", ErrorCode.NOT_FOUND.getCode()));
     }
-
 }
