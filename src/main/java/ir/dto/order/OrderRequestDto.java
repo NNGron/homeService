@@ -10,7 +10,7 @@ import java.time.LocalDateTime;
 @Setter
 public class OrderRequestDto {
 
-    private Double finalPrice;
+    private Double offerCustomerPrice;
 
     private LocalDateTime orderDate;
 

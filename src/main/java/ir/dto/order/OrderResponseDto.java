@@ -18,7 +18,7 @@ import java.util.List;
 @JsonInclude(JsonInclude.Include.NON_NULL)
 public class OrderResponseDto {
 
-    private Long id;
+    private Long orderNumber;
 
     private Double finalPrice;
 

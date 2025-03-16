@@ -82,10 +82,5 @@ public class UserController {
     }
 
 
-    @GetMapping("/orders")
-    public ResponseEntity<List<OrderResponseDto>> getAllUsers(@RequestParam String email,@RequestParam String password) {
-        List<OrderResponseDto> orders = orderService.getOrder(email, password);
-        return ResponseEntity.ok(orders);
-    }
 
 }
