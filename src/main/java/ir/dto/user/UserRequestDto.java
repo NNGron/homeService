@@ -4,7 +4,6 @@ import ir.entity.enums.UserType;
 import jakarta.validation.constraints.Email;
 import jakarta.validation.constraints.NotBlank;
 import jakarta.validation.constraints.NotNull;
-import jakarta.validation.constraints.PositiveOrZero;
 import lombok.Getter;
 import lombok.Setter;
 
@@ -30,8 +29,8 @@ public class UserRequestDto {
 
     private String address;
 
-    @PositiveOrZero(message = "Credit must be non-negative")
-    private Double credit;
+//    @PositiveOrZero(message = "Credit must be non-negative")
+//    private Double credit;
 
     private List<String> subCategoryNames; // Expert Skills
 

@@ -27,4 +27,8 @@ public interface CategoryService {
     CategoryResponseDto save(MainCategoryRequestDto categoryRequestDto);
 
     CategoryResponseDto saveSubCategory(SubCategoryRequestDto subCategoryRequestDto);
+
+    Optional<Category> findSubCategoryByName(String name);
+
+    Optional<Category> findMainCategoryByName(String name);
 }

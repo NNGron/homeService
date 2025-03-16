@@ -20,6 +20,7 @@ import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.jpa.domain.Specification;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.multipart.MultipartFile;
 
 import java.io.IOException;
@@ -29,6 +30,7 @@ import java.util.Optional;
 @AllArgsConstructor
 @Slf4j
 @Service
+@Transactional
 public class UserService {
     private final UserRepository userRepository;
     private final CategoryService categoryService;
@@ -98,7 +100,6 @@ public class UserService {
             customer.setPassword(userRequestDto.getPassword());
             customer.setEmail(userRequestDto.getEmail());
             customer.setAddress(userRequestDto.getAddress());
-            customer.setCredit(userRequestDto.getCredit());
             customer.setStatus(UserStatus.NEW);
             customer.setRole(Role.USER);
             Customer savedCustomer = userRepository.save(customer);
@@ -112,7 +113,6 @@ public class UserService {
             expert.setPassword(userRequestDto.getPassword());
             expert.setEmail(userRequestDto.getEmail());
             expert.setAddress(userRequestDto.getAddress());
-            expert.setCredit(userRequestDto.getCredit());
 
             List<String> subCategoryNames = userRequestDto.getSubCategoryNames();
             List<Category> categoryList = categoryService.findSubCategoriesByNames(subCategoryNames);
@@ -163,4 +163,10 @@ public class UserService {
         });
         return new UserMessageDto("Image uploaded successfully");
     }
+
+    public User findByEmailAndPassword(String email, String password) {
+        return userRepository.findByEmailAndPassword(email, password)
+                .orElseThrow(() -> new CustomException("User not found with provided email and password", ErrorCode.NOT_FOUND.getCode()));
+    }
+
 }

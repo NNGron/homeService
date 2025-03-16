@@ -1,28 +1,34 @@
 package ir.dto.order;
 
-import ir.entity.Category;
-import ir.entity.Customer;
+import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
+import com.fasterxml.jackson.annotation.JsonInclude;
+import ir.dto.category.CategoryResponseDto;
 import ir.entity.Offer;
 import ir.entity.Review;
 import ir.entity.enums.OrderStatus;
+import lombok.Getter;
+import lombok.Setter;
 
+import java.time.LocalDateTime;
 import java.util.List;
 
+@Getter
+@Setter
+@JsonIgnoreProperties(ignoreUnknown = true)
+@JsonInclude(JsonInclude.Include.NON_NULL)
 public class OrderResponseDto {
 
     private Double finalPrice;
 
-    private String orderDate;
+    private LocalDateTime orderDate;
 
     private String orderDescription;
 
-    private String executionDate;
+    private LocalDateTime executionDate;
 
     private String orderAddress;
 
-    private Customer customer;
-
-    private Category category;
+    private CategoryResponseDto categoryResponseDto;
 
     private OrderStatus status;
 

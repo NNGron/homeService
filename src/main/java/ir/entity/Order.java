@@ -5,6 +5,7 @@ import ir.entity.enums.OrderStatus;
 import jakarta.persistence.*;
 import lombok.*;
 
+import java.time.LocalDateTime;
 import java.util.List;
 
 @EqualsAndHashCode(callSuper = true)
@@ -16,8 +17,8 @@ import java.util.List;
 @Table(name = "orders")
 public class Order extends BaseEntity {
     private Double finalPrice;
-    private String orderDate;
-    private String executionDate;
+    private LocalDateTime orderDate;
+    private LocalDateTime executionDate;
     private String orderAddress;
     private String orderDescription;
 

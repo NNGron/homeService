@@ -103,11 +103,13 @@ public class CategoryServiceImpl implements CategoryService {
         }
     }
 
-    private Optional<Category> findSubCategoryByName(String name) {
+    @Override
+    public Optional<Category> findSubCategoryByName(String name) {
          return categoryRepository.findCategoryByNameAndParentCategoryIsNotNull(name);
     }
 
-    private Optional<Category> findMainCategoryByName(String name) {
+    @Override
+    public Optional<Category> findMainCategoryByName(String name) {
         return categoryRepository.findCategoryByNameAndParentCategoryIsNull(name);
     }
 

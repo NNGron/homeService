@@ -18,7 +18,9 @@ spring:
     properties:
       hibernate:
         show_sql: true
-
+        jdbc:
+          lob:
+            non_contextual_creation: true
   servlet:
     multipart:
       max-file-size: 300KB

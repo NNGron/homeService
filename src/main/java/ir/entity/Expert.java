@@ -1,5 +1,6 @@
 package ir.entity;
 
+import ir.convert.ByteArrayBlobConverter;
 import ir.entity.enums.UserStatus;
 import jakarta.persistence.*;
 import lombok.*;
@@ -19,7 +20,10 @@ public class Expert extends User {
     private Double credit;
 
     @Lob
+    @Convert(converter = ByteArrayBlobConverter.class)
+    @Column(name = "photo", nullable = true)
     private byte[] photo;
+
 
     @Enumerated(EnumType.STRING)
     private UserStatus status;
