@@ -87,7 +87,9 @@ public class OrderServiceImpl implements OrderService {
 
     @Override
     public OrderResponseDto updateOrderStatus(String email, String password, OrderStatus orderStatus, Long orderNumber) {
-
+        if (OrderStatus.PAID.equals(orderStatus)) {
+            throw new CustomException("Order status should not be paid", ErrorCode.ORDER_STATUS_SHOULD_NOT_BE_PAID.getCode());
+        }
         User user = userService.findByEmailAndPassword(email, password);
         if (user == null) {
             throw new CustomException("User not found with provided email and password", ErrorCode.NOT_FOUND.getCode());

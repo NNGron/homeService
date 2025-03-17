@@ -18,8 +18,6 @@ import java.util.List;
 @Entity
 public class Customer extends User {
 
-    private Double credit;
-
     @Enumerated(EnumType.STRING)
     private UserStatus status;
 

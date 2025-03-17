@@ -54,6 +54,7 @@ public enum ErrorCode {
     ALREADY_EXIST(42),
     PHOTO_INVALID(43),
     IMAGE_CAN_NOT_UPLOAD(44),
+    ORDER_STATUS_SHOULD_NOT_BE_PAID(45),
 
     // 5xx: Server Errors
     INTERNAL_SERVER_ERROR(500),

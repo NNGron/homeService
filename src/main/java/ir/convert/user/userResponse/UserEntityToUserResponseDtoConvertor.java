@@ -5,6 +5,7 @@ import ir.convert.category.categoryResponse.CategoryEntityToCategoryResponseDtoC
 import ir.dto.category.CategoryResponseDto;
 import ir.dto.user.UserResponseDto;
 import ir.entity.Category;
+import ir.entity.Customer;
 import ir.entity.Expert;
 import ir.entity.User;
 import lombok.AllArgsConstructor;
@@ -21,6 +22,11 @@ public class UserEntityToUserResponseDtoConvertor implements Function<User, User
     @Override
     public UserResponseDto apply(User user) {
         List<CategoryResponseDto> categoryResponseDtos = null;
+        Double balance = null;
+        if (user instanceof Customer) {
+            Customer customer = (Customer) user;
+            balance = customer.getCredit();
+        }
         if (user instanceof Expert) {
             Expert expert = (Expert) user;
             List<Category> categoryList = expert.getCategories();
@@ -33,6 +39,7 @@ public class UserEntityToUserResponseDtoConvertor implements Function<User, User
                 .lastName(user.getLastName())
                 .email(user.getEmail())
                 .firstName(user.getFirstName())
+                .balance(balance)
                 .categories(categoryResponseDtos)
                 .build();
     }

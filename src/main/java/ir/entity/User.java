@@ -23,6 +23,7 @@ public abstract class User extends BaseEntity {
     private String lastName;
     private String email;
     private String address;
+    private Double credit;
 
     @Enumerated(EnumType.STRING)
     private Role role;

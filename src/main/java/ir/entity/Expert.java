@@ -24,7 +24,6 @@ public class Expert extends User {
     @Column(name = "photo", nullable = true)
     private byte[] photo;
 
-
     @Enumerated(EnumType.STRING)
     private UserStatus status;
 

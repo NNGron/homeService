@@ -170,4 +170,22 @@ public class UserService {
         return userRepository.findByEmailAndPassword(email, password)
                 .orElseThrow(() -> new CustomException("User not found with provided email and password", ErrorCode.NOT_FOUND.getCode()));
     }
+
+    public User findByEmail(String email) {
+        return userRepository.findByEmail(email)
+                .orElseThrow(() -> new CustomException("User not found with provided email", ErrorCode.NOT_FOUND.getCode()));
+    }
+
+    public User saveUser(User user) {
+        return userRepository.save(user);
+    }
+
+    public UserResponseDto addCreditToCustomer(String email, double amount) {
+        User user = findByEmail(email);
+        Double credit = user.getCredit() != null ? user.getCredit() : 0;
+        credit += amount;
+        user.setCredit(credit);
+        user = saveUser(user);
+        return userEntityToUserResponseDtoConvertor.apply(user);
+    }
 }
