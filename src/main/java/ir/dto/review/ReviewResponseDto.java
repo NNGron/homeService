@@ -1,13 +1,24 @@
 package ir.dto.review;
 
-import ir.entity.Customer;
-import ir.entity.Expert;
-import ir.entity.Order;
+import com.fasterxml.jackson.annotation.JsonInclude;
+import lombok.AllArgsConstructor;
+import lombok.Builder;
+import lombok.Getter;
+import lombok.Setter;
 
+@AllArgsConstructor
+@Builder
+@Getter
+@Setter
+@JsonInclude(JsonInclude.Include.NON_NULL)
 public class ReviewResponseDto {
     private Integer rating;
     private String comment;
-    private Order order;
-    private Customer customer;
-    private Expert expert;
+    private Long orderNumber;
+    private String orderDescription;
+    private String customerFirstName;
+    private String customerLastName;
+    private String expertFirstName;
+    private String expertLastName;
+    private String subCategoryName;
 }
