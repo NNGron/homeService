@@ -5,6 +5,7 @@ import ir.dto.order.OrderRequestDto;
 import ir.dto.order.OrderResponseDto;
 import ir.entity.*;
 import ir.entity.enums.OrderStatus;
+import ir.entity.enums.UserStatus;
 import ir.exception.CustomException;
 import ir.exception.ErrorCode;
 import ir.repository.OrderRepository;
@@ -33,6 +34,9 @@ public class OrderServiceImpl implements OrderService {
         User user = userService.findByEmailAndPassword(email, password);
         if (user instanceof Customer) {
             Customer customer = (Customer) user;
+            if (user.getStatus().equals(UserStatus.NEW)) {
+                throw new CustomException("User should be approved", ErrorCode.USER_STATUS_NOT_APPROVED.getCode());
+            }
             Order order = new Order();
             order.setCustomer(customer);
             order.setOrderDescription(orderDto.getOrderDescription());
@@ -64,6 +68,9 @@ public class OrderServiceImpl implements OrderService {
         User user = userService.findByEmailAndPassword(email, password);
         if (user != null) {
             Expert expert = (Expert) user;
+            if (user.getStatus().equals(UserStatus.NEW)) {
+                throw new CustomException("User should be approved", ErrorCode.USER_STATUS_NOT_APPROVED.getCode());
+            }
             List<Category> categories = expert.getCategories();
             List<Order> ordersByCategories = findOrdersByCategories(categories, OrderStatus.WAITING_FOR_EXPERT_PROPOSALS);
             List<OrderResponseDto> orderResponseDtos = orderEntityToOrderResponseDtoConvertor.convertList(ordersByCategories);

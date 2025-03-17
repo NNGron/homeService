@@ -7,6 +7,7 @@ import ir.entity.Expert;
 import ir.entity.Offer;
 import ir.entity.Order;
 import ir.entity.User;
+import ir.entity.enums.UserStatus;
 import ir.exception.CustomException;
 import ir.exception.ErrorCode;
 import ir.repository.user.UserRepository;
@@ -38,6 +39,9 @@ public class ExpertServiceImpl implements ExpertService {
         if (optionalUser.isPresent()) {
             User user = optionalUser.get();
             Expert expert = (Expert) user;
+            if (user.getStatus().equals(UserStatus.NEW)){
+                throw new CustomException("User should be approved", ErrorCode.USER_STATUS_NOT_APPROVED.getCode());
+            }
             Offer offer = new Offer();
             offer.setExpert(expert);
             offer.setProposedPrice(offerRequestDto.getProposedPrice());

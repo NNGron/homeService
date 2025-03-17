@@ -2,6 +2,7 @@ package ir.dto.user;
 
 import com.fasterxml.jackson.annotation.JsonInclude;
 import ir.dto.category.CategoryResponseDto;
+import ir.entity.enums.UserStatus;
 import lombok.Builder;
 import lombok.Getter;
 import lombok.Setter;
@@ -18,5 +19,7 @@ public class UserResponseDto {
     private String lastName;
     private String email;
     private Double balance;
+    private UserStatus status;
+//    private byte[] photo;
     private List<CategoryResponseDto> categories;
 }

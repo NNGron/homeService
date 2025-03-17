@@ -8,6 +8,7 @@ import ir.entity.Category;
 import ir.entity.Customer;
 import ir.entity.Expert;
 import ir.entity.User;
+import ir.entity.enums.UserStatus;
 import lombok.AllArgsConstructor;
 import org.springframework.stereotype.Component;
 
@@ -22,6 +23,7 @@ public class UserEntityToUserResponseDtoConvertor implements Function<User, User
     @Override
     public UserResponseDto apply(User user) {
         List<CategoryResponseDto> categoryResponseDtos = null;
+//        byte[] photo = null;
         Double balance = null;
         if (user instanceof Customer) {
             Customer customer = (Customer) user;
@@ -29,6 +31,7 @@ public class UserEntityToUserResponseDtoConvertor implements Function<User, User
         }
         if (user instanceof Expert) {
             Expert expert = (Expert) user;
+//            photo = expert.getPhoto();
             List<Category> categoryList = expert.getCategories();
             categoryResponseDtos = categoryEntityToCategoryResponseDtoConvertor.convertList(categoryList);
         }
@@ -40,6 +43,8 @@ public class UserEntityToUserResponseDtoConvertor implements Function<User, User
                 .email(user.getEmail())
                 .firstName(user.getFirstName())
                 .balance(balance)
+                .status(user.getStatus())
+//                .photo(photo)
                 .categories(categoryResponseDtos)
                 .build();
     }

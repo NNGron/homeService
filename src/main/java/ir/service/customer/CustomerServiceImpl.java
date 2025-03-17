@@ -3,7 +3,6 @@ package ir.service.customer;
 import ir.convert.offer.offerResponse.OfferEntityToOfferResponseDtoConvertor;
 import ir.dto.offer.OfferResponseDto;
 import ir.entity.Customer;
-import ir.entity.enums.OrderStatus;
 import ir.exception.CustomException;
 import ir.exception.ErrorCode;
 import ir.repository.user.UserRepository;
@@ -34,5 +33,4 @@ public class CustomerServiceImpl implements CustomerService {
                 .map(offerEntityToOfferResponseDtoConvertor::convertList)
                 .orElseThrow(() -> new CustomException("User not found", ErrorCode.NOT_FOUND.getCode()));
     }
-
 }

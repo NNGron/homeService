@@ -2,6 +2,7 @@ package ir.entity;
 
 import ir.entity.base.BaseEntity;
 import ir.entity.enums.Role;
+import ir.entity.enums.UserStatus;
 import jakarta.persistence.*;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
@@ -24,6 +25,8 @@ public abstract class User extends BaseEntity {
     private String email;
     private String address;
     private Double credit;
+    @Enumerated(EnumType.STRING)
+    private UserStatus status;
 
     @Enumerated(EnumType.STRING)
     private Role role;

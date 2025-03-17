@@ -57,6 +57,7 @@ public enum ErrorCode {
     ORDER_STATUS_SHOULD_NOT_BE_PAID(45),
     CREDIT_NOT_ENOUGH(46),
     INVALID_AMOUNT(47),
+    USER_STATUS_NOT_APPROVED(48),
 
     // 5xx: Server Errors
     INTERNAL_SERVER_ERROR(500),

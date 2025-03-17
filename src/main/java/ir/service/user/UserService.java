@@ -50,8 +50,14 @@ public class UserService {
         Expert expert = null;
         if (optionalUser.isPresent()) {
             User user = optionalUser.get();
+            if (user.getStatus().equals(UserStatus.NEW)){
+                throw new CustomException("User should be approved", ErrorCode.USER_STATUS_NOT_APPROVED.getCode());
+            }
             if (user instanceof Expert) {
                 expert = (Expert) user;
+                if (user.getStatus().equals(UserStatus.NEW)){
+                    throw new CustomException("User should be approved", ErrorCode.USER_STATUS_NOT_APPROVED.getCode());
+                }
                 List<Category> categories = expert.getCategories();
                 categories.removeAll(shouldBeRemoveCategoryList);
                 expert.setCategories(categories);
@@ -68,8 +74,14 @@ public class UserService {
         Expert expert = null;
         if (optionalUser.isPresent()) {
             User user = optionalUser.get();
+            if (user.getStatus().equals(UserStatus.NEW)){
+                throw new CustomException("User should be approved", ErrorCode.USER_STATUS_NOT_APPROVED.getCode());
+            }
             if (user instanceof Expert) {
                 expert = (Expert) user;
+                if (user.getStatus().equals(UserStatus.NEW)){
+                    throw new CustomException("User should be approved", ErrorCode.USER_STATUS_NOT_APPROVED.getCode());
+                }
                 List<Category> categories = expert.getCategories();
                 categories.addAll(shouldBeAdd);
                 expert.setCategories(categories);
@@ -139,13 +151,31 @@ public class UserService {
         Optional<User> byEmail = userRepository.findByEmail(email);
         if (byEmail.isPresent()) {
             User user = byEmail.get();
+            if (user.getStatus().equals(UserStatus.NEW)){
+                throw new CustomException("User should be approved", ErrorCode.USER_STATUS_NOT_APPROVED.getCode());
+            }
             user.setPassword(password);
             userRepository.save(user);
         } else {
             log.error("User with email {} not found", email);
-            throw new RuntimeException("User not found");
+            throw new CustomException("User not found", ErrorCode.NOT_FOUND.getCode());
         }
         return new UserMessageDto("Password updated successfully");
+    }
+
+    public UserMessageDto updateStatusUser(String email) {
+        Optional<User> byEmail = userRepository.findByEmail(email);
+        if (byEmail.isPresent()) {
+            User user = byEmail.get();
+            if (user.getStatus().equals(UserStatus.NEW)){
+                user.setStatus(UserStatus.APPROVED);
+            }
+            userRepository.save(user);
+        } else {
+            log.error("User with email {} not found", email);
+            throw new CustomException("User not found", ErrorCode.NOT_FOUND.getCode());
+        }
+        return new UserMessageDto("Status updated is approved");
     }
 
     public UserMessageDto uploadImage(String email, MultipartFile image) {
@@ -154,6 +184,9 @@ public class UserService {
         }
         userRepository.findByEmail(email).ifPresent(user -> {
             if(user instanceof Expert){
+                if (user.getStatus().equals(UserStatus.NEW)){
+                    throw new CustomException("User should be approved", ErrorCode.USER_STATUS_NOT_APPROVED.getCode());
+                }
                 Expert expert = (Expert) user;
                 try {
                     expert.setPhoto(image.getBytes());

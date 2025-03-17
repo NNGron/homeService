@@ -1,6 +1,5 @@
 package ir.controller;
 
-import ir.dto.order.OrderResponseDto;
 import ir.dto.user.*;
 import ir.service.order.OrderService;
 import ir.service.user.UserService;
@@ -48,7 +47,7 @@ public class UserController {
         return ResponseEntity.ok(userResponseDto);
     }
 
-    @PutMapping("/expert-categories")
+    @PutMapping("/add-expert-categories")
     public ResponseEntity<UserResponseDto> addExpertToCategories(@RequestParam String email, @RequestParam List<String> categoryNames) {
         UserResponseDto userResponseDto = userService.addExpertToCategories(email, categoryNames);
         return ResponseEntity.ok(userResponseDto);
@@ -59,6 +58,13 @@ public class UserController {
         UserMessageDto userMessageDto = userService.updateUser(updatePasswordDto);
         return ResponseEntity.ok(userMessageDto);
     }
+
+    @PutMapping("/admin-update-user-status")
+    public ResponseEntity<UserMessageDto> updateUserStatus(@RequestParam String email) {
+        UserMessageDto userMessageDto = userService.updateStatusUser(email);
+        return ResponseEntity.ok(userMessageDto);
+    }
+
 
     @PostMapping("/filter")
     public ResponseEntity<List<UserResponseDto>> getAllCategories(@Valid @RequestBody UserFilterDto filterDto,
@@ -80,7 +86,4 @@ public class UserController {
         UserMessageDto userMessageDto = userService.uploadImage(email, image);// new
         return ResponseEntity.ok(userMessageDto);
     }
-
-
-
 }
