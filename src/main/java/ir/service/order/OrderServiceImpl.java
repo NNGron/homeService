@@ -85,4 +85,21 @@ public class OrderServiceImpl implements OrderService {
         return orderRepository.save(order);
     }
 
+    @Override
+    public OrderResponseDto updateOrderStatus(String email, String password, OrderStatus orderStatus, Long orderNumber) {
+
+        User user = userService.findByEmailAndPassword(email, password);
+        if (user == null) {
+            throw new CustomException("User not found with provided email and password", ErrorCode.NOT_FOUND.getCode());
+        }
+        Order order = findById(orderNumber);
+        if (order == null) {
+            throw new CustomException("Order not found with provided order number", ErrorCode.NOT_FOUND.getCode());
+        }
+        order.setStatus(orderStatus);
+        orderRepository.save(order);
+        return orderEntityToOrderResponseDtoConvertor.apply(order);
+    }
+
+
 }

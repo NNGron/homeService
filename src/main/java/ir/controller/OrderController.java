@@ -2,6 +2,7 @@ package ir.controller;
 
 import ir.dto.order.OrderRequestDto;
 import ir.dto.order.OrderResponseDto;
+import ir.entity.enums.OrderStatus;
 import ir.service.order.OrderService;
 import jakarta.validation.Valid;
 import lombok.AllArgsConstructor;
@@ -32,5 +33,12 @@ public class OrderController {
         return ResponseEntity.ok(orders);
     }
 
-
+    @PutMapping("/update-status")
+    public ResponseEntity<OrderResponseDto> updateStatus(@RequestParam String email,
+                                                         @RequestParam String password,
+                                                         @RequestParam OrderStatus status,
+                                                         @RequestParam Long orderNumber) {
+        OrderResponseDto orderResponseDto = orderService.updateOrderStatus(email, password, status, orderNumber);
+        return ResponseEntity.ok(orderResponseDto);
+    }
 }

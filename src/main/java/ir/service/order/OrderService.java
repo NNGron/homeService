@@ -23,4 +23,6 @@ public interface OrderService {
     Order findById(Long id);
 
     Order save(Order order);
+
+    OrderResponseDto updateOrderStatus(String email, String password, OrderStatus orderStatus, Long orderNumber);
 }

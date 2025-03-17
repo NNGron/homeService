@@ -28,7 +28,7 @@ public class CustomerServiceImpl implements CustomerService {
                 .filter(user -> user instanceof Customer)
                 .map(user -> (Customer) user)
                 .map(customer -> customer.getOrders().stream()
-                        .filter(order -> order.getStatus() == OrderStatus.WAITING_FOR_EXPERT_SELECTION_BY_CUSTOMER)
+//                        .filter(order -> order.getStatus() == OrderStatus.WAITING_FOR_EXPERT_SELECTION_BY_CUSTOMER)
                         .flatMap(order -> order.getOffers().stream())
                         .collect(Collectors.toList()))
                 .map(offerEntityToOfferResponseDtoConvertor::convertList)
