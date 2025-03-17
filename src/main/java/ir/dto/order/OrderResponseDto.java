@@ -26,6 +26,8 @@ public class OrderResponseDto {
 
     private String orderDescription;
 
+    private String orderName;
+
     private LocalDateTime executionDate;
 
     private String orderAddress;

@@ -1,11 +1,12 @@
 package ir.dto.offer;
 
-import ir.entity.Expert;
-import ir.entity.Order;
+import lombok.Getter;
+import lombok.Setter;
 
+@Getter
+@Setter
 public class OfferRequestDto {
-    private Order order;
-    private Expert expert;
+    private Long orderNumber;
     private Double proposedPrice;
     private Integer estimatedTime;
     private String startTime;

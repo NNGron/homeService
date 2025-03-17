@@ -15,7 +15,12 @@ public interface OrderService {
                                String password);
 
 
+
     List<Order> findOrdersByCategories(List<Category> categories, OrderStatus orderStatus);
 
     List<OrderResponseDto> getOrder(String email, String password);
+
+    Order findById(Long id);
+
+    Order save(Order order);
 }

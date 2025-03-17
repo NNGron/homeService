@@ -38,7 +38,7 @@ public class OrderServiceImpl implements OrderService {
             order.setOrderDescription(orderDto.getOrderDescription());
             order.setOrderDate(orderDto.getOrderDate());
             order.setOrderAddress(orderDto.getOrderAddress());
-            order.setStatus(OrderStatus.WAITING_FOR_PROPOSALS);
+            order.setStatus(OrderStatus.WAITING_FOR_EXPERT_PROPOSALS);
             order.setExecutionDate(orderDto.getExecutionDate());
 
             String subCategoryName = orderDto.getSubCategoryName();
@@ -65,11 +65,24 @@ public class OrderServiceImpl implements OrderService {
         if (user != null) {
             Expert expert = (Expert) user;
             List<Category> categories = expert.getCategories();
-            List<Order> ordersByCategories = findOrdersByCategories(categories, OrderStatus.WAITING_FOR_PROPOSALS);
+            List<Order> ordersByCategories = findOrdersByCategories(categories, OrderStatus.WAITING_FOR_EXPERT_PROPOSALS);
             List<OrderResponseDto> orderResponseDtos = orderEntityToOrderResponseDtoConvertor.convertList(ordersByCategories);
             return orderResponseDtos;
         }
         throw new CustomException("User not found with provided email and password", ErrorCode.NOT_FOUND.getCode());
+    }
+
+    @Override
+    public Order findById(Long id) {
+        Optional<Order> optionalOrder = orderRepository.findById(id);
+        return optionalOrder
+                .orElseThrow(() -> new CustomException("Order not found with provided order number", ErrorCode.NOT_FOUND.getCode()));
+
+    }
+
+    @Override
+    public Order save(Order order) {
+        return orderRepository.save(order);
     }
 
 }
