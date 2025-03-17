@@ -37,8 +37,18 @@ public class OrderController {
     public ResponseEntity<OrderResponseDto> updateStatus(@RequestParam String email,
                                                          @RequestParam String password,
                                                          @RequestParam OrderStatus status,
-                                                         @RequestParam Long orderNumber) {
-        OrderResponseDto orderResponseDto = orderService.updateOrderStatus(email, password, status, orderNumber);
+                                                         @RequestParam Long orderNumber,
+                                                         @RequestParam Long offerNumber) {
+        OrderResponseDto orderResponseDto = orderService.updateOrderStatus(email, password, status, orderNumber, offerNumber);
+        return ResponseEntity.ok(orderResponseDto);
+    }
+
+    @PutMapping("/paid")
+    public ResponseEntity<OrderResponseDto> paid(@RequestParam String email,
+                                                 @RequestParam String password,
+                                                 @RequestParam Long orderNumber,
+                                                 @RequestParam Long offerNumber) {
+        OrderResponseDto orderResponseDto = orderService.paid(email, password, orderNumber, offerNumber);
         return ResponseEntity.ok(orderResponseDto);
     }
 }

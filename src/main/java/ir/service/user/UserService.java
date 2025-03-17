@@ -183,6 +183,11 @@ public class UserService {
     public UserResponseDto addCreditToCustomer(String email, double amount) {
         User user = findByEmail(email);
         Double credit = user.getCredit() != null ? user.getCredit() : 0;
+
+        if ((credit + amount < 0)) {
+            throw new CustomException("Amount is invalid", ErrorCode.INVALID_AMOUNT.getCode());
+        }
+
         credit += amount;
         user.setCredit(credit);
         user = saveUser(user);

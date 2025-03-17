@@ -24,5 +24,12 @@ public interface OrderService {
 
     Order save(Order order);
 
-    OrderResponseDto updateOrderStatus(String email, String password, OrderStatus orderStatus, Long orderNumber);
+    OrderResponseDto updateOrderStatus(String email, String password,
+                                       OrderStatus orderStatus,
+                                       Long orderNumber, Long offerNumber);
+
+    OrderResponseDto paid(String email,
+                          String password,
+                          Long orderNumber,
+                          Long offerNumber);
 }

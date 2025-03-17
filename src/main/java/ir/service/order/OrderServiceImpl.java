@@ -86,7 +86,9 @@ public class OrderServiceImpl implements OrderService {
     }
 
     @Override
-    public OrderResponseDto updateOrderStatus(String email, String password, OrderStatus orderStatus, Long orderNumber) {
+    public OrderResponseDto updateOrderStatus(String email, String password,
+                                              OrderStatus orderStatus,
+                                              Long orderNumber, Long offerNumber) {
         if (OrderStatus.PAID.equals(orderStatus)) {
             throw new CustomException("Order status should not be paid", ErrorCode.ORDER_STATUS_SHOULD_NOT_BE_PAID.getCode());
         }
@@ -98,10 +100,51 @@ public class OrderServiceImpl implements OrderService {
         if (order == null) {
             throw new CustomException("Order not found with provided order number", ErrorCode.NOT_FOUND.getCode());
         }
+
+        if (OrderStatus.WAITING_FOR_EXPERT_ARRIVAL.equals(orderStatus)) {
+            Optional<Offer> offerOptional = order.getOffers().stream().filter(offer -> offer.getId().equals(offerNumber)).findFirst();
+            if (offerOptional.isPresent()) {
+                Offer offer = offerOptional.get();
+                Double proposedPrice = offer.getProposedPrice();
+                order.setFinalPrice(proposedPrice);
+            }
+        }
         order.setStatus(orderStatus);
         orderRepository.save(order);
         return orderEntityToOrderResponseDtoConvertor.apply(order);
     }
 
+    @Override
+    public OrderResponseDto paid(String email,
+                                 String password,
+                                 Long orderNumber,
+                                 Long offerNumber) {
 
+        User user = userService.findByEmailAndPassword(email, password);
+        if (user == null || !(user instanceof Customer)) {
+            throw new CustomException("User not found with provided email and password", ErrorCode.NOT_FOUND.getCode());
+        }
+        Order order = findById(orderNumber);
+        if (order == null) {
+            throw new CustomException("Order not found with provided order number", ErrorCode.NOT_FOUND.getCode());
+        }
+        Optional<Offer> offerOptional = order.getOffers().stream().filter(offer -> offer.getId().equals(offerNumber)).findFirst();
+        if (offerOptional.isPresent()) {
+            Offer offer = offerOptional.get();
+            Expert expert = offer.getExpert();
+            Double finalPrice = order.getFinalPrice();
+            Customer customer = (Customer) user;
+            if (customer.getCredit() == null || customer.getCredit() < finalPrice) {
+                throw new CustomException("Credit is not enough", ErrorCode.CREDIT_NOT_ENOUGH.getCode());
+            }
+            Double expertCredit = expert.getCredit() != null ? expert.getCredit() : 0;
+            customer.setCredit(customer.getCredit() - finalPrice);
+            expert.setCredit(expertCredit + finalPrice);
+            userService.saveUser(customer);
+            userService.saveUser(expert);
+        }
+        order.setStatus(OrderStatus.PAID);
+        orderRepository.save(order);
+        return orderEntityToOrderResponseDtoConvertor.apply(order);
+    }
 }
