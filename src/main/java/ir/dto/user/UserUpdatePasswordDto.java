@@ -2,5 +2,5 @@ package ir.dto.user;
 
 public record UserUpdatePasswordDto(
         String newPassword,
-        String email) {
+        String oldPassword) {
 }

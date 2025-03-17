@@ -2,11 +2,10 @@ package ir.service.user;
 
 import ir.convert.order.OrderResponse.OrderEntityToOrderResponseDtoConvertor;
 import ir.convert.user.userResponse.UserEntityToUserResponseDtoConvertor;
+import ir.dto.review.ReviewRequestDto;
+import ir.dto.review.ReviewResponseDto;
 import ir.dto.user.*;
-import ir.entity.Category;
-import ir.entity.Customer;
-import ir.entity.Expert;
-import ir.entity.User;
+import ir.entity.*;
 import ir.entity.enums.Role;
 import ir.entity.enums.UserStatus;
 import ir.entity.enums.UserType;
@@ -145,16 +144,33 @@ public class UserService {
         return responseDto;
     }
 
-    public UserMessageDto updateUser(UserUpdatePasswordDto userUpdatePasswordDto) {
-        String password = userUpdatePasswordDto.newPassword();
-        String email = userUpdatePasswordDto.email();
-        Optional<User> byEmail = userRepository.findByEmail(email);
-        if (byEmail.isPresent()) {
-            User user = byEmail.get();
+//    public UserMessageDto updateUser(UserUpdatePasswordDto userUpdatePasswordDto) {
+//        String password = userUpdatePasswordDto.newPassword();
+//        String email = userUpdatePasswordDto.email();
+//        Optional<User> byEmail = userRepository.findByEmail(email);
+//        if (byEmail.isPresent()) {
+//            User user = byEmail.get();
+//            if (user.getStatus().equals(UserStatus.NEW)){
+//                throw new CustomException("User should be approved", ErrorCode.USER_STATUS_NOT_APPROVED.getCode());
+//            }
+//            user.setPassword(password);
+//            userRepository.save(user);
+//        } else {
+//            log.error("User with email {} not found", email);
+//            throw new CustomException("User not found", ErrorCode.NOT_FOUND.getCode());
+//        }
+//        return new UserMessageDto("Password updated successfully");
+//    }
+
+    public UserMessageDto updateUserPassword (String email, String oldPassword,String newPassword) {
+        Optional<User> optionalUser = userRepository.findByEmailAndPassword(email, oldPassword);
+
+        if (optionalUser.isPresent()) {
+            User user = optionalUser.get();
             if (user.getStatus().equals(UserStatus.NEW)){
                 throw new CustomException("User should be approved", ErrorCode.USER_STATUS_NOT_APPROVED.getCode());
             }
-            user.setPassword(password);
+            user.setPassword(newPassword);
             userRepository.save(user);
         } else {
             log.error("User with email {} not found", email);

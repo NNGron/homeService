@@ -1,5 +1,7 @@
 package ir.controller;
 
+import ir.dto.review.ReviewRequestDto;
+import ir.dto.review.ReviewResponseDto;
 import ir.dto.user.*;
 import ir.service.order.OrderService;
 import ir.service.user.UserService;
@@ -53,11 +55,22 @@ public class UserController {
         return ResponseEntity.ok(userResponseDto);
     }
 
+//    @PutMapping("/update-password")
+//    public ResponseEntity<UserMessageDto> updatePassword(@RequestBody UserUpdatePasswordDto updatePasswordDto) {
+//        UserMessageDto userMessageDto = userService.updateUser(updatePasswordDto);
+//        return ResponseEntity.ok(userMessageDto);
+//    }
+
     @PutMapping("/update-password")
-    public ResponseEntity<UserMessageDto> updatePassword(@RequestBody UserUpdatePasswordDto updatePasswordDto) {
-        UserMessageDto userMessageDto = userService.updateUser(updatePasswordDto);
+    public ResponseEntity<UserMessageDto> updatePassword(@RequestParam String email,
+                                                         @RequestParam String oldPassword,
+                                                         @RequestParam String newPassword) {
+        UserMessageDto userMessageDto = userService.updateUserPassword(email, oldPassword, newPassword);
         return ResponseEntity.ok(userMessageDto);
     }
+
+
+
 
     @PutMapping("/admin-update-user-status")
     public ResponseEntity<UserMessageDto> updateUserStatus(@RequestParam String email) {
