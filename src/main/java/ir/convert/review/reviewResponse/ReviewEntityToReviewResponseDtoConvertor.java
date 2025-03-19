@@ -15,6 +15,7 @@ public class ReviewEntityToReviewResponseDtoConvertor implements Function<Review
                 .builder()
                 .orderNumber(review.getOrder().getId())
                 .comment(review.getComment())
+                .rating(review.getRating())
                 .customerFirstName(review.getCustomer().getFirstName())
                 .customerLastName(review.getCustomer().getLastName())
                 .expertFirstName(review.getExpert().getFirstName())

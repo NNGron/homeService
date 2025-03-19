@@ -1,0 +1,786 @@
+{
+	"info": {
+		"_postman_id": "372369c2-e376-4ddf-86a9-caaeeb707570",
+		"name": "home_service_api",
+		"schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json",
+		"_exporter_id": "41967057"
+	},
+	"item": [
+		{
+			"name": "01-create-category",
+			"request": {
+				"method": "POST",
+				"header": [
+					{
+						"key": "accept",
+						"value": "*/*"
+					},
+					{
+						"key": "Content-Type",
+						"value": "application/json"
+					}
+				],
+				"body": {
+					"mode": "raw",
+					"raw": "{\r\n  \"name\": \"clean\"\r\n}",
+					"options": {
+						"raw": {
+							"language": "json"
+						}
+					}
+				},
+				"url": {
+					"raw": "http://localhost:8080/v1/categories/create-main-category",
+					"protocol": "http",
+					"host": [
+						"localhost"
+					],
+					"port": "8080",
+					"path": [
+						"v1",
+						"categories",
+						"create-main-category"
+					]
+				},
+				"description": "Generated from cURL: curl -X 'POST' \\\r\n  'http://localhost:8080/v1/categories/create-main-category' \\\r\n  -H 'accept: */*' \\\r\n  -H 'Content-Type: application/json' \\\r\n  -d '{\r\n  \"name\": \"clean\"\r\n}'"
+			},
+			"response": []
+		},
+		{
+			"name": "02-create-sub-category",
+			"request": {
+				"method": "POST",
+				"header": [
+					{
+						"key": "accept",
+						"value": "*/*"
+					},
+					{
+						"key": "Content-Type",
+						"value": "application/json"
+					}
+				],
+				"body": {
+					"mode": "raw",
+					"raw": "{\r\n  \"name\": \"wc\",\r\n  \"description\": \"clean wc and remove garbage\",\r\n  \"basePrice\": 200,\r\n  \"parentName\": \"wc\"\r\n}",
+					"options": {
+						"raw": {
+							"language": "json"
+						}
+					}
+				},
+				"url": {
+					"raw": "http://localhost:8080/v1/categories/create-sub-category",
+					"protocol": "http",
+					"host": [
+						"localhost"
+					],
+					"port": "8080",
+					"path": [
+						"v1",
+						"categories",
+						"create-sub-category"
+					]
+				},
+				"description": "Generated from cURL: curl -X 'POST' \\\r\n  'http://localhost:8080/v1/categories/create-sub-category' \\\r\n  -H 'accept: */*' \\\r\n  -H 'Content-Type: application/json' \\\r\n  -d '{\r\n  \"name\": \"wc\",\r\n  \"description\": \"clean wc and remove garbage\",\r\n  \"basePrice\": 200,\r\n  \"parentName\": \"wc\"\r\n}'"
+			},
+			"response": []
+		},
+		{
+			"name": "03-customer-signup",
+			"request": {
+				"method": "POST",
+				"header": [
+					{
+						"key": "accept",
+						"value": "*/*"
+					},
+					{
+						"key": "Content-Type",
+						"value": "application/json"
+					}
+				],
+				"body": {
+					"mode": "raw",
+					"raw": "{\r\n  \"userName\": \"customer1\",\r\n  \"password\": \"123\",\r\n  \"firstName\": \"customer1\",\r\n  \"lastName\": \"customer1\",\r\n  \"email\": \"customer1@yahoo.com\",\r\n  \"address\": \"tehran\",\r\n  \"userType\": \"CUSTOMER\"\r\n}",
+					"options": {
+						"raw": {
+							"language": "json"
+						}
+					}
+				},
+				"url": {
+					"raw": "http://localhost:8080/v1/users/signup",
+					"protocol": "http",
+					"host": [
+						"localhost"
+					],
+					"port": "8080",
+					"path": [
+						"v1",
+						"users",
+						"signup"
+					]
+				},
+				"description": "Generated from cURL: curl -X 'POST' \\\r\n  'http://localhost:8080/v1/users/signup' \\\r\n  -H 'accept: */*' \\\r\n  -H 'Content-Type: application/json' \\\r\n  -d '{\r\n  \"userName\": \"customer1\",\r\n  \"password\": \"123\",\r\n  \"firstName\": \"customer1\",\r\n  \"lastName\": \"customer1\",\r\n  \"email\": \"customer1@yahoo.com\",\r\n  \"address\": \"tehran\",\r\n  \"userType\": \"CUSTOMER\"\r\n}'"
+			},
+			"response": []
+		},
+		{
+			"name": "04-expert-signup",
+			"request": {
+				"method": "POST",
+				"header": [
+					{
+						"key": "accept",
+						"value": "*/*"
+					},
+					{
+						"key": "Content-Type",
+						"value": "application/json"
+					}
+				],
+				"body": {
+					"mode": "raw",
+					"raw": "{\r\n  \"userName\": \"expert1\",\r\n  \"password\": \"123\",\r\n  \"firstName\": \"expert1\",\r\n  \"lastName\": \"expert1\",\r\n  \"email\": \"expert1@yahoo.com\",\r\n  \"address\": \"teh\",\r\n  \"subCategoryNames\": [\r\n    \"wc\"\r\n  ],\r\n  \"userType\": \"EXPERT\"\r\n}",
+					"options": {
+						"raw": {
+							"language": "json"
+						}
+					}
+				},
+				"url": {
+					"raw": "http://localhost:8080/v1/users/signup",
+					"protocol": "http",
+					"host": [
+						"localhost"
+					],
+					"port": "8080",
+					"path": [
+						"v1",
+						"users",
+						"signup"
+					]
+				},
+				"description": "Generated from cURL: curl -X 'POST' \\\r\n  'http://localhost:8080/v1/users/signup' \\\r\n  -H 'accept: */*' \\\r\n  -H 'Content-Type: application/json' \\\r\n  -d '{\r\n  \"userName\": \"expert1\",\r\n  \"password\": \"123\",\r\n  \"firstName\": \"expert1\",\r\n  \"lastName\": \"expert1\",\r\n  \"email\": \"expert1@yahoo.com\",\r\n  \"address\": \"teh\",\r\n  \"subCategoryNames\": [\r\n    \"wc\"\r\n  ],\r\n  \"userType\": \"EXPERT\"\r\n}'"
+			},
+			"response": []
+		},
+		{
+			"name": "05-get-all-users(customer-expert)",
+			"request": {
+				"method": "GET",
+				"header": [
+					{
+						"key": "accept",
+						"value": "*/*"
+					}
+				],
+				"url": {
+					"raw": "http://localhost:8080/v1/users/all-user?pageNumber=0&size=10&sortBy=firstName&sortDir=asc",
+					"protocol": "http",
+					"host": [
+						"localhost"
+					],
+					"port": "8080",
+					"path": [
+						"v1",
+						"users",
+						"all-user"
+					],
+					"query": [
+						{
+							"key": "pageNumber",
+							"value": "0"
+						},
+						{
+							"key": "size",
+							"value": "10"
+						},
+						{
+							"key": "sortBy",
+							"value": "firstName"
+						},
+						{
+							"key": "sortDir",
+							"value": "asc"
+						}
+					]
+				},
+				"description": "Generated from cURL: curl -X 'GET' \\\r\n  'http://localhost:8080/v1/users/all-user?pageNumber=0&size=10&sortBy=firstName&sortDir=asc' \\\r\n  -H 'accept: */*'"
+			},
+			"response": []
+		},
+		{
+			"name": "06-approve-user",
+			"request": {
+				"method": "PUT",
+				"header": [
+					{
+						"key": "accept",
+						"value": "*/*"
+					}
+				],
+				"url": {
+					"raw": "http://localhost:8080/v1/users/approve-user?email=expert1%40yahoo.com",
+					"protocol": "http",
+					"host": [
+						"localhost"
+					],
+					"port": "8080",
+					"path": [
+						"v1",
+						"users",
+						"approve-user"
+					],
+					"query": [
+						{
+							"key": "email",
+							"value": "expert1%40yahoo.com"
+						}
+					]
+				},
+				"description": "Generated from cURL: curl -X 'PUT' \\\r\n  'http://localhost:8080/v1/users/approve-user?email=expert1%40yahoo.com' \\\r\n  -H 'accept: */*'"
+			},
+			"response": []
+		},
+		{
+			"name": "07-create-order-by-customer",
+			"request": {
+				"method": "POST",
+				"header": [
+					{
+						"key": "accept",
+						"value": "*/*"
+					},
+					{
+						"key": "Content-Type",
+						"value": "application/json"
+					}
+				],
+				"body": {
+					"mode": "raw",
+					"raw": "{\r\n  \"offerCustomerPrice\": 100,\r\n  \"orderDate\": \"2025-03-19T21:01:15.877Z\",\r\n  \"orderDescription\": \"remove garbage from home\",\r\n  \"executionDate\": \"2025-03-20T21:01:15.877Z\",\r\n  \"orderAddress\": \"karaj\",\r\n  \"subCategoryName\": \"wc\"\r\n}",
+					"options": {
+						"raw": {
+							"language": "json"
+						}
+					}
+				},
+				"url": {
+					"raw": "http://localhost:8080/v1/orders/create-order?email=customer1%40yahoo.com&password=123",
+					"protocol": "http",
+					"host": [
+						"localhost"
+					],
+					"port": "8080",
+					"path": [
+						"v1",
+						"orders",
+						"create-order"
+					],
+					"query": [
+						{
+							"key": "email",
+							"value": "customer1%40yahoo.com"
+						},
+						{
+							"key": "password",
+							"value": "123"
+						}
+					]
+				},
+				"description": "Generated from cURL: curl -X 'POST' \\\r\n  'http://localhost:8080/v1/orders/create-order?email=customer1%40yahoo.com&password=123' \\\r\n  -H 'accept: */*' \\\r\n  -H 'Content-Type: application/json' \\\r\n  -d '{\r\n  \"offerCustomerPrice\": 100,\r\n  \"orderDate\": \"2025-03-19T21:01:15.877Z\",\r\n  \"orderDescription\": \"remove garbage from home\",\r\n  \"executionDate\": \"2025-03-20T21:01:15.877Z\",\r\n  \"orderAddress\": \"karaj\",\r\n  \"subCategoryName\": \"wc\"\r\n}'"
+			},
+			"response": []
+		},
+		{
+			"name": "08-show-order-to-expert",
+			"request": {
+				"method": "GET",
+				"header": [
+					{
+						"key": "accept",
+						"value": "*/*"
+					}
+				],
+				"url": {
+					"raw": "http://localhost:8080/v1/orders/show-orders?email=expert1%40yahoo.com&password=123",
+					"protocol": "http",
+					"host": [
+						"localhost"
+					],
+					"port": "8080",
+					"path": [
+						"v1",
+						"orders",
+						"show-orders"
+					],
+					"query": [
+						{
+							"key": "email",
+							"value": "expert1%40yahoo.com"
+						},
+						{
+							"key": "password",
+							"value": "123"
+						}
+					]
+				},
+				"description": "Generated from cURL: curl -X 'GET' \\\r\n  'http://localhost:8080/v1/orders/show-orders?email=expert1%40yahoo.com&password=123' \\\r\n  -H 'accept: */*'"
+			},
+			"response": []
+		},
+		{
+			"name": "09-create-offer-by-expert",
+			"request": {
+				"method": "POST",
+				"header": [
+					{
+						"key": "accept",
+						"value": "*/*"
+					},
+					{
+						"key": "Content-Type",
+						"value": "application/json"
+					}
+				],
+				"body": {
+					"mode": "raw",
+					"raw": "{\r\n  \"orderNumber\": 1,\r\n  \"proposedPrice\": 400,\r\n  \"estimatedTime\": 2,\r\n  \"startTime\": \"19-03-2025 23:000\"\r\n}",
+					"options": {
+						"raw": {
+							"language": "json"
+						}
+					}
+				},
+				"url": {
+					"raw": "http://localhost:8080/v1/experts/create-offer?email=expert1%40yahoo.com&password=123",
+					"protocol": "http",
+					"host": [
+						"localhost"
+					],
+					"port": "8080",
+					"path": [
+						"v1",
+						"experts",
+						"create-offer"
+					],
+					"query": [
+						{
+							"key": "email",
+							"value": "expert1%40yahoo.com"
+						},
+						{
+							"key": "password",
+							"value": "123"
+						}
+					]
+				},
+				"description": "Generated from cURL: curl -X 'POST' \\\r\n  'http://localhost:8080/v1/experts/create-offer?email=expert1%40yahoo.com&password=123' \\\r\n  -H 'accept: */*' \\\r\n  -H 'Content-Type: application/json' \\\r\n  -d '{\r\n  \"orderNumber\": 1,\r\n  \"proposedPrice\": 400,\r\n  \"estimatedTime\": 2,\r\n  \"startTime\": \"19-03-2025 23:000\"\r\n}'"
+			},
+			"response": []
+		},
+		{
+			"name": "10-see-ofer-by-customer",
+			"request": {
+				"method": "GET",
+				"header": [
+					{
+						"key": "accept",
+						"value": "*/*"
+					}
+				],
+				"url": {
+					"raw": "http://localhost:8080/v1/customers/order-offers?email=customer1%40yahoo.com&password=123",
+					"protocol": "http",
+					"host": [
+						"localhost"
+					],
+					"port": "8080",
+					"path": [
+						"v1",
+						"customers",
+						"order-offers"
+					],
+					"query": [
+						{
+							"key": "email",
+							"value": "customer1%40yahoo.com"
+						},
+						{
+							"key": "password",
+							"value": "123"
+						}
+					]
+				},
+				"description": "Generated from cURL: curl -X 'GET' \\\r\n  'http://localhost:8080/v1/customers/order-offers?email=customer1%40yahoo.com&password=123' \\\r\n  -H 'accept: */*'"
+			},
+			"response": []
+		},
+		{
+			"name": "11-approve-offer-by-customer",
+			"request": {
+				"method": "PUT",
+				"header": [
+					{
+						"key": "accept",
+						"value": "*/*"
+					}
+				],
+				"url": {
+					"raw": "http://localhost:8080/v1/orders/update-status?email=customer1%40yahoo.com&password=123&status=WAITING_FOR_EXPERT_ARRIVAL&orderNumber=1&offerNumber=1",
+					"protocol": "http",
+					"host": [
+						"localhost"
+					],
+					"port": "8080",
+					"path": [
+						"v1",
+						"orders",
+						"update-status"
+					],
+					"query": [
+						{
+							"key": "email",
+							"value": "customer1%40yahoo.com"
+						},
+						{
+							"key": "password",
+							"value": "123"
+						},
+						{
+							"key": "status",
+							"value": "WAITING_FOR_EXPERT_ARRIVAL"
+						},
+						{
+							"key": "orderNumber",
+							"value": "1"
+						},
+						{
+							"key": "offerNumber",
+							"value": "1"
+						}
+					]
+				},
+				"description": "Generated from cURL: curl -X 'PUT' \\\r\n  'http://localhost:8080/v1/orders/update-status?email=customer1%40yahoo.com&password=123&status=WAITING_FOR_EXPERT_ARRIVAL&orderNumber=1&offerNumber=1' \\\r\n  -H 'accept: */*'"
+			},
+			"response": []
+		},
+		{
+			"name": "12-expert-start-working",
+			"request": {
+				"method": "PUT",
+				"header": [
+					{
+						"key": "accept",
+						"value": "*/*"
+					}
+				],
+				"url": {
+					"raw": "http://localhost:8080/v1/orders/update-status?email=customer1%40yahoo.com&password=123&status=STARTED&orderNumber=1&offerNumber=1",
+					"protocol": "http",
+					"host": [
+						"localhost"
+					],
+					"port": "8080",
+					"path": [
+						"v1",
+						"orders",
+						"update-status"
+					],
+					"query": [
+						{
+							"key": "email",
+							"value": "customer1%40yahoo.com"
+						},
+						{
+							"key": "password",
+							"value": "123"
+						},
+						{
+							"key": "status",
+							"value": "STARTED"
+						},
+						{
+							"key": "orderNumber",
+							"value": "1"
+						},
+						{
+							"key": "offerNumber",
+							"value": "1"
+						}
+					]
+				},
+				"description": "Generated from cURL: curl -X 'PUT' \\\r\n  'http://localhost:8080/v1/orders/update-status?email=customer1%40yahoo.com&password=123&status=STARTED&orderNumber=1&offerNumber=1' \\\r\n  -H 'accept: */*'"
+			},
+			"response": []
+		},
+		{
+			"name": "13-complete-work-by-expert",
+			"request": {
+				"method": "PUT",
+				"header": [
+					{
+						"key": "accept",
+						"value": "*/*"
+					}
+				],
+				"url": {
+					"raw": "http://localhost:8080/v1/orders/update-status?email=customer1%40yahoo.com&password=123&status=COMPLETED&orderNumber=1&offerNumber=1",
+					"protocol": "http",
+					"host": [
+						"localhost"
+					],
+					"port": "8080",
+					"path": [
+						"v1",
+						"orders",
+						"update-status"
+					],
+					"query": [
+						{
+							"key": "email",
+							"value": "customer1%40yahoo.com"
+						},
+						{
+							"key": "password",
+							"value": "123"
+						},
+						{
+							"key": "status",
+							"value": "COMPLETED"
+						},
+						{
+							"key": "orderNumber",
+							"value": "1"
+						},
+						{
+							"key": "offerNumber",
+							"value": "1"
+						}
+					]
+				},
+				"description": "Generated from cURL: curl -X 'PUT' \\\r\n  'http://localhost:8080/v1/orders/update-status?email=customer1%40yahoo.com&password=123&status=COMPLETED&orderNumber=1&offerNumber=1' \\\r\n  -H 'accept: */*'"
+			},
+			"response": []
+		},
+		{
+			"name": "14-add-balance-to-customer",
+			"request": {
+				"method": "PUT",
+				"header": [
+					{
+						"key": "accept",
+						"value": "*/*"
+					}
+				],
+				"url": {
+					"raw": "http://localhost:8080/v1/credits/add-balance?email=customer1%40yahoo.com&balance=500",
+					"protocol": "http",
+					"host": [
+						"localhost"
+					],
+					"port": "8080",
+					"path": [
+						"v1",
+						"credits",
+						"add-balance"
+					],
+					"query": [
+						{
+							"key": "email",
+							"value": "customer1%40yahoo.com"
+						},
+						{
+							"key": "balance",
+							"value": "500"
+						}
+					]
+				},
+				"description": "Generated from cURL: curl -X 'PUT' \\\r\n  'http://localhost:8080/v1/credits/add-balance?email=customer1%40yahoo.com&balance=500' \\\r\n  -H 'accept: */*'"
+			},
+			"response": []
+		},
+		{
+			"name": "15-paid-money-by-customer",
+			"request": {
+				"method": "PUT",
+				"header": [
+					{
+						"key": "accept",
+						"value": "*/*"
+					}
+				],
+				"url": {
+					"raw": "http://localhost:8080/v1/orders/paid?email=customer1%40yahoo.com&password=123&orderNumber=1&offerNumber=1",
+					"protocol": "http",
+					"host": [
+						"localhost"
+					],
+					"port": "8080",
+					"path": [
+						"v1",
+						"orders",
+						"paid"
+					],
+					"query": [
+						{
+							"key": "email",
+							"value": "customer1%40yahoo.com"
+						},
+						{
+							"key": "password",
+							"value": "123"
+						},
+						{
+							"key": "orderNumber",
+							"value": "1"
+						},
+						{
+							"key": "offerNumber",
+							"value": "1"
+						}
+					]
+				},
+				"description": "Generated from cURL: curl -X 'PUT' \\\r\n  'http://localhost:8080/v1/orders/paid?email=customer1%40yahoo.com&password=123&orderNumber=1&offerNumber=1' \\\r\n  -H 'accept: */*'"
+			},
+			"response": []
+		},
+		{
+			"name": "16-add-comment-and-rate-by-customer",
+			"request": {
+				"method": "POST",
+				"header": [
+					{
+						"key": "accept",
+						"value": "*/*"
+					},
+					{
+						"key": "Content-Type",
+						"value": "application/json"
+					}
+				],
+				"body": {
+					"mode": "raw",
+					"raw": "{\r\n  \"rating\": 4,\r\n  \"comment\": \"good\",\r\n  \"orderNumber\": 1,\r\n  \"offerNumber\": 1\r\n}",
+					"options": {
+						"raw": {
+							"language": "json"
+						}
+					}
+				},
+				"url": {
+					"raw": "http://localhost:8080/v1/reviews/comment?email=customer1%40yahoo.com&password=123",
+					"protocol": "http",
+					"host": [
+						"localhost"
+					],
+					"port": "8080",
+					"path": [
+						"v1",
+						"reviews",
+						"comment"
+					],
+					"query": [
+						{
+							"key": "email",
+							"value": "customer1%40yahoo.com"
+						},
+						{
+							"key": "password",
+							"value": "123"
+						}
+					]
+				},
+				"description": "Generated from cURL: curl -X 'POST' \\\r\n  'http://localhost:8080/v1/reviews/comment?email=customer1%40yahoo.com&password=123' \\\r\n  -H 'accept: */*' \\\r\n  -H 'Content-Type: application/json' \\\r\n  -d '{\r\n  \"rating\": 4,\r\n  \"comment\": \"good\",\r\n  \"orderNumber\": 1,\r\n  \"offerNumber\": 1\r\n}'"
+			},
+			"response": []
+		},
+		{
+			"name": "20-update-password",
+			"request": {
+				"method": "PUT",
+				"header": [
+					{
+						"key": "accept",
+						"value": "*/*"
+					}
+				],
+				"url": {
+					"raw": "http://localhost:8080/v1/users/update-password?email=customer1%40yahoo.com&oldPassword=123&newPassword=111",
+					"protocol": "http",
+					"host": [
+						"localhost"
+					],
+					"port": "8080",
+					"path": [
+						"v1",
+						"users",
+						"update-password"
+					],
+					"query": [
+						{
+							"key": "email",
+							"value": "customer1%40yahoo.com"
+						},
+						{
+							"key": "oldPassword",
+							"value": "123"
+						},
+						{
+							"key": "newPassword",
+							"value": "111"
+						}
+					]
+				},
+				"description": "Generated from cURL: curl -X 'PUT' \\\n  'http://localhost:8080/v1/users/update-password?email=customer1%40yahoo.com&oldPassword=123&newPassword=111' \\\n  -H 'accept: */*'"
+			},
+			"response": []
+		},
+		{
+			"name": "21-upload-photo",
+			"request": {
+				"method": "POST",
+				"header": [
+					{
+						"key": "accept",
+						"value": "*/*"
+					}
+				],
+				"body": {
+					"mode": "formdata",
+					"formdata": [
+						{
+							"key": "image",
+							"contentType": "image/jpeg",
+							"type": "file",
+							"src": "IMG_1933.jpg"
+						}
+					]
+				},
+				"url": {
+					"raw": "http://localhost:8080/v1/users/upload-image?email=expert1%40yahoo.com",
+					"protocol": "http",
+					"host": [
+						"localhost"
+					],
+					"port": "8080",
+					"path": [
+						"v1",
+						"users",
+						"upload-image"
+					],
+					"query": [
+						{
+							"key": "email",
+							"value": "expert1%40yahoo.com"
+						}
+					]
+				},
+				"description": "Generated from cURL: curl -X 'POST' \\\n  'http://localhost:8080/v1/users/upload-image?email=expert1%40yahoo.com' \\\n  -H 'accept: */*' \\\n  -H 'Content-Type: multipart/form-data' \\\n  -F 'image=@IMG_1933.jpg;type=image/jpeg'"
+			},
+			"response": []
+		}
+	]
+}

@@ -20,6 +20,7 @@ public class UserResponseDto {
     private String email;
     private Double balance;
     private UserStatus status;
+    private Double averageRate;
 //    private byte[] photo;
     private List<CategoryResponseDto> categories;
 }

@@ -58,8 +58,8 @@ public class OrderServiceImpl implements OrderService {
     }
 
     @Override
-    public List<Order> findOrdersByCategories(List<Category> categories, OrderStatus orderStatus) {
-        Optional<List<Order>> optionalOrderList = orderRepository.findAllByCategoryInAndStatus(categories, orderStatus);
+    public List<Order> findOrdersByCategories(List<Category> categories) {
+        Optional<List<Order>> optionalOrderList = orderRepository.findAllByCategoryIn(categories);
         return optionalOrderList.orElse(new ArrayList<>());
     }
 
@@ -72,7 +72,7 @@ public class OrderServiceImpl implements OrderService {
                 throw new CustomException("User should be approved", ErrorCode.USER_STATUS_NOT_APPROVED.getCode());
             }
             List<Category> categories = expert.getCategories();
-            List<Order> ordersByCategories = findOrdersByCategories(categories, OrderStatus.WAITING_FOR_EXPERT_PROPOSALS);
+            List<Order> ordersByCategories = findOrdersByCategories(categories);
             List<OrderResponseDto> orderResponseDtos = orderEntityToOrderResponseDtoConvertor.convertList(ordersByCategories);
             return orderResponseDtos;
         }

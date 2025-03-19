@@ -8,9 +8,11 @@ spring:
 
   datasource:
     driver-class-name: org.postgresql.Driver
-    url: jdbc:postgresql://localhost:5432/home_service
+    url: jdbc:postgresql://localhost:5432/homeservicev2
     username: Maktab
     password: Maktab123
+    hikari:
+          auto-commit: false
 
   jpa:
     hibernate:

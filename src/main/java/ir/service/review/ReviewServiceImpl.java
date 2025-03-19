@@ -12,6 +12,8 @@ import lombok.AllArgsConstructor;
 import lombok.extern.log4j.Log4j2;
 import org.springframework.stereotype.Service;
 
+import java.util.ArrayList;
+import java.util.List;
 import java.util.Optional;
 
 @Service
@@ -25,7 +27,8 @@ public class ReviewServiceImpl implements ReviewService {
 
     @Override
     public ReviewResponseDto addReview(String email, String password, ReviewRequestDto reviewRequestDto) {
-        return Optional.ofNullable(userService.findByEmailAndPassword(email, password))
+        Optional<User> optionalUser = Optional.ofNullable(userService.findByEmailAndPassword(email, password));
+        return optionalUser
                 .filter(user -> user instanceof Customer)
                 .map(user -> (Customer) user)
                 .flatMap(customer -> customer.getOrders().stream()
@@ -36,16 +39,49 @@ public class ReviewServiceImpl implements ReviewService {
                                 .findFirst()
                                 .map(offer -> createAndSaveReview(customer, offer, order, reviewRequestDto))))
                 .map(reviewEntityToReviewResponseDtoConvertor::apply)
-                .orElseThrow(() -> new CustomException("User not found or is not a customer", ErrorCode.NOT_FOUND.getCode()));
+                .orElseThrow(() -> new CustomException("User not found or is not a customer/ order-number or offer-number not found", ErrorCode.NOT_FOUND.getCode()));
     }
 
     private Review createAndSaveReview(Customer customer, Offer offer, Order order, ReviewRequestDto reviewRequestDto) {
+        Expert expert = offer.getExpert();
         Review review = new Review();
         review.setCustomer(customer);
-        review.setExpert(offer.getExpert());
+        review.setExpert(expert);
         review.setOrder(order);
         review.setComment(reviewRequestDto.comment());
         review.setRating(reviewRequestDto.rating());
+
+
+        List<Integer> allRates = new ArrayList<>(findAllReviewsByExpertId(expert.getId()).stream().map(Review::getRating).toList());
+        allRates.add(reviewRequestDto.rating());
+        double averageRate = allRates.stream()
+                .mapToInt(Integer::intValue)
+                .average()
+                .orElse(0);
+        expert.setRating(averageRate);
+        userService.saveUser(expert);
+
         return reviewRepository.save(review);
     }
+
+    @Override
+    public List<Review> findAllReviewsByExpertId(Long expertId) {
+
+        return reviewRepository.findAllByExpert_Id(expertId);
+    }
 }
+// @Override
+//    public ReviewResponseDto addReview(String email, String password, ReviewRequestDto reviewRequestDto) {
+//        return Optional.ofNullable(userService.findByEmailAndPassword(email, password))
+//                .filter(user -> user instanceof Customer)
+//                .map(user -> (Customer) user)
+//                .flatMap(customer -> customer.getOrders().stream()
+//                        .filter(order -> order.getId().equals(reviewRequestDto.orderNumber()))
+//                        .findFirst()
+//                        .flatMap(order -> order.getOffers().stream()
+//                                .filter(offer -> offer.getId().equals(reviewRequestDto.offerNumber()))
+//                                .findFirst()
+//                                .map(offer -> createAndSaveReview(customer, offer, order, reviewRequestDto))))
+//                .map(reviewEntityToReviewResponseDtoConvertor)
+//                .orElseThrow(() -> new CustomException("User not found or is not a customer", ErrorCode.NOT_FOUND.getCode()));
+//    }

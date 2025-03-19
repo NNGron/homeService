@@ -4,6 +4,7 @@ import ir.entity.base.BaseEntity;
 import ir.entity.enums.Role;
 import ir.entity.enums.UserStatus;
 import jakarta.persistence.*;
+import jakarta.validation.constraints.PositiveOrZero;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
@@ -24,6 +25,10 @@ public abstract class User extends BaseEntity {
     private String lastName;
     private String email;
     private String address;
+    /**
+     * The expert's credit, must be non-negative.
+     */
+    @PositiveOrZero(message = "Credit must be a non-negative value")
     private Double credit;
     @Enumerated(EnumType.STRING)
     private UserStatus status;

@@ -5,10 +5,8 @@ import ir.convert.category.categoryResponse.CategoryEntityToCategoryResponseDtoC
 import ir.dto.category.CategoryResponseDto;
 import ir.dto.user.UserResponseDto;
 import ir.entity.Category;
-import ir.entity.Customer;
 import ir.entity.Expert;
 import ir.entity.User;
-import ir.entity.enums.UserStatus;
 import lombok.AllArgsConstructor;
 import org.springframework.stereotype.Component;
 
@@ -18,20 +16,19 @@ import java.util.function.Function;
 @AllArgsConstructor
 @Component
 public class UserEntityToUserResponseDtoConvertor implements Function<User, UserResponseDto> {
+
     private final CategoryEntityToCategoryResponseDtoConvertor categoryEntityToCategoryResponseDtoConvertor;
 
     @Override
     public UserResponseDto apply(User user) {
         List<CategoryResponseDto> categoryResponseDtos = null;
+        Double averageRate = null;
 //        byte[] photo = null;
-        Double balance = null;
-        if (user instanceof Customer) {
-            Customer customer = (Customer) user;
-            balance = customer.getCredit();
-        }
+        Double balance = user.getCredit() == null ? 0 : user.getCredit();
         if (user instanceof Expert) {
             Expert expert = (Expert) user;
 //            photo = expert.getPhoto();
+            averageRate = expert.getRating() == null ? 0 : expert.getRating();
             List<Category> categoryList = expert.getCategories();
             categoryResponseDtos = categoryEntityToCategoryResponseDtoConvertor.convertList(categoryList);
         }
@@ -44,6 +41,7 @@ public class UserEntityToUserResponseDtoConvertor implements Function<User, User
                 .firstName(user.getFirstName())
                 .balance(balance)
                 .status(user.getStatus())
+                .averageRate(averageRate)
 //                .photo(photo)
                 .categories(categoryResponseDtos)
                 .build();

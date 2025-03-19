@@ -87,8 +87,8 @@ public class CategoryServiceImpl implements CategoryService {
         }
         String parentName = subCategoryRequestDto.parentName();
         Optional<List<Category>> byName = categoryRepository.findByName(parentName);
-        if (byName.isPresent()) {
-            Category parentCategory = byName.get().get(0);
+        if (byName.isPresent() && !byName.get().isEmpty()) {
+            Category parentCategory = byName.get().getFirst();
             Category subCategory = new Category();
             subCategory.setName(subCategoryRequestDto.name());
             subCategory.setParentCategory(parentCategory);

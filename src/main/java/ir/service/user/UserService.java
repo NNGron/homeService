@@ -16,6 +16,7 @@ import ir.repository.user.UserSpecification;
 import ir.service.category.CategoryService;
 import lombok.AllArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import org.apache.commons.lang3.StringUtils;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.jpa.domain.Specification;
@@ -102,7 +103,15 @@ public class UserService {
     }
 
     public UserResponseDto saveUser(UserRequestDto userRequestDto) {
-        log.info("Start saving user: {}", userRequestDto);
+        log.info("Start saving user: {}", userRequestDto.toString());
+        if (StringUtils.isEmpty(userRequestDto.getEmail()) || StringUtils.isEmpty(userRequestDto.getPassword())){
+            throw new CustomException("Email is invalid", ErrorCode.INVALID_EMAIL_OR_PASSWORD.getCode());
+        }
+
+        Optional<User> optionalUser = userRepository.findByEmailAndPassword(userRequestDto.getEmail(), userRequestDto.getPassword());
+        if (optionalUser.isPresent()){
+            throw new CustomException("Email already exist", ErrorCode.ALREADY_EXIST.getCode());
+        }
         User user = null;
         UserType userType = userRequestDto.getUserType();
         if (userType != null && userType.equals(UserType.CUSTOMER)) {

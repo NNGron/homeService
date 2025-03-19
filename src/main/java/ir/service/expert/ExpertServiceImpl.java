@@ -10,6 +10,7 @@ import ir.entity.User;
 import ir.entity.enums.UserStatus;
 import ir.exception.CustomException;
 import ir.exception.ErrorCode;
+import ir.repository.ExpertRepository;
 import ir.repository.user.UserRepository;
 import ir.service.offer.OfferService;
 import ir.service.order.OrderService;
@@ -17,6 +18,7 @@ import lombok.AllArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
 
+import java.util.List;
 import java.util.Optional;
 
 import static ir.entity.enums.OrderStatus.WAITING_FOR_EXPERT_SELECTION_BY_CUSTOMER;
@@ -27,6 +29,7 @@ import static ir.entity.enums.OrderStatus.WAITING_FOR_EXPERT_SELECTION_BY_CUSTOM
 public class ExpertServiceImpl implements ExpertService {
 
     private final UserRepository userRepository;
+    private final ExpertRepository expertRepository;
     private final OrderService orderService;
     private final OfferService offerService;
     private final OfferEntityToOfferResponseDtoConvertor offerEntityToOfferResponseDtoConvertor;
@@ -35,7 +38,7 @@ public class ExpertServiceImpl implements ExpertService {
     public OfferResponseDto saveOffer(OfferRequestDto offerRequestDto, String email, String password) {
         Order order = orderService.findById(offerRequestDto.getOrderNumber());
 
-        Optional<User> optionalUser = userRepository.findByEmailAndPassword(email, password);
+        Optional<Expert> optionalUser = expertRepository.findByEmailAndPassword(email, password);
         if (optionalUser.isPresent()) {
             User user = optionalUser.get();
             Expert expert = (Expert) user;

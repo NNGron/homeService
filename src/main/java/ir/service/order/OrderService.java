@@ -16,7 +16,7 @@ public interface OrderService {
 
 
 
-    List<Order> findOrdersByCategories(List<Category> categories, OrderStatus orderStatus);
+    List<Order> findOrdersByCategories(List<Category> categories);
 
     List<OrderResponseDto> getOrder(String email, String password);
 

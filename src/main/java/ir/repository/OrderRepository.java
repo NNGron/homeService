@@ -15,6 +15,7 @@ public interface OrderRepository extends JpaRepository<Order, Long>, JpaSpecific
 
 
     Optional<List<Order>> findAllByCategoryInAndStatus(List<Category> category, OrderStatus status);
+    Optional<List<Order>> findAllByCategoryIn(List<Category> categories);
 
 }
 

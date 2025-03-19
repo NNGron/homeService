@@ -26,12 +26,6 @@ public class Expert extends User {
     private Double rating;
 
     /**
-     * The expert's credit, must be non-negative.
-     */
-    @PositiveOrZero(message = "Credit must be a non-negative value")
-    private Double credit;
-
-    /**
      * The expert's photo, must be less than or equal to 300KB.
      */
     @Lob
