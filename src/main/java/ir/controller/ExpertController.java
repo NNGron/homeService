@@ -1,5 +1,6 @@
 package ir.controller;
 
+import io.swagger.v3.oas.annotations.Operation;
 import ir.dto.offer.OfferRequestDto;
 import ir.dto.offer.OfferResponseDto;
 import ir.service.expert.ExpertService;
@@ -15,7 +16,8 @@ public class ExpertController {
 
     private final ExpertService expertService;
 
-    @PostMapping("/save-expert-offer")
+    @PostMapping("/create-offer")
+    @Operation(summary = "(Expert only)")
     public ResponseEntity<OfferResponseDto> saveExpertOffer(@Valid @RequestBody OfferRequestDto offerRequestDto,
                                                               @RequestParam String email,
                                                               @RequestParam String password) {

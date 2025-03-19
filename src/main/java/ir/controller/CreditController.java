@@ -1,5 +1,6 @@
 package ir.controller;
 
+import io.swagger.v3.oas.annotations.Operation;
 import ir.dto.user.UserResponseDto;
 
 import ir.service.user.UserService;
@@ -19,6 +20,7 @@ public class CreditController {
 
 
     @PutMapping("/add-balance")
+    @Operation(summary = "(Admin only)")
     public ResponseEntity<UserResponseDto> addBalance(@RequestParam String email,
                                                       @RequestParam Double balance) {
         UserResponseDto responseDto = userService.addCreditToCustomer(email, balance);

@@ -1,5 +1,6 @@
 package ir.controller;
 
+import io.swagger.v3.oas.annotations.Operation;
 import ir.dto.category.CategoryResponseDto;
 import ir.dto.category.MainCategoryRequestDto;
 import ir.dto.category.SubCategoryRequestDto;
@@ -20,7 +21,7 @@ public class CategoryController {
 
     private final CategoryService categoryService;
 
-    @GetMapping("/parent-categories")
+    @GetMapping("/main-categories")
     public ResponseEntity<List<CategoryResponseDto>> getParentCategories() {
         List<CategoryResponseDto> categories = categoryService.findAllParentCategories();
         return ResponseEntity.ok(categories);
@@ -53,13 +54,15 @@ public class CategoryController {
         return ResponseEntity.ok(categories);
     }
 
-    @PostMapping("/save-main-category")
+    @PostMapping("/create-main-category")
+    @Operation(summary = "(Admin only)")
     public ResponseEntity<CategoryResponseDto> saveCategory(@RequestBody MainCategoryRequestDto mainCategoryRequestDto) {
         CategoryResponseDto responseDto = categoryService.save(mainCategoryRequestDto);
         return ResponseEntity.ok(responseDto);
     }
 
-    @PostMapping("/save-sub-category")
+    @PostMapping("/create-sub-category")
+    @Operation(summary = "(Admin only)")
     public ResponseEntity<CategoryResponseDto> saveSubCategory(@RequestBody SubCategoryRequestDto subCategoryRequestDto) {
         CategoryResponseDto responseDto = categoryService.saveSubCategory(subCategoryRequestDto);
         return ResponseEntity.ok(responseDto);

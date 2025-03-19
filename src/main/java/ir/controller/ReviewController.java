@@ -1,5 +1,6 @@
 package ir.controller;
 
+import io.swagger.v3.oas.annotations.Operation;
 import ir.dto.review.ReviewRequestDto;
 import ir.dto.review.ReviewResponseDto;
 import ir.service.review.ReviewService;
@@ -15,6 +16,7 @@ public class ReviewController {
     private final ReviewService reviewService;
 
     @PostMapping("/comment")
+    @Operation(summary = "(Customer only)")
     public ResponseEntity<ReviewResponseDto> saveComment(@RequestParam String email,
                                                          @RequestParam String password,
                                                          @RequestBody ReviewRequestDto reviewRequestDto) {

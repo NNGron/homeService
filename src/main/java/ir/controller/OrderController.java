@@ -1,5 +1,6 @@
 package ir.controller;
 
+import io.swagger.v3.oas.annotations.Operation;
 import ir.dto.order.OrderRequestDto;
 import ir.dto.order.OrderResponseDto;
 import ir.entity.enums.OrderStatus;
@@ -18,7 +19,8 @@ public class OrderController {
 
     private final OrderService orderService;
 
-    @PostMapping("/save-customer-order")
+    @PostMapping("/create-order")
+    @Operation(summary = "(Customer only)")
     public ResponseEntity<OrderResponseDto> saveCustomerOrder(@Valid @RequestBody OrderRequestDto orderDto,
                                                       @RequestParam String email,
                                                       @RequestParam String password) {
@@ -27,13 +29,15 @@ public class OrderController {
         return ResponseEntity.ok(orderResponseDto);
     }
 
-    @GetMapping("/show-orders-for-expert")
+    @GetMapping("/show-orders")
+    @Operation(summary = "(Expert only)")
     public ResponseEntity<List<OrderResponseDto>> getAllUsers(@RequestParam String email, @RequestParam String password) {
         List<OrderResponseDto> orders = orderService.getOrder(email, password);
         return ResponseEntity.ok(orders);
     }
 
     @PutMapping("/update-status")
+    @Operation(summary = "(Expert only)")
     public ResponseEntity<OrderResponseDto> updateStatus(@RequestParam String email,
                                                          @RequestParam String password,
                                                          @RequestParam OrderStatus status,
@@ -44,6 +48,7 @@ public class OrderController {
     }
 
     @PutMapping("/paid")
+    @Operation(summary = "(Customer only)")
     public ResponseEntity<OrderResponseDto> paid(@RequestParam String email,
                                                  @RequestParam String password,
                                                  @RequestParam Long orderNumber,

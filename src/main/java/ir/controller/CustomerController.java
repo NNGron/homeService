@@ -1,5 +1,6 @@
 package ir.controller;
 
+import io.swagger.v3.oas.annotations.Operation;
 import ir.dto.offer.OfferResponseDto;
 import ir.service.customer.CustomerService;
 import lombok.AllArgsConstructor;
@@ -19,6 +20,7 @@ public class CustomerController {
     private final CustomerService customerService;
 
     @GetMapping("/order-offers")
+    @Operation(summary = "(Customer only)")
     public ResponseEntity<List<OfferResponseDto>> getOffersOfOrderCustomer(@RequestParam String email,
                                                                            @RequestParam String password) {
         List<OfferResponseDto> customerOffers = customerService.getCustomerOffers(email, password);
