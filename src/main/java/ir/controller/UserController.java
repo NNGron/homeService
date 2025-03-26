@@ -5,7 +5,6 @@ import ir.dto.user.UserFilterDto;
 import ir.dto.user.UserMessageDto;
 import ir.dto.user.UserRequestDto;
 import ir.dto.user.UserResponseDto;
-import ir.service.order.OrderService;
 import ir.service.user.UserService;
 import jakarta.validation.Valid;
 import lombok.AllArgsConstructor;
@@ -24,7 +23,6 @@ import java.util.List;
 @RequestMapping("/v1/users")
 public class UserController {
     private final UserService userService;
-    private final OrderService orderService;
 
     @PostMapping("/signup")
     @Operation(summary = "(Customer & Expert)")

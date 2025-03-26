@@ -4,9 +4,7 @@ import com.fasterxml.jackson.annotation.JsonInclude;
 import ir.dto.category.CategoryResponseDto;
 import ir.entity.enums.UserStatus;
 import jakarta.validation.constraints.*;
-import lombok.Builder;
-import lombok.Getter;
-import lombok.Setter;
+import lombok.*;
 
 import java.time.LocalDateTime;
 import java.util.List;
