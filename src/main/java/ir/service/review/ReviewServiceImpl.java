@@ -1,12 +1,14 @@
 package ir.service.review;
 
-import ir.convert.review.reviewResponse.ReviewEntityToReviewResponseDtoConvertor;
+import ir.convert.review.ReviewEntityToReviewResponseDtoConvertor;
 import ir.dto.review.ReviewRequestDto;
 import ir.dto.review.ReviewResponseDto;
 import ir.entity.*;
+import ir.entity.enums.UserStatus;
 import ir.exception.CustomException;
 import ir.exception.ErrorCode;
 import ir.repository.ReviewRepository;
+import ir.service.order.OrderService;
 import ir.service.user.UserService;
 import lombok.AllArgsConstructor;
 import lombok.extern.log4j.Log4j2;
@@ -23,6 +25,7 @@ public class ReviewServiceImpl implements ReviewService {
 
     private final ReviewRepository reviewRepository;
     private final UserService userService;
+    private final OrderService orderService;
     private final ReviewEntityToReviewResponseDtoConvertor reviewEntityToReviewResponseDtoConvertor;
 
     @Override
@@ -39,10 +42,13 @@ public class ReviewServiceImpl implements ReviewService {
                                 .findFirst()
                                 .map(offer -> createAndSaveReview(customer, offer, order, reviewRequestDto))))
                 .map(reviewEntityToReviewResponseDtoConvertor::apply)
-                .orElseThrow(() -> new CustomException("User not found or is not a customer/ order-number or offer-number not found", ErrorCode.NOT_FOUND.getCode()));
+                .orElseThrow(() -> new CustomException(
+                        "User not found or is not a customer/ order-number or offer-number not found",
+                        ErrorCode.NOT_FOUND.getCode()));
     }
 
-    private Review createAndSaveReview(Customer customer, Offer offer, Order order, ReviewRequestDto reviewRequestDto) {
+    private Review createAndSaveReview(
+            Customer customer, Offer offer, Order order, ReviewRequestDto reviewRequestDto) {
         Expert expert = offer.getExpert();
         Review review = new Review();
         review.setCustomer(customer);
@@ -52,7 +58,8 @@ public class ReviewServiceImpl implements ReviewService {
         review.setRating(reviewRequestDto.rating());
 
 
-        List<Integer> allRates = new ArrayList<>(findAllReviewsByExpertId(expert.getId()).stream().map(Review::getRating).toList());
+        List<Integer> allRates = new ArrayList<>(findAllReviewsByExpertId(expert.getId()).stream()
+                .map(Review::getRating).toList());
         allRates.add(reviewRequestDto.rating());
         double averageRate = allRates.stream()
                 .mapToInt(Integer::intValue)
@@ -66,10 +73,31 @@ public class ReviewServiceImpl implements ReviewService {
 
     @Override
     public List<Review> findAllReviewsByExpertId(Long expertId) {
-
         return reviewRepository.findAllByExpert_Id(expertId);
     }
+
+
+    @Override
+    public List<ReviewResponseDto> getReviewsForExpert(String email, String password) {
+        User user = userService.findByEmailAndPassword(email, password);
+        if (!(user instanceof Expert expert)) {
+            throw new CustomException("User not found or is not an expert", ErrorCode.NOT_FOUND.getCode());
+        }
+
+        if (expert.getStatus().equals(UserStatus.NEW)) {
+            throw new CustomException("User should be approved", ErrorCode.USER_STATUS_NOT_APPROVED.getCode());
+        }
+
+        List<Review> reviews = reviewRepository.findAllByExpert_Id(expert.getId());
+
+        return reviews.stream()
+                .map(reviewEntityToReviewResponseDtoConvertor)
+                .toList();
+    }
+
 }
+
+
 // @Override
 //    public ReviewResponseDto addReview(String email, String password, ReviewRequestDto reviewRequestDto) {
 //        return Optional.ofNullable(userService.findByEmailAndPassword(email, password))

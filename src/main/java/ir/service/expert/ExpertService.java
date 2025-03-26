@@ -6,4 +6,8 @@ import ir.dto.offer.OfferResponseDto;
 
 public interface ExpertService {
     OfferResponseDto saveOffer(OfferRequestDto offerRequestDto, String email, String password);
+
+    OfferResponseDto updateOffer(Long offerNumber, OfferRequestDto offerRequestDto, String email, String password);
+
+    void deleteOffer(Long offerId, String email, String password);
 }

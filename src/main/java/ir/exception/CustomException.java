@@ -1,6 +1,5 @@
 package ir.exception;
 
-
 /**
  * Custom exception class for handling specific application errors.
  */

@@ -10,6 +10,36 @@ import org.springframework.data.jpa.domain.Specification;
 import java.util.ArrayList;
 import java.util.List;
 
+/**
+ * Provides dynamic filtering logic for querying users based on various attributes.
+ *
+ * <p>The {@code UserSpecification} class builds a dynamic {@link Specification}
+ * for filtering {@link User} entities based on criteria provided in a {@link UserFilterDto}.
+ * It also allows filtering users by their associated {@link Category} list.</p>
+ *
+ * <p>This specification is primarily used in conjunction with Spring Data JPA to
+ * generate database queries at runtime, offering flexible filtering capabilities.</p>
+ *
+ * <p>Key Features:</p>
+ * <ul>
+ *     <li>Dynamically builds {@link Predicate}s for filtering users based on:
+ *         <ul>
+ *             <li>First name</li>
+ *             <li>Last name</li>
+ *             <li>Email</li>
+ *             <li>Associated categories</li>
+ *         </ul>
+ *     </li>
+ *     <li>Handles null and empty values gracefully to ensure robust query generation.</li>
+ *     <li>Allows joining with related entities such as {@link Category} to enable filtering based on associations.</li>
+ * </ul>
+ *
+ * @see Specification
+ * @see Predicate
+ * @see UserFilterDto
+ * @see User
+ * @see Category
+ */
 public class UserSpecification {
 
     public static Specification<User> filterUsers(UserFilterDto userFilterDto, List<Category> categoryList) {

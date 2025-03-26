@@ -6,82 +6,71 @@ import ir.dto.category.CategoryResponseDto;
 import ir.entity.Offer;
 import ir.entity.Review;
 import ir.entity.enums.OrderStatus;
-import jakarta.validation.constraints.Future;
-import jakarta.validation.constraints.NotBlank;
-import jakarta.validation.constraints.NotNull;
-import jakarta.validation.constraints.PositiveOrZero;
+import jakarta.validation.constraints.*;
+import lombok.AllArgsConstructor;
 import lombok.Getter;
+import lombok.NoArgsConstructor;
 import lombok.Setter;
 
-import java.time.LocalDateTime;
+import java.time.LocalDate;
 import java.util.List;
 
+/**
+ * Data Transfer Object (DTO) for representing order details in the response layer.
+ *
+ * <p>This class encapsulates necessary information about an order, such as its identifier,
+ * pricing, dates, status, and associated entities like offers and reviews. Validation
+ * annotations are applied to ensure data integrity.</p>
+ *
+ * <p>Annotations:</p>
+ * <ul>
+ *     <li>{@link JsonIgnoreProperties}: Ignores any unknown JSON properties during deserialization.</li>
+ *     <li>{@link JsonInclude}: Ensures only non-null fields are included in the JSON response.</li>
+ *     <li>{@link Getter} and {@link Setter}: Automatically generates getter and setter methods for all fields.</li>
+ * </ul>
+ */
 @Getter
 @Setter
+@AllArgsConstructor
+@NoArgsConstructor
 @JsonIgnoreProperties(ignoreUnknown = true)
 @JsonInclude(JsonInclude.Include.NON_NULL)
 public class OrderResponseDto {
 
-
-    /**
-     * The unique order number (must not be null).
-     */
     @NotNull(message = "Order number cannot be null")
     private Long orderNumber;
 
-    /**
-     * The final price of the order (must be positive if present).
-     */
     @PositiveOrZero(message = "Final price must be zero or a positive value")
     private Double finalPrice;
 
-    /**
-     * The date the order was placed (must not be null).
-     */
     @NotNull(message = "Order date cannot be null")
-    private LocalDateTime orderDate;
+    private LocalDate orderDate;
 
-    /**
-     * A brief description of the order.
-     */
+    @NotBlank(message = "Order description cannot be blank")
+    @Size(max = 500, message = "Order description must not exceed 500 characters")
     private String orderDescription;
 
-    /**
-     * The name of the order (must not be blank).
-     */
     @NotBlank(message = "Order name cannot be blank")
+    @Size(max = 100, message = "Order name must not exceed 100 characters")
     private String orderName;
 
-    /**
-     * The expected execution date of the order.
-     */
+    @NotNull(message = "Execution date cannot be null")
     @Future(message = "Execution date must be in the future")
-    private LocalDateTime executionDate;
+    private LocalDate executionDate;
 
-    /**
-     * The address for the order (must not be blank).
-     */
     @NotBlank(message = "Order address cannot be blank")
+    @Size(max = 255, message = "Order address must not exceed 255 characters")
     private String orderAddress;
 
-    /**
-     * The category information for the order.
-     */
     private CategoryResponseDto categoryResponseDto;
 
-    /**
-     * The current status of the order.
-     */
     @NotNull(message = "Order status cannot be null")
     private OrderStatus status;
 
-    /**
-     * The list of offers associated with the order.
-     */
+    @Size(min = 1, message = "Offers list must not be empty")
     private List<Offer> offers;
 
-    /**
-     * The review associated with the order.
-     */
     private Review review;
+
+    private Double offerCustomerPrice;
 }

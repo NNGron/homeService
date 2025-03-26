@@ -1,6 +1,6 @@
 package ir.service.customer;
 
-import ir.convert.offer.offerResponse.OfferEntityToOfferResponseDtoConvertor;
+import ir.convert.offer.OfferEntityToOfferResponseDtoConvertor;
 import ir.dto.offer.OfferResponseDto;
 import ir.entity.Customer;
 import ir.exception.CustomException;

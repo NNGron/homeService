@@ -8,11 +8,11 @@
         <version>3.4.3</version>
         <relativePath/> <!-- lookup parent from repository -->
     </parent>
-    <groupId>com.example</groupId>
-    <artifactId>sanaz-spring</artifactId>
+    <groupId>ir</groupId>
+    <artifactId>home-service-demo</artifactId>
     <version>0.0.1-SNAPSHOT</version>
-    <name>sanaz-spring</name>
-    <description>Spring boot for test</description>
+    <name>home-service-demo</name>
+    <description>Spring boot project demo</description>
     <url/>
     <properties>
         <java.version>23</java.version>

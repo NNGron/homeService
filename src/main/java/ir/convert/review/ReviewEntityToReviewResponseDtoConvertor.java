@@ -1,9 +1,10 @@
-package ir.convert.review.reviewResponse;
+package ir.convert.review;
 
 import ir.dto.review.ReviewResponseDto;
 import ir.entity.Review;
 import org.springframework.stereotype.Component;
 
+import java.util.List;
 import java.util.function.Function;
 
 @Component
@@ -23,5 +24,11 @@ public class ReviewEntityToReviewResponseDtoConvertor implements Function<Review
                 .orderDescription(review.getOrder().getOrderDescription())
                 .subCategoryName(review.getOrder().getCategory().getName())
                 .build();
+    }
+
+    public List<ReviewResponseDto> convertList(List<Review> reviews) {
+        return reviews.stream()
+                .map(this)
+                .toList();
     }
 }

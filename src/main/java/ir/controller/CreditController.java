@@ -1,15 +1,12 @@
 package ir.controller;
 
 import io.swagger.v3.oas.annotations.Operation;
+import ir.dto.credit.CreditResponseDto;
 import ir.dto.user.UserResponseDto;
-
 import ir.service.user.UserService;
 import lombok.AllArgsConstructor;
 import org.springframework.http.ResponseEntity;
-import org.springframework.web.bind.annotation.PutMapping;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RequestParam;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
 
 @RestController
 @AllArgsConstructor
@@ -26,4 +23,13 @@ public class CreditController {
         UserResponseDto responseDto = userService.addCreditToCustomer(email, balance);
         return ResponseEntity.ok(responseDto);
     }
+
+    @GetMapping("/show-credit")
+    @Operation(summary = "(Customer & Expert only)")
+    public ResponseEntity<CreditResponseDto> showCredit(@RequestParam String email,
+                                                        @RequestParam String password) {
+        CreditResponseDto creditResponseDto = userService.getBalance(email, password);
+        return ResponseEntity.ok(creditResponseDto);
+    }
+
 }

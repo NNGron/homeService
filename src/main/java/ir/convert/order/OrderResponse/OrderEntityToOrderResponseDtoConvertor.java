@@ -22,6 +22,7 @@ public class OrderEntityToOrderResponseDtoConvertor implements Function<Order, O
         orderResponseDto.setExecutionDate(order.getExecutionDate());
         orderResponseDto.setStatus(order.getStatus());
         orderResponseDto.setFinalPrice(order.getFinalPrice());
+        orderResponseDto.setOfferCustomerPrice(order.getOfferCustomerPrice());
         return orderResponseDto;
     }
 

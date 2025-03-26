@@ -24,4 +24,24 @@ public class ExpertController {
         OfferResponseDto offerResponseDto = expertService.saveOffer(offerRequestDto, email, password);
         return ResponseEntity.ok(offerResponseDto);
     }
+
+    @PutMapping("/update-offer")
+    @Operation(summary = "(Expert only) Update an existing offer")
+    public ResponseEntity<OfferResponseDto> updateExpertOffer(@Valid @RequestBody OfferRequestDto offerRequestDto,
+                                                              @RequestParam String email,
+                                                              @RequestParam String password,
+                                                              @RequestParam Long offerNumber) {
+        OfferResponseDto offerResponseDto = expertService.updateOffer(offerNumber, offerRequestDto, email, password);
+        return ResponseEntity.ok(offerResponseDto);
+    }
+
+    @DeleteMapping("/delete-offer")
+    @Operation(summary = "(Expert only)")
+    public ResponseEntity<String> deleteExpertOffer(@Valid @RequestParam String email,
+                                                    @RequestParam String password,
+                                                    @RequestParam Long offerNumber) {
+        expertService.deleteOffer(offerNumber, email, password);
+        return ResponseEntity.ok("Offer with number " + offerNumber + " has been successfully deleted.");
+    }
+
 }

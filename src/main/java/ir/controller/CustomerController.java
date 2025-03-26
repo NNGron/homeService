@@ -26,6 +26,4 @@ public class CustomerController {
         List<OfferResponseDto> customerOffers = customerService.getCustomerOffers(email, password);
         return ResponseEntity.ok(customerOffers);
     }
-
-
 }

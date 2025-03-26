@@ -10,4 +10,6 @@ public interface ReviewService {
     ReviewResponseDto addReview(String email, String password, ReviewRequestDto reviewRequestDto);
 
     List<Review> findAllReviewsByExpertId(Long expertId);
+
+    List<ReviewResponseDto> getReviewsForExpert(String email, String password);
 }

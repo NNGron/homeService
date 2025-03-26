@@ -1,4 +1,4 @@
-package ir.convert.offer.offerResponse;
+package ir.convert.offer;
 
 import ir.convert.order.OrderResponse.OrderEntityToOrderResponseDtoConvertor;
 import ir.dto.offer.OfferResponseDto;

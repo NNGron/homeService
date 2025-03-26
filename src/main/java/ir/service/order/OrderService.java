@@ -14,8 +14,6 @@ public interface OrderService {
                                String email,
                                String password);
 
-
-
     List<Order> findOrdersByCategories(List<Category> categories);
 
     List<OrderResponseDto> getOrder(String email, String password);
@@ -32,4 +30,11 @@ public interface OrderService {
                           String password,
                           Long orderNumber,
                           Long offerNumber);
+
+    OrderResponseDto updateOrder(Long orderNumber,
+                                 OrderRequestDto orderDto,
+                                 String email,
+                                 String password);
+
+    void deleteOrder(Long orderId, String email, String password);
 }

@@ -1,254 +1,142 @@
 package ir.service.user;
 
-import ir.convert.order.OrderResponse.OrderEntityToOrderResponseDtoConvertor;
-import ir.convert.user.userResponse.UserEntityToUserResponseDtoConvertor;
-import ir.dto.review.ReviewRequestDto;
-import ir.dto.review.ReviewResponseDto;
-import ir.dto.user.*;
-import ir.entity.*;
-import ir.entity.enums.Role;
-import ir.entity.enums.UserStatus;
-import ir.entity.enums.UserType;
-import ir.exception.CustomException;
-import ir.exception.ErrorCode;
-import ir.repository.user.UserRepository;
-import ir.repository.user.UserSpecification;
-import ir.service.category.CategoryService;
-import lombok.AllArgsConstructor;
-import lombok.extern.slf4j.Slf4j;
-import org.apache.commons.lang3.StringUtils;
-import org.springframework.data.domain.Page;
+import ir.dto.credit.CreditResponseDto;
+import ir.dto.user.UserFilterDto;
+import ir.dto.user.UserMessageDto;
+import ir.dto.user.UserRequestDto;
+import ir.dto.user.UserResponseDto;
+import ir.entity.User;
 import org.springframework.data.domain.Pageable;
-import org.springframework.data.jpa.domain.Specification;
-import org.springframework.stereotype.Service;
-import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.multipart.MultipartFile;
 
-import java.io.IOException;
 import java.util.List;
-import java.util.Optional;
 
-@AllArgsConstructor
-@Slf4j
-@Service
-@Transactional
-public class UserService {
-    private final UserRepository userRepository;
-    private final CategoryService categoryService;
-    private final UserEntityToUserResponseDtoConvertor userEntityToUserResponseDtoConvertor;
-    private final OrderEntityToOrderResponseDtoConvertor orderEntityToOrderResponseDtoConvertor;
+/**
+ * Service interface for managing {@link User} entities and handling user-related operations.
+ *
+ * <p>This interface provides various methods for performing CRUD operations, updating user
+ * statuses, managing passwords, uploading profile images, and associating users with
+ * categories. It acts as a bridge between the controller layer and the data access layer.</p>
+ *
+ * <p>Key Features:</p>
+ * <ul>
+ *     <li>Retrieve users with pagination or filtering options.</li>
+ *     <li>Manage user categories for experts and customers.</li>
+ *     <li>Update user credentials and statuses.</li>
+ *     <li>Save new users and add credits to customer accounts.</li>
+ * </ul>
+ *
+ * @see User
+ * @see UserRequestDto
+ * @see UserResponseDto
+ * @see UserFilterDto
+ * @see UserMessageDto
+ */
+public interface UserService {
 
-    public List<UserResponseDto> getALldUsers(Pageable pageable) {
-        Page<User> userPage = userRepository.findAll(pageable);
-        List<User> userList = userPage.getContent();
-        return userEntityToUserResponseDtoConvertor.convertList(userList);
-    }
+    /**
+     * Retrieves a paginated list of all users.
+     *
+     * @param pageable The {@link Pageable} object defining pagination and sorting.
+     * @return A list of {@link UserResponseDto} objects representing the users.
+     */
+    List<UserResponseDto> getALldUsers(Pageable pageable);
 
-    public UserResponseDto deleteCategoryFromUser(String email, List<String> categoryNames) {
-        Optional<User> optionalUser = userRepository.findByEmail(email);
-        List<Category> shouldBeRemoveCategoryList = categoryService.findSubCategoriesByNames(categoryNames);
-        Expert expert = null;
-        if (optionalUser.isPresent()) {
-            User user = optionalUser.get();
-            if (user.getStatus().equals(UserStatus.NEW)){
-                throw new CustomException("User should be approved", ErrorCode.USER_STATUS_NOT_APPROVED.getCode());
-            }
-            if (user instanceof Expert) {
-                expert = (Expert) user;
-                if (user.getStatus().equals(UserStatus.NEW)){
-                    throw new CustomException("User should be approved", ErrorCode.USER_STATUS_NOT_APPROVED.getCode());
-                }
-                List<Category> categories = expert.getCategories();
-                categories.removeAll(shouldBeRemoveCategoryList);
-                expert.setCategories(categories);
-                expert = userRepository.save(expert);
-            }
-        }
-        UserResponseDto responseDto = userEntityToUserResponseDtoConvertor.apply(expert);
-        return responseDto;
-    }
+    /**
+     * Removes categories from a user's profile based on their email address.
+     *
+     * @param email         The email address of the user.
+     * @param categoryNames A list of category names to remove from the user.
+     * @return A {@link UserResponseDto} containing updated details of the user.
+     */
+    UserResponseDto deleteCategoryFromUser(String email, List<String> categoryNames);
 
-    public UserResponseDto addExpertToCategories(String email, List<String> categoryNames) {
-        Optional<User> optionalUser = userRepository.findByEmail(email);
-        List<Category> shouldBeAdd = categoryService.findSubCategoriesByNames(categoryNames);
-        Expert expert = null;
-        if (optionalUser.isPresent()) {
-            User user = optionalUser.get();
-            if (user.getStatus().equals(UserStatus.NEW)){
-                throw new CustomException("User should be approved", ErrorCode.USER_STATUS_NOT_APPROVED.getCode());
-            }
-            if (user instanceof Expert) {
-                expert = (Expert) user;
-                if (user.getStatus().equals(UserStatus.NEW)){
-                    throw new CustomException("User should be approved", ErrorCode.USER_STATUS_NOT_APPROVED.getCode());
-                }
-                List<Category> categories = expert.getCategories();
-                categories.addAll(shouldBeAdd);
-                expert.setCategories(categories);
-                expert = userRepository.save(expert);
-            }
-        }
-        UserResponseDto responseDto = userEntityToUserResponseDtoConvertor.apply(expert);
-        return responseDto;
-    }
+    /**
+     * Assigns an expert user to specific categories based on their email.
+     *
+     * @param email         The email address of the expert.
+     * @param categoryNames A list of category names to assign to the expert.
+     * @return A {@link UserResponseDto} containing updated details of the user.
+     */
+    UserResponseDto addExpertToCategories(String email, List<String> categoryNames);
 
-    public List<UserResponseDto> getFilteredUsers(UserFilterDto filterDto, Pageable pageable) {
-        List<String> categoryNames = filterDto.categoryNames();
-        List<Category> categoryList = categoryNames != null ? categoryService.findSubCategoriesByNames(categoryNames) : List.of();
+    /**
+     * Retrieves a filtered and paginated list of users based on the provided criteria.
+     *
+     * @param filterDto The {@link UserFilterDto} object containing filtering criteria.
+     * @param pageable  The {@link Pageable} object defining pagination and sorting.
+     * @return A list of {@link UserResponseDto} objects matching the filter criteria.
+     */
+    List<UserResponseDto> getFilteredUsers(UserFilterDto filterDto, Pageable pageable);
 
-        Specification<User> spec = UserSpecification.filterUsers(filterDto, categoryList);
-        Page<User> userPage = userRepository.findAll(spec, pageable);
-        List<User> userList = userPage.getContent();
-        return userEntityToUserResponseDtoConvertor.convertList(userList);
-    }
+    /**
+     * Saves a new user based on the provided user details.
+     *
+     * @param userRequestDto The {@link UserRequestDto} object containing user details.
+     * @return A {@link UserResponseDto} containing details of the saved user.
+     */
+    UserResponseDto saveUser(UserRequestDto userRequestDto);
 
-    public UserResponseDto saveUser(UserRequestDto userRequestDto) {
-        log.info("Start saving user: {}", userRequestDto.toString());
-        if (StringUtils.isEmpty(userRequestDto.getEmail()) || StringUtils.isEmpty(userRequestDto.getPassword())){
-            throw new CustomException("Email is invalid", ErrorCode.INVALID_EMAIL_OR_PASSWORD.getCode());
-        }
+    /**
+     * Updates a user's password based on the provided old and new passwords.
+     *
+     * @param email       The email address of the user.
+     * @param oldPassword The user's current password.
+     * @param newPassword The new password to set.
+     * @return A {@link UserMessageDto} containing a success message or details of any issues.
+     */
+    UserMessageDto updateUserPassword(String email, String oldPassword, String newPassword);
 
-        Optional<User> optionalUser = userRepository.findByEmailAndPassword(userRequestDto.getEmail(), userRequestDto.getPassword());
-        if (optionalUser.isPresent()){
-            throw new CustomException("Email already exist", ErrorCode.ALREADY_EXIST.getCode());
-        }
-        User user = null;
-        UserType userType = userRequestDto.getUserType();
-        if (userType != null && userType.equals(UserType.CUSTOMER)) {
-            Customer customer = new Customer();
-            customer.setFirstName(userRequestDto.getFirstName());
-            customer.setLastName(userRequestDto.getLastName());
-            customer.setUserName(userRequestDto.getUserName());
-            customer.setPassword(userRequestDto.getPassword());
-            customer.setEmail(userRequestDto.getEmail());
-            customer.setAddress(userRequestDto.getAddress());
-            customer.setStatus(UserStatus.NEW);
-            customer.setRole(Role.USER);
-            Customer savedCustomer = userRepository.save(customer);
-            user = savedCustomer;
-        }
-        if (userType != null && userType.equals(UserType.EXPERT)) {
-            Expert expert = new Expert();
-            expert.setFirstName(userRequestDto.getFirstName());
-            expert.setLastName(userRequestDto.getLastName());
-            expert.setUserName(userRequestDto.getUserName());
-            expert.setPassword(userRequestDto.getPassword());
-            expert.setEmail(userRequestDto.getEmail());
-            expert.setAddress(userRequestDto.getAddress());
+    /**
+     * Updates the status of a user based on their email address.
+     *
+     * @param email The email address of the user.
+     * @return A {@link UserMessageDto} containing a message about the status update.
+     */
+    UserMessageDto updateStatusUser(String email);
 
-            List<String> subCategoryNames = userRequestDto.getSubCategoryNames();
-            List<Category> categoryList = categoryService.findSubCategoriesByNames(subCategoryNames);
-            if (categoryList == null || categoryList.isEmpty()) {
-                log.error("Could not find categories by given names.");
-                throw new CustomException("Category is invalid", ErrorCode.CATEGORY_INVALID.getCode());
-            }
-            expert.setCategories(categoryList);
+    /**
+     * Uploads a profile image for a user based on their email address.
+     *
+     * @param email The email address of the user.
+     * @param image The {@link MultipartFile} containing the user's image.
+     * @return A {@link UserMessageDto} containing a success message or details of any issues.
+     */
+    UserMessageDto uploadImage(String email, MultipartFile image);
 
-            expert.setStatus(UserStatus.NEW);
-            expert.setRole(Role.USER);
-            Expert savedExpert = userRepository.save(expert);
-            user = savedExpert;
-        }
-        UserResponseDto responseDto = userEntityToUserResponseDtoConvertor.apply(user);
-        return responseDto;
-    }
+    /**
+     * Finds a {@link User} entity based on their email address and password.
+     *
+     * @param email    The email address of the user.
+     * @param password The password of the user.
+     * @return The {@link User} entity if found.
+     */
+    User findByEmailAndPassword(String email, String password);
 
-//    public UserMessageDto updateUser(UserUpdatePasswordDto userUpdatePasswordDto) {
-//        String password = userUpdatePasswordDto.newPassword();
-//        String email = userUpdatePasswordDto.email();
-//        Optional<User> byEmail = userRepository.findByEmail(email);
-//        if (byEmail.isPresent()) {
-//            User user = byEmail.get();
-//            if (user.getStatus().equals(UserStatus.NEW)){
-//                throw new CustomException("User should be approved", ErrorCode.USER_STATUS_NOT_APPROVED.getCode());
-//            }
-//            user.setPassword(password);
-//            userRepository.save(user);
-//        } else {
-//            log.error("User with email {} not found", email);
-//            throw new CustomException("User not found", ErrorCode.NOT_FOUND.getCode());
-//        }
-//        return new UserMessageDto("Password updated successfully");
-//    }
+    /**
+     * Finds a {@link User} entity based on their email address.
+     *
+     * @param email The email address of the user.
+     * @return The {@link User} entity if found.
+     */
+    User findByEmail(String email);
 
-    public UserMessageDto updateUserPassword (String email, String oldPassword,String newPassword) {
-        Optional<User> optionalUser = userRepository.findByEmailAndPassword(email, oldPassword);
+    /**
+     * Saves a {@link User} entity to the database.
+     *
+     * @param user The {@link User} entity to save.
+     * @return The saved {@link User} entity.
+     */
+    User saveUser(User user);
 
-        if (optionalUser.isPresent()) {
-            User user = optionalUser.get();
-            if (user.getStatus().equals(UserStatus.NEW)){
-                throw new CustomException("User should be approved", ErrorCode.USER_STATUS_NOT_APPROVED.getCode());
-            }
-            user.setPassword(newPassword);
-            userRepository.save(user);
-        } else {
-            log.error("User with email {} not found", email);
-            throw new CustomException("User not found", ErrorCode.NOT_FOUND.getCode());
-        }
-        return new UserMessageDto("Password updated successfully");
-    }
+    /**
+     * Adds credit to a customer's account based on their email address.
+     *
+     * @param email  The email address of the customer.
+     * @param amount The amount of credit to add.
+     * @return A {@link UserResponseDto} containing updated details of the customer.
+     */
+    UserResponseDto addCreditToCustomer(String email, double amount);
 
-    public UserMessageDto updateStatusUser(String email) {
-        Optional<User> byEmail = userRepository.findByEmail(email);
-        if (byEmail.isPresent()) {
-            User user = byEmail.get();
-            if (user.getStatus().equals(UserStatus.NEW)){
-                user.setStatus(UserStatus.APPROVED);
-            }
-            userRepository.save(user);
-        } else {
-            log.error("User with email {} not found", email);
-            throw new CustomException("User not found", ErrorCode.NOT_FOUND.getCode());
-        }
-        return new UserMessageDto("Status updated is approved");
-    }
-
-    public UserMessageDto uploadImage(String email, MultipartFile image) {
-        if (image.getSize() > 300 * 1024){
-            throw new CustomException("Image size must to be less than 300KB", ErrorCode.PHOTO_INVALID.getCode());
-        }
-        userRepository.findByEmail(email).ifPresent(user -> {
-            if(user instanceof Expert){
-                if (user.getStatus().equals(UserStatus.NEW)){
-                    throw new CustomException("User should be approved", ErrorCode.USER_STATUS_NOT_APPROVED.getCode());
-                }
-                Expert expert = (Expert) user;
-                try {
-                    expert.setPhoto(image.getBytes());
-                    userRepository.save(expert);
-                } catch (IOException e) {
-                    throw new CustomException("Can not upload image", ErrorCode.IMAGE_CAN_NOT_UPLOAD.getCode());
-                }
-            }
-        });
-        return new UserMessageDto("Image uploaded successfully");
-    }
-
-    public User findByEmailAndPassword(String email, String password) {
-        return userRepository.findByEmailAndPassword(email, password)
-                .orElseThrow(() -> new CustomException("User not found with provided email and password", ErrorCode.NOT_FOUND.getCode()));
-    }
-
-    public User findByEmail(String email) {
-        return userRepository.findByEmail(email)
-                .orElseThrow(() -> new CustomException("User not found with provided email", ErrorCode.NOT_FOUND.getCode()));
-    }
-
-    public User saveUser(User user) {
-        return userRepository.save(user);
-    }
-
-    public UserResponseDto addCreditToCustomer(String email, double amount) {
-        User user = findByEmail(email);
-        Double credit = user.getCredit() != null ? user.getCredit() : 0;
-
-        if ((credit + amount < 0)) {
-            throw new CustomException("Amount is invalid", ErrorCode.INVALID_AMOUNT.getCode());
-        }
-
-        credit += amount;
-        user.setCredit(credit);
-        user = saveUser(user);
-        return userEntityToUserResponseDtoConvertor.apply(user);
-    }
+    CreditResponseDto getBalance(String email, String password);
 }

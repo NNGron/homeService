@@ -24,36 +24,56 @@ public class OrderController {
     public ResponseEntity<OrderResponseDto> saveCustomerOrder(@Valid @RequestBody OrderRequestDto orderDto,
                                                       @RequestParam String email,
                                                       @RequestParam String password) {
-
         OrderResponseDto orderResponseDto = orderService.saveOrder(orderDto, email, password);
+        return ResponseEntity.ok(orderResponseDto);
+    }
+
+    @PutMapping("/update-status")
+    @Operation(summary = "(Customer only)")
+    public ResponseEntity<OrderResponseDto> updateStatus(@Valid @RequestParam String email,
+                                                         @RequestParam String password,
+                                                         @RequestParam OrderStatus status,
+                                                         @RequestParam Long orderNumber,
+                                                         @RequestParam Long offerNumber) {
+        OrderResponseDto orderResponseDto =
+                orderService.updateOrderStatus(email, password, status, orderNumber, offerNumber);
         return ResponseEntity.ok(orderResponseDto);
     }
 
     @GetMapping("/show-orders")
     @Operation(summary = "(Expert only)")
-    public ResponseEntity<List<OrderResponseDto>> getAllUsers(@RequestParam String email, @RequestParam String password) {
+    public ResponseEntity<List<OrderResponseDto>> getAllUsers(@Valid @RequestParam String email,
+                                                              @RequestParam String password) {
         List<OrderResponseDto> orders = orderService.getOrder(email, password);
         return ResponseEntity.ok(orders);
     }
 
-    @PutMapping("/update-status")
-    @Operation(summary = "(Expert only)")
-    public ResponseEntity<OrderResponseDto> updateStatus(@RequestParam String email,
-                                                         @RequestParam String password,
-                                                         @RequestParam OrderStatus status,
-                                                         @RequestParam Long orderNumber,
-                                                         @RequestParam Long offerNumber) {
-        OrderResponseDto orderResponseDto = orderService.updateOrderStatus(email, password, status, orderNumber, offerNumber);
-        return ResponseEntity.ok(orderResponseDto);
-    }
-
     @PutMapping("/paid")
     @Operation(summary = "(Customer only)")
-    public ResponseEntity<OrderResponseDto> paid(@RequestParam String email,
+    public ResponseEntity<OrderResponseDto> paid(@Valid @RequestParam String email,
                                                  @RequestParam String password,
                                                  @RequestParam Long orderNumber,
                                                  @RequestParam Long offerNumber) {
         OrderResponseDto orderResponseDto = orderService.paid(email, password, orderNumber, offerNumber);
         return ResponseEntity.ok(orderResponseDto);
+    }
+
+    @PutMapping("/update-order")
+    @Operation(summary = "(Customer only)")
+    public ResponseEntity<OrderResponseDto> updateCustomerOrder(@Valid @RequestBody OrderRequestDto orderDto,
+                                                                @RequestParam String email,
+                                                                @RequestParam String password,
+                                                                @RequestParam Long orderId) {
+        OrderResponseDto updatedOrder = orderService.updateOrder(orderId, orderDto, email, password);
+        return ResponseEntity.ok(updatedOrder);
+    }
+
+    @DeleteMapping("/delete-order")
+    @Operation(summary = "(Customer only)")
+    public ResponseEntity<String> deleteCustomerOrder(@Valid @RequestParam String email,
+                                                      @RequestParam String password,
+                                                      @RequestParam Long orderNumber) {
+        orderService.deleteOrder(orderNumber, email, password);
+        return ResponseEntity.ok("Order with number " + orderNumber + " has been successfully deleted.");
     }
 }

@@ -1,4 +1,4 @@
-package ir.convert.user.userResponse;
+package ir.convert.user;
 
 
 import ir.convert.category.categoryResponse.CategoryEntityToCategoryResponseDtoConvertor;

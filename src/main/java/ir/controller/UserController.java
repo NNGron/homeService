@@ -49,23 +49,20 @@ public class UserController {
 
     @DeleteMapping("/expert-category")
     @Operation(summary = "(Admin & Expert)")
-    public ResponseEntity<UserResponseDto> deleteExpertCategory(@RequestParam String email, @RequestParam List<String> categoryNames) {
+    public ResponseEntity<UserResponseDto> deleteExpertCategory(@RequestParam String email,
+                                                                @RequestParam List<String> categoryNames) {
         UserResponseDto userResponseDto = userService.deleteCategoryFromUser(email, categoryNames);
         return ResponseEntity.ok(userResponseDto);
     }
 
     @PutMapping("/add-expert-categories")
     @Operation(summary = "(Expert only)")
-    public ResponseEntity<UserResponseDto> addExpertToCategories(@RequestParam String email, @RequestParam List<String> categoryNames) {
+    public ResponseEntity<UserResponseDto> addExpertToCategories(@RequestParam String email,
+                                                                 @RequestParam List<String> categoryNames) {
         UserResponseDto userResponseDto = userService.addExpertToCategories(email, categoryNames);
         return ResponseEntity.ok(userResponseDto);
     }
 
-//    @PutMapping("/update-password")
-//    public ResponseEntity<UserMessageDto> updatePassword(@RequestBody UserUpdatePasswordDto updatePasswordDto) {
-//        UserMessageDto userMessageDto = userService.updateUser(updatePasswordDto);
-//        return ResponseEntity.ok(userMessageDto);
-//    }
 
     @PutMapping("/update-password")
     @Operation(summary = "(Customer & Expert)")
@@ -108,3 +105,8 @@ public class UserController {
         return ResponseEntity.ok(userMessageDto);
     }
 }
+//    @PutMapping("/update-password")
+//    public ResponseEntity<UserMessageDto> updatePassword(@RequestBody UserUpdatePasswordDto updatePasswordDto) {
+//        UserMessageDto userMessageDto = userService.updateUser(updatePasswordDto);
+//        return ResponseEntity.ok(userMessageDto);
+//    }
