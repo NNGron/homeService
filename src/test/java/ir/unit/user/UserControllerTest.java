@@ -1,10 +1,9 @@
 package ir.unit.user;
 
+import com.fasterxml.jackson.databind.ObjectMapper;
 import ir.controller.UserController;
 import ir.dto.user.UserRequestDto;
 import ir.dto.user.UserResponseDto;
-import ir.entity.Customer;
-import ir.entity.User;
 import ir.entity.enums.UserType;
 import ir.service.user.UserServiceImpl;
 import org.junit.jupiter.api.BeforeEach;
@@ -15,12 +14,12 @@ import org.mockito.MockitoAnnotations;
 import org.springframework.http.MediaType;
 import org.springframework.test.web.servlet.MockMvc;
 import org.springframework.test.web.servlet.setup.MockMvcBuilders;
-import com.fasterxml.jackson.databind.ObjectMapper;
 
-
-import static org.mockito.Mockito.*;
-import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.*;
-import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.*;
+import static org.mockito.Mockito.any;
+import static org.mockito.Mockito.when;
+import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post;
+import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.jsonPath;
+import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 
 class UserControllerTest {
 
@@ -39,8 +38,6 @@ class UserControllerTest {
         MockitoAnnotations.openMocks(this);
         mockMvc = MockMvcBuilders.standaloneSetup(userController).build();
     }
-
-
 
     @Test
     void testSaveUser() throws Exception {

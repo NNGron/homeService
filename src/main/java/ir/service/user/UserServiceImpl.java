@@ -143,7 +143,7 @@ public class UserServiceImpl implements UserService {
 
     @Override
     public List<UserResponseDto> getALldUsers(Pageable pageable) {
-        Page<User> userPage = userRepository.findAll(pageable);
+        Page<User> userPage = userRepository.findByStatusNot(UserStatus.DELETED, pageable);
         List<User> userList = userPage.getContent();
         return userEntityToUserResponseDtoConvertor.convertList(userList);
     }
@@ -309,4 +309,25 @@ public class UserServiceImpl implements UserService {
         BigDecimal balance = BigDecimal.valueOf(user.getCredit());
         return new CreditResponseDto(balance);
     }
+
+    @Override
+    public void deleteUser(String email, String password) {
+        log.info("Attempting to delete user with email: {}", email);
+        User user = userRepository.findByEmailAndPassword(email, password)
+                .orElseThrow(() -> new CustomException("User not found with provided email and password", ErrorCode.NOT_FOUND.getCode()));
+
+        if (user instanceof Customer customer && !customer.getOrders().isEmpty()) {
+            throw new CustomException("Cannot delete user with active orders", ErrorCode.UNPROCESSABLE_ENTITY.getCode());
+        }
+
+        if (user instanceof Expert expert && !expert.getOffers().isEmpty()) {
+            throw new CustomException("Cannot delete user with active offers", ErrorCode.UNPROCESSABLE_ENTITY.getCode());
+        }
+
+        //soft delete
+        user.setStatus(UserStatus.DELETED);
+        userRepository.save(user);
+        log.info("Successfully deleted user of type: {} with email: {}", user.getClass().getSimpleName(), email);
+    }
+
 }

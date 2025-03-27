@@ -113,30 +113,13 @@ public interface UserService {
      */
     User findByEmailAndPassword(String email, String password);
 
-    /**
-     * Finds a {@link User} entity based on their email address.
-     *
-     * @param email The email address of the user.
-     * @return The {@link User} entity if found.
-     */
     User findByEmail(String email);
 
-    /**
-     * Saves a {@link User} entity to the database.
-     *
-     * @param user The {@link User} entity to save.
-     * @return The saved {@link User} entity.
-     */
     User saveUser(User user);
 
-    /**
-     * Adds credit to a customer's account based on their email address.
-     *
-     * @param email  The email address of the customer.
-     * @param amount The amount of credit to add.
-     * @return A {@link UserResponseDto} containing updated details of the customer.
-     */
     UserResponseDto addCreditToCustomer(String email, double amount);
 
     CreditResponseDto getBalance(String email, String password);
+
+    void deleteUser(String email, String password);
 }

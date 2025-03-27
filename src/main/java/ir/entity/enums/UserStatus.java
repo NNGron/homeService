@@ -4,4 +4,5 @@ public enum UserStatus {
     NEW,
    // WAITING,
     APPROVED,
+    DELETED,
 }

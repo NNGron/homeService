@@ -3,6 +3,7 @@ package ir.repository.user;
 import ir.dto.user.UserFilterDto;
 import ir.entity.Category;
 import ir.entity.User;
+import ir.entity.enums.UserStatus;
 import jakarta.persistence.criteria.Join;
 import jakarta.persistence.criteria.Predicate;
 import org.springframework.data.jpa.domain.Specification;
@@ -62,6 +63,9 @@ public class UserSpecification {
                 Join<User, Category> categoryJoin = root.join("categories");
                 predicates.add(categoryJoin.in(categoryList));
             }
+
+            predicates.add(criteriaBuilder.notEqual(root.get("status"), UserStatus.DELETED));
+
             return criteriaBuilder.and(predicates.toArray(new Predicate[0]));
         };
     }

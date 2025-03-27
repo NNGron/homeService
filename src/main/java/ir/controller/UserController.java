@@ -102,6 +102,15 @@ public class UserController {
         UserMessageDto userMessageDto = userService.uploadImage(email, image);// new
         return ResponseEntity.ok(userMessageDto);
     }
+
+    @DeleteMapping("/delete-user")
+    @Operation(summary = "(Customer or Expert)")
+    public ResponseEntity<String> deleteUser(@RequestParam String email,
+                                             @RequestParam String password) {
+        userService.deleteUser(email, password);
+        return ResponseEntity.ok("User with email " + email + " has been successfully deleted.");
+    }
+
 }
 //    @PutMapping("/update-password")
 //    public ResponseEntity<UserMessageDto> updatePassword(@RequestBody UserUpdatePasswordDto updatePasswordDto) {

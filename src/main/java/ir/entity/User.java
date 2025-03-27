@@ -9,6 +9,10 @@ import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
+import org.hibernate.annotations.Filter;
+import org.hibernate.annotations.FilterDef;
+import org.hibernate.annotations.ParamDef;
+import org.hibernate.annotations.SQLDelete;
 
 import java.time.LocalDateTime;
 
@@ -61,6 +65,7 @@ import java.time.LocalDateTime;
 @AllArgsConstructor
 @Entity
 @Table(name = "users")
+@SQLDelete(sql = "UPDATE users SET status = 'DELETED' WHERE id = ?")
 public abstract class User extends BaseEntity {
 
     @NotBlank(message = "Username must not be blank")
@@ -99,7 +104,7 @@ public abstract class User extends BaseEntity {
     @NotNull(message = "Status must not be null")
     @Enumerated(EnumType.STRING)
     @Column(name = "status", nullable = false)
-    private UserStatus status;
+    private UserStatus status = UserStatus.NEW;
 
     @Enumerated(EnumType.STRING)
     @Column(name = "role")
