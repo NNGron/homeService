@@ -1387,6 +1387,56 @@
 				"description": "Generated from cURL: curl -X 'DELETE' \\\n  'http://localhost:8080/v1/users/delete-user?email=customer1%40yahoo.com&password=customer1' \\\n  -H 'accept: */*'"
 			},
 			"response": []
+		},
+		{
+			"name": "35-update-users(customer & expert)",
+			"request": {
+				"method": "PUT",
+				"header": [
+					{
+						"key": "accept",
+						"value": "*/*"
+					},
+					{
+						"key": "Content-Type",
+						"value": "application/json"
+					}
+				],
+				"body": {
+					"mode": "raw",
+					"raw": "{\n  \"userName\": \"customer33\",\n  \"firstName\": \"customer33\",\n  \"lastName\": \"customer33\",\n  \"address\": \"customer33\"\n}",
+					"options": {
+						"raw": {
+							"language": "json"
+						}
+					}
+				},
+				"url": {
+					"raw": "http://localhost:8080/v1/users/update_users?email=customer1@yahoo.com&password=customer1",
+					"protocol": "http",
+					"host": [
+						"localhost"
+					],
+					"port": "8080",
+					"path": [
+						"v1",
+						"users",
+						"update_users"
+					],
+					"query": [
+						{
+							"key": "email",
+							"value": "customer1@yahoo.com"
+						},
+						{
+							"key": "password",
+							"value": "customer1"
+						}
+					]
+				},
+				"description": "Generated from cURL: curl -X 'PUT' \\\n  'http://localhost:8080/v1/users/update_users?email=customer1%40yahoo.com&password=customer1' \\\n  -H 'accept: */*' \\\n  -H 'Content-Type: application/json' \\\n  -d '{\n  \"userName\": \"customer33\",\n  \"firstName\": \"customer33\",\n  \"lastName\": \"customer33\",\n  \"address\": \"customer33\"\n}'"
+			},
+			"response": []
 		}
 	]
 }

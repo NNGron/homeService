@@ -2,10 +2,7 @@ package ir.service.user;
 
 import ir.convert.user.UserEntityToUserResponseDtoConvertor;
 import ir.dto.credit.CreditResponseDto;
-import ir.dto.user.UserFilterDto;
-import ir.dto.user.UserMessageDto;
-import ir.dto.user.UserRequestDto;
-import ir.dto.user.UserResponseDto;
+import ir.dto.user.*;
 import ir.entity.*;
 import ir.entity.enums.OrderStatus;
 import ir.entity.enums.Role;
@@ -347,5 +344,22 @@ public class UserServiceImpl implements UserService {
 
         log.info("Successfully soft-deleted user of type: {} with email: {}",
                 user.getClass().getSimpleName(), email);
+    }
+
+    @Override
+    public UserResponseDto updateUser(UserUpdateRequestDto userUpdateRequestDto, String email, String password) {
+        User user = userRepository.findByEmailAndPassword(email, password)
+                .orElseThrow(() -> new CustomException(
+                        "User not found with provided email and password",
+                        ErrorCode.NOT_FOUND.getCode()));
+
+        user.setFirstName(userUpdateRequestDto.getFirstName());
+        user.setLastName(userUpdateRequestDto.getLastName());
+        user.setAddress(userUpdateRequestDto.getAddress());
+        user.setUserName(userUpdateRequestDto.getUserName());
+
+        userRepository.save(user);
+        log.info("User updated successfully");
+        return userEntityToUserResponseDtoConvertor.apply(user);
     }
 }

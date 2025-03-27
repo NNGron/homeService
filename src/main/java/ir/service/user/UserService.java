@@ -1,10 +1,7 @@
 package ir.service.user;
 
 import ir.dto.credit.CreditResponseDto;
-import ir.dto.user.UserFilterDto;
-import ir.dto.user.UserMessageDto;
-import ir.dto.user.UserRequestDto;
-import ir.dto.user.UserResponseDto;
+import ir.dto.user.*;
 import ir.entity.User;
 import org.springframework.data.domain.Pageable;
 import org.springframework.web.multipart.MultipartFile;
@@ -62,4 +59,6 @@ public interface UserService {
     CreditResponseDto getBalance(String email, String password);
 
     void deleteUser(String email, String password);
+
+    UserResponseDto updateUser(UserUpdateRequestDto userUpdateRequestDto, String email, String password);
 }

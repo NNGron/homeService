@@ -1,10 +1,7 @@
 package ir.controller;
 
 import io.swagger.v3.oas.annotations.Operation;
-import ir.dto.user.UserFilterDto;
-import ir.dto.user.UserMessageDto;
-import ir.dto.user.UserRequestDto;
-import ir.dto.user.UserResponseDto;
+import ir.dto.user.*;
 import ir.service.user.UserService;
 import jakarta.validation.Valid;
 import lombok.AllArgsConstructor;
@@ -111,9 +108,13 @@ public class UserController {
         return ResponseEntity.ok("User with email " + email + " has been successfully deleted.");
     }
 
+    @PutMapping("/update_users")
+    @Operation(summary = "(Customer & Expert)")
+    public ResponseEntity<UserResponseDto> saveUser(@Valid @RequestBody UserUpdateRequestDto userUpdateRequestDto,
+                                                    @RequestParam String email,
+                                                    @RequestParam String password) {
+        UserResponseDto responseDto = userService.updateUser(userUpdateRequestDto, email, password);
+        return ResponseEntity.ok(responseDto);
+    }
 }
-//    @PutMapping("/update-password")
-//    public ResponseEntity<UserMessageDto> updatePassword(@RequestBody UserUpdatePasswordDto updatePasswordDto) {
-//        UserMessageDto userMessageDto = userService.updateUser(updatePasswordDto);
-//        return ResponseEntity.ok(userMessageDto);
-//    }
+
