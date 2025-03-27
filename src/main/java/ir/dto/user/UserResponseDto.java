@@ -4,8 +4,11 @@ import com.fasterxml.jackson.annotation.JsonInclude;
 import ir.dto.category.CategoryResponseDto;
 import ir.entity.enums.UserStatus;
 import jakarta.validation.constraints.*;
-import lombok.*;
+import lombok.Builder;
+import lombok.Getter;
+import lombok.Setter;
 
+import java.math.BigDecimal;
 import java.time.LocalDateTime;
 import java.util.List;
 
@@ -60,7 +63,7 @@ public class UserResponseDto {
     private String email;
 
     @PositiveOrZero(message = "Balance must be zero or a positive value")
-    private Double balance;
+    private BigDecimal balance;
 
     @NotNull(message = "Status must not be null")
     private UserStatus status;

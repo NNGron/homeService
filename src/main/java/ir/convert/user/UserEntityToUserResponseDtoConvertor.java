@@ -10,6 +10,7 @@ import ir.entity.User;
 import lombok.AllArgsConstructor;
 import org.springframework.stereotype.Component;
 
+import java.math.BigDecimal;
 import java.util.List;
 import java.util.function.Function;
 
@@ -23,11 +24,9 @@ public class UserEntityToUserResponseDtoConvertor implements Function<User, User
     public UserResponseDto apply(User user) {
         List<CategoryResponseDto> categoryResponseDtos = null;
         Double averageRate = null;
-//        byte[] photo = null;
-        Double balance = user.getCredit() == null ? 0 : user.getCredit();
-        if (user instanceof Expert) {
-            Expert expert = (Expert) user;
-//            photo = expert.getPhoto();
+        BigDecimal balance = user.getCredit() == null ? BigDecimal.ZERO : user.getCredit();
+
+        if (user instanceof Expert expert) {
             averageRate = expert.getRating() == null ? 0 : expert.getRating();
             List<Category> categoryList = expert.getCategories();
             categoryResponseDtos = categoryEntityToCategoryResponseDtoConvertor.convertList(categoryList);

@@ -12,6 +12,7 @@ import ir.service.order.OrderService;
 import ir.service.user.UserService;
 import lombok.AllArgsConstructor;
 import lombok.extern.log4j.Log4j2;
+import org.springframework.dao.DataIntegrityViolationException;
 import org.springframework.stereotype.Service;
 
 import java.util.ArrayList;
@@ -67,8 +68,11 @@ public class ReviewServiceImpl implements ReviewService {
                 .orElse(0);
         expert.setRating(averageRate);
         userService.saveUser(expert);
-
-        return reviewRepository.save(review);
+        try {
+            return reviewRepository.save(review);
+        } catch (DataIntegrityViolationException ex) {
+            throw new CustomException("This order already has a comment", ErrorCode.ALREADY_EXIST.getCode());
+        }
     }
 
     @Override

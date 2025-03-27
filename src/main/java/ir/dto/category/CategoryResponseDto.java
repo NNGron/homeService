@@ -7,6 +7,7 @@ import jakarta.validation.constraints.PositiveOrZero;
 import jakarta.validation.constraints.Size;
 import lombok.*;
 
+import java.math.BigDecimal;
 import java.util.List;
 
 /**
@@ -49,7 +50,7 @@ public class CategoryResponseDto {
     private String description;
 
     @PositiveOrZero(message = "Base price must be zero or a positive value")
-    private Double basePrice;
+    private BigDecimal basePrice;
 
     private List<OrderResponseDto> orders;
 

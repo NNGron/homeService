@@ -9,54 +9,53 @@ import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
-import org.hibernate.annotations.Filter;
-import org.hibernate.annotations.FilterDef;
-import org.hibernate.annotations.ParamDef;
 import org.hibernate.annotations.SQLDelete;
 
+import java.math.BigDecimal;
 import java.time.LocalDateTime;
 
 /**
- * Represents a base class for all users in the system.
+ * Represents the base class for all types of users in the system.
  *
- * <p>The {@code User} class defines common attributes and functionality shared
- * across all user types (e.g., customers, experts, admins). It uses the {@link Inheritance}
- * annotation with the {@code JOINED} strategy to enable inheritance in JPA, ensuring
- * that each subclass has its own table with shared columns inherited from this class.</p>
+ * <p>This abstract class defines the common attributes and functionalities
+ * that are shared across all user types (customers, experts, and administrators).</p>
  *
  * <p>Key Features:</p>
  * <ul>
- *     <li>Stores essential user information such as username, password, first and last name, email, and address.</li>
- *     <li>Maintains user-specific properties such as credit balance, status, and role.</li>
- *     <li>Ensures data integrity with detailed validation annotations for fields.</li>
- *     <li>Acts as a parent class for specific user roles (e.g., {@code Customer} and {@code Expert}).</li>
+ *     <li>Defines common attributes like username, password, name, email, address, credit, status, and role.</li>
+ *     <li>Implements validation constraints to ensure data integrity for each field.</li>
+ *     <li>Utilizes the {@link Inheritance} annotation with the {@code JOINED} strategy to separate subclass tables
+ *         while inheriting common columns.</li>
+ *     <li>Supports logical deletion through {@link SQLDelete}, where the status is updated to 'DELETED'.</li>
  * </ul>
  *
  * <p>Validation Rules:</p>
  * <ul>
- *     <li>{@code userName} - Must not be blank and must be unique.</li>
- *     <li>{@code password} - Must be at least 8 characters long and contain at least one letter and one number.</li>
- *     <li>{@code firstName} - Must not be blank.</li>
- *     <li>{@code lastName} - Must not be blank.</li>
- *     <li>{@code email} - Must be a valid email address and unique.</li>
- *     <li>{@code address} - Must not exceed 255 characters and cannot be blank.</li>
- *     <li>{@code credit} - Must be zero or a positive value.</li>
- *     <li>{@code status} - Cannot be null and uses the {@link UserStatus} enumeration.</li>
- *     <li>{@code role} - Defines the user's role using the {@link Role} enumeration.</li>
+ *     <li><b>userName</b>: Must not be blank and must be unique within the database.</li>
+ *     <li><b>password</b>: Must be at least 8 characters long and include at least one letter and one number.</li>
+ *     <li><b>firstName</b> and <b>lastName</b>: Cannot be blank, ensuring proper user identification.</li>
+ *     <li><b>email</b>: Must be a valid email format and unique across all users.</li>
+ *     <li><b>address</b>: Cannot exceed 255 characters and must not be blank.</li>
+ *     <li><b>credit</b>: Must be a non-negative value (i.e., zero or positive).</li>
+ *     <li><b>status</b>: Determines the user's lifecycle state (NEW, APPROVED, or DELETED),
+ *         represented by the {@link UserStatus} enum.</li>
+ *     <li><b>role</b>: Defines the user's role (ADMIN, َUSER) using the {@link Role} enum.</li>
+ * </ul>
+ *
+ * <p>Lifecycle Annotations:</p>
+ * <ul>
+ *     <li><b>{@link PrePersist}</b>: Automatically sets the registration date to the current timestamp before
+ *         persisting a new user.</li>
  * </ul>
  *
  * <p>Inheritance Strategy:</p>
  * <ul>
- *     <li>Uses {@code InheritanceType.JOINED} to create separate tables for subclasses
- *     while sharing common fields defined in this class.</li>
- *     <li>Fields from {@code BaseEntity} (e.g., {@code id}) are also inherited.</li>
+ *     <li>Uses {@code InheritanceType.JOINED}, allowing all subclasses to have their own tables
+ *         while sharing common attributes defined in this class.</li>
  * </ul>
- *
- * @Entity public class Customer extends User {
- * private String loyaltyCardNumber;
- * }
- * <p>This class provides the foundation for defining user-specific subclasses, ensuring
- * that all user types share a consistent structure and functionality.</p>
+ * @see ir.entity.enums.Role
+ * @see ir.entity.enums.UserStatus
+ * @see BaseEntity
  */
 @Inheritance(strategy = InheritanceType.JOINED)
 @Getter
@@ -99,7 +98,7 @@ public abstract class User extends BaseEntity {
 
     @PositiveOrZero(message = "Credit must be a non-negative value")
     @Column(name = "credit")
-    private Double credit;
+    private BigDecimal credit;
 
     @NotNull(message = "Status must not be null")
     @Enumerated(EnumType.STRING)

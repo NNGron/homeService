@@ -3,6 +3,7 @@ package ir.service.customer;
 import ir.convert.offer.OfferEntityToOfferResponseDtoConvertor;
 import ir.dto.offer.OfferResponseDto;
 import ir.entity.Customer;
+import ir.entity.enums.UserStatus;
 import ir.exception.CustomException;
 import ir.exception.ErrorCode;
 import ir.repository.user.UserRepository;
@@ -24,10 +25,15 @@ public class CustomerServiceImpl implements CustomerService {
     @Override
     public List<OfferResponseDto> getCustomerOffers(String email, String password) {
         return userRepository.findByEmailAndPassword(email, password)
-                .filter(user -> user instanceof Customer)
+                .filter(user -> {
+                    if (user.getStatus().equals(UserStatus.DELETED)) {
+                        throw new CustomException("User already deleted", ErrorCode.NOT_FOUND.getCode());
+                    }
+                    return user instanceof Customer;
+                })
                 .map(user -> (Customer) user)
                 .map(customer -> customer.getOrders().stream()
-//                        .filter(order -> order.getStatus() == OrderStatus.WAITING_FOR_EXPERT_SELECTION_BY_CUSTOMER)
+//                    .filter(order -> order.getStatus() == OrderStatus.WAITING_FOR_EXPERT_SELECTION_BY_CUSTOMER)
                         .flatMap(order -> order.getOffers().stream())
                         .collect(Collectors.toList()))
                 .map(offerEntityToOfferResponseDtoConvertor::convertList)

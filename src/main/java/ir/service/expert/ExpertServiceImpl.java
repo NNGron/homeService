@@ -19,7 +19,6 @@ import org.springframework.stereotype.Service;
 
 import java.util.Optional;
 
-import static ir.entity.enums.OrderStatus.WAITING_FOR_EXPERT_PROPOSALS;
 import static ir.entity.enums.OrderStatus.WAITING_FOR_EXPERT_SELECTION_BY_CUSTOMER;
 
 @Service
@@ -42,8 +41,11 @@ public class ExpertServiceImpl implements ExpertService {
         if (optionalUser.isPresent()) {
             User user = optionalUser.get();
             Expert expert = (Expert) user;
-            if (user.getStatus().equals(UserStatus.NEW)){
+            if (user.getStatus().equals(UserStatus.NEW)) {
                 throw new CustomException("User should be approved", ErrorCode.USER_STATUS_NOT_APPROVED.getCode());
+            }
+            if (user.getStatus().equals(UserStatus.DELETED)) {
+                throw new CustomException("User already deleted", ErrorCode.NOT_FOUND.getCode());
             }
             Offer offer = new Offer();
             offer.setExpert(expert);
@@ -81,7 +83,7 @@ public class ExpertServiceImpl implements ExpertService {
                 throw new CustomException("Offer not found with offer ID: " + offerNumber, ErrorCode.NOT_FOUND.getCode());
             }
 
-            if (offer.getOrder() != null && offer.getOrder().getStatus() != WAITING_FOR_EXPERT_PROPOSALS) {
+            if (offer.getOrder() != null && offer.getOrder().getStatus() != WAITING_FOR_EXPERT_SELECTION_BY_CUSTOMER) {
                 throw new CustomException("You cannot update this offer because it has already been used in an order",
                         ErrorCode.UNPROCESSABLE_ENTITY.getCode());
             }
@@ -120,7 +122,7 @@ public class ExpertServiceImpl implements ExpertService {
             if (offer == null) {
                 throw new CustomException("Offer not found with offer ID: " + offerId, ErrorCode.NOT_FOUND.getCode());
             }
-            if (offer.getOrder() != null && offer.getOrder().getStatus() != WAITING_FOR_EXPERT_PROPOSALS) {
+            if (offer.getOrder() != null && offer.getOrder().getStatus() != WAITING_FOR_EXPERT_SELECTION_BY_CUSTOMER) {
                 throw new CustomException("You cannot delete this offer because it has already been used in an order",
                         ErrorCode.UNPROCESSABLE_ENTITY.getCode());
             }

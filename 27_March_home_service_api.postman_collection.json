@@ -1,13 +1,13 @@
 {
 	"info": {
-		"_postman_id": "372369c2-e376-4ddf-86a9-caaeeb707570",
+		"_postman_id": "951806e6-e8d6-430a-8244-ff11737f030d",
 		"name": "home_service_api",
 		"schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json",
 		"_exporter_id": "41967057"
 	},
 	"item": [
 		{
-			"name": "01-create-main-category",
+			"name": "01-create-main-category(admin)",
 			"request": {
 				"method": "POST",
 				"header": [
@@ -47,7 +47,7 @@
 			"response": []
 		},
 		{
-			"name": "02-create-sub-category",
+			"name": "02-create-sub-category(admin)",
 			"request": {
 				"method": "POST",
 				"header": [
@@ -222,7 +222,7 @@
 					}
 				],
 				"url": {
-					"raw": "http://localhost:8080/v1/users/approve-user?email=expert1@yahoo.com",
+					"raw": "http://localhost:8080/v1/users/approve-user?email=customer1@yahoo.com",
 					"protocol": "http",
 					"host": [
 						"localhost"
@@ -236,7 +236,7 @@
 					"query": [
 						{
 							"key": "email",
-							"value": "expert1@yahoo.com"
+							"value": "customer1@yahoo.com"
 						}
 					]
 				},
@@ -260,7 +260,7 @@
 				],
 				"body": {
 					"mode": "raw",
-					"raw": "{\r\n  \"offerCustomerPrice\": 100,\r\n  \"orderDate\": \"2025-03-26\",\r\n  \"orderDescription\": \"for update and delete\",\r\n  \"executionDate\": \"2025-03-26\",\r\n  \"orderAddress\": \"karaj\",\r\n  \"subCategoryName\": \"طراح\"\r\n}",
+					"raw": "{\r\n  \"offerCustomerPrice\": 100,\r\n  \"orderDate\": \"2025-03-30\",\r\n  \"orderDescription\": \"for update and delete\",\r\n  \"executionDate\": \"2025-03-30\",\r\n  \"orderAddress\": \"karaj\",\r\n  \"subCategoryName\": \"طراح\"\r\n}",
 					"options": {
 						"raw": {
 							"language": "json"
@@ -1348,6 +1348,43 @@
 					]
 				},
 				"description": "Generated from cURL: curl -X 'DELETE' \\\n  'http://localhost:8080/v1/experts/delete-offer?email=expert1%40yahoo.com&password=expert11&offerNumber=3' \\\n  -H 'accept: */*'"
+			},
+			"response": []
+		},
+		{
+			"name": "34-delete-user(customer & expert)",
+			"request": {
+				"method": "DELETE",
+				"header": [
+					{
+						"key": "accept",
+						"value": "*/*"
+					}
+				],
+				"url": {
+					"raw": "http://localhost:8080/v1/users/delete-user?email=customer1%40yahoo.com&password=customer1",
+					"protocol": "http",
+					"host": [
+						"localhost"
+					],
+					"port": "8080",
+					"path": [
+						"v1",
+						"users",
+						"delete-user"
+					],
+					"query": [
+						{
+							"key": "email",
+							"value": "customer1%40yahoo.com"
+						},
+						{
+							"key": "password",
+							"value": "customer1"
+						}
+					]
+				},
+				"description": "Generated from cURL: curl -X 'DELETE' \\\n  'http://localhost:8080/v1/users/delete-user?email=customer1%40yahoo.com&password=customer1' \\\n  -H 'accept: */*'"
 			},
 			"response": []
 		}

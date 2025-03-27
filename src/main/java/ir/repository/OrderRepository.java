@@ -11,8 +11,6 @@ import java.util.Optional;
 
 @Repository
 public interface OrderRepository extends JpaRepository<Order, Long>, JpaSpecificationExecutor<Order> {
-
-
     Optional<List<Order>> findAllByCategoryIn(List<Category> categories);
 }
 

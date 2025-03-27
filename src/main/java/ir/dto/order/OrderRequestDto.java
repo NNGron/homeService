@@ -7,6 +7,7 @@ import jakarta.validation.constraints.Size;
 import lombok.Getter;
 import lombok.Setter;
 
+import java.math.BigDecimal;
 import java.time.LocalDate;
 
 /**
@@ -30,7 +31,7 @@ import java.time.LocalDate;
 @Setter
 public class OrderRequestDto {
 
-    private Double offerCustomerPrice;
+    private BigDecimal offerCustomerPrice;
 
     @NotNull(message = "Order date must not be null")
     @FutureOrPresent(message = "Order date must not be in the past")

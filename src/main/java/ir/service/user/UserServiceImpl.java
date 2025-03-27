@@ -6,10 +6,8 @@ import ir.dto.user.UserFilterDto;
 import ir.dto.user.UserMessageDto;
 import ir.dto.user.UserRequestDto;
 import ir.dto.user.UserResponseDto;
-import ir.entity.Category;
-import ir.entity.Customer;
-import ir.entity.Expert;
-import ir.entity.User;
+import ir.entity.*;
+import ir.entity.enums.OrderStatus;
 import ir.entity.enums.Role;
 import ir.entity.enums.UserStatus;
 import ir.entity.enums.UserType;
@@ -232,6 +230,9 @@ public class UserServiceImpl implements UserService {
         Optional<User> byEmail = userRepository.findByEmail(email);
         if (byEmail.isPresent()) {
             User user = byEmail.get();
+            if (user.getStatus().equals(UserStatus.DELETED)) {
+                throw new CustomException("User already deleted", ErrorCode.NOT_FOUND.getCode());
+            }
             if (user.getStatus().equals(UserStatus.NEW)) {
                 user.setStatus(UserStatus.APPROVED);
             }
@@ -283,15 +284,15 @@ public class UserServiceImpl implements UserService {
     }
 
     @Override
-    public UserResponseDto addCreditToCustomer(String email, double amount) {
+    public UserResponseDto addCreditToCustomer(String email, BigDecimal amount) {
         User user = findByEmail(email);
-        Double credit = user.getCredit() != null ? user.getCredit() : 0;
+        BigDecimal credit = user.getCredit() != null ? user.getCredit() : BigDecimal.ZERO;
 
-        if ((credit + amount < 0)) {
+        if (credit.add(amount).compareTo(BigDecimal.ZERO) < 0) {
             throw new CustomException("Amount is invalid", ErrorCode.INVALID_AMOUNT.getCode());
         }
 
-        credit += amount;
+        credit = credit.add(amount);
         user.setCredit(credit);
         user = saveUser(user);
         return userEntityToUserResponseDtoConvertor.apply(user);
@@ -306,28 +307,45 @@ public class UserServiceImpl implements UserService {
         if (user.getStatus().equals(UserStatus.NEW)) {
             throw new CustomException("User should be approved", ErrorCode.USER_STATUS_NOT_APPROVED.getCode());
         }
-        BigDecimal balance = BigDecimal.valueOf(user.getCredit());
+        BigDecimal balance = user.getCredit() != null ? user.getCredit() : BigDecimal.ZERO;
         return new CreditResponseDto(balance);
     }
 
     @Override
     public void deleteUser(String email, String password) {
         log.info("Attempting to delete user with email: {}", email);
+
         User user = userRepository.findByEmailAndPassword(email, password)
-                .orElseThrow(() -> new CustomException("User not found with provided email and password", ErrorCode.NOT_FOUND.getCode()));
+                .orElseThrow(() -> new CustomException(
+                        "User not found with provided email and password",
+                        ErrorCode.NOT_FOUND.getCode()));
 
-        if (user instanceof Customer customer && !customer.getOrders().isEmpty()) {
-            throw new CustomException("Cannot delete user with active orders", ErrorCode.UNPROCESSABLE_ENTITY.getCode());
+        if (user instanceof Customer customer) {
+            boolean allOrdersPaid = customer.getOrders().stream()
+                    .allMatch(order -> OrderStatus.PAID.equals(order.getStatus()));
+
+            if (!allOrdersPaid) {
+                throw new CustomException("Cannot delete customer with non-paid orders",
+                        ErrorCode.UNPROCESSABLE_ENTITY.getCode());
+            }
         }
 
-        if (user instanceof Expert expert && !expert.getOffers().isEmpty()) {
-            throw new CustomException("Cannot delete user with active offers", ErrorCode.UNPROCESSABLE_ENTITY.getCode());
+        if (user instanceof Expert expert) {
+            boolean allRelatedOrdersPaid = expert.getOffers().stream()
+                    .map(Offer::getOrder)
+                    .allMatch(order -> OrderStatus.PAID.equals(order.getStatus()));
+
+            if (!allRelatedOrdersPaid) {
+                throw new CustomException("Cannot delete expert with offers linked to non-paid orders",
+                        ErrorCode.UNPROCESSABLE_ENTITY.getCode());
+            }
         }
 
-        //soft delete
+        // Perform soft delete for user
         user.setStatus(UserStatus.DELETED);
         userRepository.save(user);
-        log.info("Successfully deleted user of type: {} with email: {}", user.getClass().getSimpleName(), email);
-    }
 
+        log.info("Successfully soft-deleted user of type: {} with email: {}",
+                user.getClass().getSimpleName(), email);
+    }
 }

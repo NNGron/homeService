@@ -15,6 +15,7 @@ import lombok.AllArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
 
+import java.math.BigDecimal;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
@@ -34,8 +35,10 @@ public class OrderServiceImpl implements OrderService {
     @Override
     public OrderResponseDto saveOrder(OrderRequestDto orderDto, String email, String password) {
         User user = userService.findByEmailAndPassword(email, password);
-        if (user instanceof Customer) {
-            Customer customer = (Customer) user;
+        if (user instanceof Customer customer) {
+            if (user.getStatus().equals(UserStatus.DELETED)) {
+                throw new CustomException("User already deleted", ErrorCode.NOT_FOUND.getCode());
+            }
             if (user.getStatus().equals(UserStatus.NEW)) {
                 throw new CustomException("User should be approved", ErrorCode.USER_STATUS_NOT_APPROVED.getCode());
             }
@@ -76,9 +79,7 @@ public class OrderServiceImpl implements OrderService {
             }
             List<Category> categories = expert.getCategories();
             List<Order> ordersByCategories = findOrdersByCategories(categories);
-            List<OrderResponseDto> orderResponseDtos =
-                    orderEntityToOrderResponseDtoConvertor.convertList(ordersByCategories);
-            return orderResponseDtos;
+            return orderEntityToOrderResponseDtoConvertor.convertList(ordersByCategories);
         }
         throw new CustomException("User not found with provided email and password",
                 ErrorCode.NOT_FOUND.getCode());
@@ -151,9 +152,9 @@ public class OrderServiceImpl implements OrderService {
 
         // Update final price if status is WAITING_FOR_EXPERT_ARRIVAL
         if (OrderStatus.WAITING_FOR_EXPERT_ARRIVAL.equals(orderStatus)) {
-            Double proposedPrice = offer.getProposedPrice();
+            BigDecimal proposedPrice = offer.getProposedPrice();
             log.info("Proposed price for the offer: {}", proposedPrice);
-            order.setFinalPrice(proposedPrice);
+            order.setFinalPrice((proposedPrice));
         }
 
         // Update order status
@@ -176,7 +177,7 @@ public class OrderServiceImpl implements OrderService {
                                  Long offerNumber) {
 
         User user = userService.findByEmailAndPassword(email, password);
-        if (user == null || !(user instanceof Customer)) {
+        if (!(user instanceof Customer)) {
             throw new CustomException("User not found with provided email and password", ErrorCode.NOT_FOUND.getCode());
         }
         Order order = findById(orderNumber);
@@ -188,14 +189,14 @@ public class OrderServiceImpl implements OrderService {
         if (offerOptional.isPresent()) {
             Offer offer = offerOptional.get();
             Expert expert = offer.getExpert();
-            Double finalPrice = order.getFinalPrice();
+            BigDecimal finalPrice = order.getFinalPrice();
             Customer customer = (Customer) user;
-            if (customer.getCredit() == null || customer.getCredit() < finalPrice) {
+            if (customer.getCredit() == null || customer.getCredit().compareTo(finalPrice) < 0) {
                 throw new CustomException("Credit is not enough", ErrorCode.CREDIT_NOT_ENOUGH.getCode());
             }
-            Double expertCredit = expert.getCredit() != null ? expert.getCredit() : 0;
-            customer.setCredit(customer.getCredit() - finalPrice);
-            expert.setCredit(expertCredit + finalPrice);
+            BigDecimal expertCredit = expert.getCredit() != null ? expert.getCredit() : BigDecimal.ZERO;
+            customer.setCredit(customer.getCredit().subtract(finalPrice));
+            expert.setCredit(expertCredit.add(finalPrice));
             userService.saveUser(customer);
             userService.saveUser(expert);
         }

@@ -5,6 +5,7 @@ import jakarta.validation.constraints.*;
 import lombok.Getter;
 import lombok.Setter;
 
+import java.math.BigDecimal;
 import java.util.List;
 
 /**
@@ -62,7 +63,7 @@ public class UserRequestDto {
     private String address;
 
     @PositiveOrZero(message = "Credit must be a non-negative value")
-    private Double credit;
+    private BigDecimal credit;
 
     /**
      * A list of sub-category names associated with the user (expert skills).

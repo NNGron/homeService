@@ -15,5 +15,5 @@
 //    @OneToOne
 //    private User user;
 //
-//    private Double balance;
+//    private BigDecimal balance;
 //}

@@ -4,6 +4,8 @@ import jakarta.validation.constraints.*;
 import lombok.Getter;
 import lombok.Setter;
 
+import java.math.BigDecimal;
+
 /**
  * Data Transfer Object (DTO) for capturing offer request details.
  *
@@ -27,7 +29,7 @@ public class OfferRequestDto {
     private Long orderNumber;
 
     @PositiveOrZero(message = "Proposed price must be zero or a positive value")
-    private Double proposedPrice;
+    private BigDecimal proposedPrice;
 
     @Positive(message = "Estimated time must be a positive value")
     private Integer estimatedTime;

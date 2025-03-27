@@ -12,6 +12,7 @@ import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
 
+import java.math.BigDecimal;
 import java.time.LocalDate;
 import java.util.List;
 
@@ -41,7 +42,7 @@ public class OrderResponseDto {
     private Long orderNumber;
 
     @PositiveOrZero(message = "Final price must be zero or a positive value")
-    private Double finalPrice;
+    private BigDecimal finalPrice;
 
     @NotNull(message = "Order date cannot be null")
     private LocalDate orderDate;
@@ -72,5 +73,5 @@ public class OrderResponseDto {
 
     private Review review;
 
-    private Double offerCustomerPrice;
+    private BigDecimal offerCustomerPrice;
 }

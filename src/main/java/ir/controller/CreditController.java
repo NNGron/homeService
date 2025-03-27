@@ -8,6 +8,8 @@ import lombok.AllArgsConstructor;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
+import java.math.BigDecimal;
+
 @RestController
 @AllArgsConstructor
 @RequestMapping("/v1/credits")
@@ -19,7 +21,7 @@ public class CreditController {
     @PutMapping("/add-balance")
     @Operation(summary = "(Admin only)")
     public ResponseEntity<UserResponseDto> addBalance(@RequestParam String email,
-                                                      @RequestParam Double balance) {
+                                                      @RequestParam BigDecimal balance) {
         UserResponseDto responseDto = userService.addCreditToCustomer(email, balance);
         return ResponseEntity.ok(responseDto);
     }
