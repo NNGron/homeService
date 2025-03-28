@@ -10,22 +10,17 @@ import java.util.List;
 import java.util.Optional;
 
 /**
- * Service interface for managing {@link Category} entities and providing various operations
- * related to categories. This includes CRUD functionality, querying parent and subcategories,
- * pagination, and category creation.
+ * Defines operations for managing categories.
+ *
+ * <p>This service provides functionality for handling both main categories and subcategories,
+ * including creating, retrieving, and searching for categories.</p>
  *
  * <p>Key Features:</p>
  * <ul>
- *     <li>Retrieve all categories or filtered categories such as parent or subcategories.</li>
- *     <li>Save new categories including main categories and subcategories.</li>
- *     <li>Perform queries based on category names and paging parameters.</li>
- *     <li>Find specific categories by name with optional results.</li>
+ *     <li>Retrieve all categories with optional pagination.</li>
+ *     <li>Create new main categories and subcategories.</li>
+ *     <li>Find categories by name or type (main/sub).</li>
  * </ul>
- *
- * @see Category
- * @see CategoryResponseDto
- * @see MainCategoryRequestDto
- * @see SubCategoryRequestDto
  */
 public interface CategoryService {
 
@@ -104,6 +99,3 @@ public interface CategoryService {
      */
     Optional<Category> findMainCategoryByName(String name);
 }
-
-//    List<CategoryResponseDto> findAllSubCategoriesByNames(List<String> categoryNames);
-//    Optional<List<Category>> findAllByName(String name);

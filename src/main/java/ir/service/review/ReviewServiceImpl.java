@@ -8,7 +8,6 @@ import ir.entity.enums.UserStatus;
 import ir.exception.CustomException;
 import ir.exception.ErrorCode;
 import ir.repository.ReviewRepository;
-import ir.service.order.OrderService;
 import ir.service.user.UserService;
 import lombok.AllArgsConstructor;
 import lombok.extern.log4j.Log4j2;
@@ -19,6 +18,12 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
 
+/**
+ * Service implementation for managing reviews.
+ *
+ * <p>This class provides functionality to add new reviews, fetch reviews for experts,
+ * and find reviews by expert ID. It includes validation for authentication and user roles.</p>
+ */
 @Service
 @AllArgsConstructor
 @Log4j2
@@ -26,11 +31,24 @@ public class ReviewServiceImpl implements ReviewService {
 
     private final ReviewRepository reviewRepository;
     private final UserService userService;
-    private final OrderService orderService;
     private final ReviewEntityToReviewResponseDtoConvertor reviewEntityToReviewResponseDtoConvertor;
 
+    /**
+     * Adds a new review for the authenticated customer.
+     *
+     * <p>Validates the customer's authentication and ensures the specified order
+     * and offer exist before creating the review.</p>
+     *
+     * @param email            the customer's email for authentication
+     * @param password         the customer's password for authentication
+     * @param reviewRequestDto the details of the review to be added
+     * @return the added review as a {@link ReviewResponseDto}
+     * @throws CustomException if validation fails or the review already exists
+     */
     @Override
     public ReviewResponseDto addReview(String email, String password, ReviewRequestDto reviewRequestDto) {
+        log.info("Starting to add review for customer with email: {}", email);
+
         Optional<User> optionalUser = Optional.ofNullable(userService.findByEmailAndPassword(email, password));
         return optionalUser
                 .filter(user -> user instanceof Customer)
@@ -48,6 +66,18 @@ public class ReviewServiceImpl implements ReviewService {
                         ErrorCode.NOT_FOUND.getCode()));
     }
 
+    /**
+     * Creates and saves a review for the specified customer, order, and offer.
+     *
+     * <p>Calculates the average rating for the expert based on all reviews.</p>
+     *
+     * @param customer the customer adding the review
+     * @param offer the offer linked to the review
+     * @param order the order linked to the review
+     * @param reviewRequestDto the details of the review to be created
+     * @return the saved {@link Review} entity
+     * @throws CustomException if the review already exists
+     */
     private Review createAndSaveReview(
             Customer customer, Offer offer, Order order, ReviewRequestDto reviewRequestDto) {
         Expert expert = offer.getExpert();
@@ -57,7 +87,6 @@ public class ReviewServiceImpl implements ReviewService {
         review.setOrder(order);
         review.setComment(reviewRequestDto.comment());
         review.setRating(reviewRequestDto.rating());
-
 
         List<Integer> allRates = new ArrayList<>(findAllReviewsByExpertId(expert.getId()).stream()
                 .map(Review::getRating).toList());
@@ -75,45 +104,48 @@ public class ReviewServiceImpl implements ReviewService {
         }
     }
 
+    /**
+     * Finds all reviews for a specific expert based on their ID.
+     *
+     * @param expertId the unique ID of the expert
+     * @return a list of {@link Review} entities for the expert
+     */
     @Override
     public List<Review> findAllReviewsByExpertId(Long expertId) {
+        log.info("Fetching reviews for expert with ID: {}", expertId);
         return reviewRepository.findAllByExpert_Id(expertId);
     }
 
-
+    /**
+     * Retrieves all reviews for the authenticated expert.
+     *
+     * <p>Validates the expert's authentication and ensures the expert has an approved status.</p>
+     *
+     * @param email the expert's email for authentication
+     * @param password the expert's password for authentication
+     * @return a list of {@link ReviewResponseDto} representing the expert's reviews
+     * @throws CustomException if the user is not an expert or is not approved
+     */
     @Override
     public List<ReviewResponseDto> getReviewsForExpert(String email, String password) {
+        log.info("Fetching reviews for expert with email: {}", email);
+
         User user = userService.findByEmailAndPassword(email, password);
         if (!(user instanceof Expert expert)) {
+            log.error("User is not an expert or not found. Email: {}", email);
             throw new CustomException("User not found or is not an expert", ErrorCode.NOT_FOUND.getCode());
         }
 
         if (expert.getStatus().equals(UserStatus.NEW)) {
+            log.error("Expert with email {} is not approved", email);
             throw new CustomException("User should be approved", ErrorCode.USER_STATUS_NOT_APPROVED.getCode());
         }
 
         List<Review> reviews = reviewRepository.findAllByExpert_Id(expert.getId());
+        log.info("Successfully fetched {} reviews for expert with email: {}", reviews.size(), email);
 
         return reviews.stream()
                 .map(reviewEntityToReviewResponseDtoConvertor)
                 .toList();
     }
-
 }
-
-
-// @Override
-//    public ReviewResponseDto addReview(String email, String password, ReviewRequestDto reviewRequestDto) {
-//        return Optional.ofNullable(userService.findByEmailAndPassword(email, password))
-//                .filter(user -> user instanceof Customer)
-//                .map(user -> (Customer) user)
-//                .flatMap(customer -> customer.getOrders().stream()
-//                        .filter(order -> order.getId().equals(reviewRequestDto.orderNumber()))
-//                        .findFirst()
-//                        .flatMap(order -> order.getOffers().stream()
-//                                .filter(offer -> offer.getId().equals(reviewRequestDto.offerNumber()))
-//                                .findFirst()
-//                                .map(offer -> createAndSaveReview(customer, offer, order, reviewRequestDto))))
-//                .map(reviewEntityToReviewResponseDtoConvertor)
-//                .orElseThrow(() -> new CustomException("User not found or is not a customer", ErrorCode.NOT_FOUND.getCode()));
-//    }
