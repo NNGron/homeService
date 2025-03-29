@@ -59,6 +59,10 @@ public class UserSpecification {
                 predicates.add(criteriaBuilder.like(criteriaBuilder.lower(root.get("email")), "%" + userFilterDto.email().toLowerCase() + "%"));
             }
 
+            if (userFilterDto.userType() != null) {
+                predicates.add(criteriaBuilder.equal(root.type(), userFilterDto.userType().name()));
+            }
+
             if (categoryList != null && !categoryList.isEmpty()) {
                 Join<User, Category> categoryJoin = root.join("categories");
                 predicates.add(categoryJoin.in(categoryList));
