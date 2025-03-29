@@ -67,10 +67,13 @@ public class UserServiceImpl implements UserService {
         UserType userType = userRequestDto.getUserType();
 
         if (userType != null && userType.equals(UserType.CUSTOMER)) {
-            user = getCustomer(userRequestDto);
+            user = createCustomer(userRequestDto);
         }
         if (userType != null && userType.equals(UserType.EXPERT)) {
-            user = getExpert(userRequestDto);
+            user = createExpert(userRequestDto);
+        }
+        if (userType != null && userType.equals(UserType.ADMIN)) {
+            user = createAdmin(userRequestDto);
         }
 
         UserResponseDto responseDto = userEntityToUserResponseDtoConvertor.apply(user);
@@ -86,8 +89,7 @@ public class UserServiceImpl implements UserService {
      * @return the saved {@link User} entity
      * @throws CustomException if category validation fails or the expert could not be saved
      */
-    private User getExpert(UserRequestDto userRequestDto) {
-        log.info("User type EXPERT detected. Creating an Expert entity.");
+    private User createExpert(UserRequestDto userRequestDto) {
 
         User user;
         log.info("User type EXPERT detected. Creating an Expert entity.");
@@ -126,10 +128,7 @@ public class UserServiceImpl implements UserService {
      * @return the saved {@link User} entity
      * @throws CustomException if validation fails or the customer could not be saved
      */
-    private User getCustomer(UserRequestDto userRequestDto) {
-        log.info("User type CUSTOMER detected. Creating a Customer entity.");
-
-        User user;
+    private User createCustomer(UserRequestDto userRequestDto) {
         log.info("User type CUSTOMER detected. Creating a Customer entity.");
         Customer customer = new Customer();
         customer.setFirstName(userRequestDto.getFirstName());
@@ -142,10 +141,27 @@ public class UserServiceImpl implements UserService {
         customer.setRole(Role.USER);
         customer.setRegistrationDate(LocalDateTime.now());
 
-        Customer savedCustomer = userRepository.save(customer);
-        log.info("Customer entity saved successfully: {}", savedCustomer);
-        user = savedCustomer;
-        return user;
+        customer = userRepository.save(customer);
+        log.info("Customer entity saved successfully: {}", customer);
+        return customer;
+    }
+
+    private User createAdmin(UserRequestDto userRequestDto) {
+
+        log.info("User type ADMIN detected. Creating a admin entity.");
+        User admin = new Admin();
+        admin.setFirstName(userRequestDto.getFirstName());
+        admin.setLastName(userRequestDto.getLastName());
+        admin.setUserName(userRequestDto.getUserName());
+        admin.setPassword(userRequestDto.getPassword());
+        admin.setEmail(userRequestDto.getEmail());
+        admin.setAddress(userRequestDto.getAddress());
+        admin.setRole(Role.ADMIN);
+        admin.setRegistrationDate(LocalDateTime.now());
+
+        admin = userRepository.save(admin);
+        log.info("Admin entity saved successfully: {}", admin);
+        return admin;
     }
 
     /**
@@ -181,18 +197,28 @@ public class UserServiceImpl implements UserService {
     }
 
     /**
-     * Retrieves all users with pagination support.
+     * Retrieves a paginated list of users, excluding those with the ADMIN role.
      *
-     * @param pageable the pagination configuration specifying page number, size, and sorting
-     * @return a list of {@link UserResponseDto} representing all users
+     * <p>This method fetches all users whose status is not DELETED and role is not ADMIN.
+     * If no users are found matching the criteria, a custom exception is thrown.</p>
+     *
+     * @param pageable the pagination details, including page size and sorting options
+     * @return a list of {@link UserResponseDto} representing the filtered users
+     * @throws CustomException if no users are found
      */
     @Override
-    public List<UserResponseDto> getALldUsers(Pageable pageable) {
-        log.info("Fetching all users with pagination details: {}", pageable);
+    public List<UserResponseDto> getALlUsers(Pageable pageable) {
+        log.info("Fetching all non-admin users with pagination details: {}", pageable);
 
-        Page<User> userPage = userRepository.findByStatusNot(UserStatus.DELETED, pageable);
-        List<User> userList = userPage.getContent();
-        return userEntityToUserResponseDtoConvertor.convertList(userList);
+        Page<User> userPage = userRepository.findByStatusNotAndRoleNot(UserStatus.DELETED, Role.ADMIN, pageable);
+
+        if (userPage == null || userPage.getContent().isEmpty()) {
+            log.error("No users found excluding admin roles.");
+            throw new CustomException("No users found", ErrorCode.NO_USERS_FOUND.getCode());
+        }
+
+        log.info("Successfully fetched {} users excluding admin roles.", userPage.getContent().size());
+        return userEntityToUserResponseDtoConvertor.convertList(userPage.getContent());
     }
 
     /**
@@ -584,5 +610,75 @@ public class UserServiceImpl implements UserService {
         userRepository.save(user);
         log.info("User with email {} updated successfully", email);
         return userEntityToUserResponseDtoConvertor.apply(user);
+    }
+
+    /**
+     * Authenticates an admin using email and password.
+     *
+     * @param email    the admin's email
+     * @param password the admin's password
+     * @throws CustomException if the admin is not found or authentication fails
+     */
+    @Override
+    public void authenticateAdmin(String email, String password) {
+        log.info("Authenticating admin with email: {}", email);
+
+        User admin = userRepository.findByEmailAndPassword(email, password)
+                .orElseThrow(() -> {
+                    log.error("Admin authentication failed for email: {}", email);
+                    return new CustomException("Invalid admin credentials", ErrorCode.UNAUTHORIZED.getCode());
+                });
+
+        if (!admin.getRole().equals(Role.ADMIN)) {
+            log.error("User with email {} is not an admin", email);
+            throw new CustomException("User is not authorized as admin", ErrorCode.UNAUTHORIZED.getCode());
+        }
+
+        log.info("Admin with email {} authenticated successfully", email);
+    }
+
+    /**
+     * Adds subcategories to an expert's profile.
+     *
+     * @param expertEmail      the email of the expert
+     * @param subCategoryNames the list of subcategories to add
+     * @throws CustomException if the expert is not found or validation fails
+     */
+    @Override
+    public void addExpertToCategoriesByAdmin(String expertEmail, List<String> subCategoryNames) {
+        log.info("Fetching expert with email: {}", expertEmail);
+
+        User user = userRepository.findByEmail(expertEmail)
+                .orElseThrow(() -> {
+                    log.error("User with email {} not found", expertEmail);
+                    return new CustomException("User not found", ErrorCode.NOT_FOUND.getCode());
+                });
+
+        if (!(user instanceof Expert expert)) {
+            log.error("User with email {} is not an expert", expertEmail);
+            throw new CustomException("User is not an expert", ErrorCode.NOT_FOUND.getCode());
+        }
+
+        log.info("Fetching and validating subcategories: {}", subCategoryNames);
+        List<Category> subCategories = categoryService.findSubCategoriesByNames(subCategoryNames);
+
+        // Check for duplicates
+        List<String> existingSubCategories = expert.getCategories().stream()
+                .map(Category::getName)
+                .toList();
+        List<String> duplicates = subCategoryNames.stream()
+                .filter(existingSubCategories::contains)
+                .toList();
+
+        if (!duplicates.isEmpty()) {
+            log.error("Duplicate subcategories detected for expert with email {}: {}", expertEmail, duplicates);
+            throw new CustomException("Duplicate subcategories: " + duplicates, ErrorCode.DUPLICATE_CATEGORY.getCode());
+        }
+
+        // Add new subcategories
+        expert.getCategories().addAll(subCategories);
+        userRepository.save(expert);
+
+        log.info("Successfully added subcategories {} to expert with email {}", subCategoryNames, expertEmail);
     }
 }

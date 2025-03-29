@@ -39,7 +39,7 @@ public class UserController {
                 sortDir.equalsIgnoreCase("desc") ? Sort.Direction.DESC : Sort.Direction.ASC;
         Pageable pageable = PageRequest.of(pageNumber, size, Sort.by(direction, sortBy));
 
-        List<UserResponseDto> aLldUsers = userService.getALldUsers(pageable);
+        List<UserResponseDto> aLldUsers = userService.getALlUsers(pageable);
         return ResponseEntity.ok(aLldUsers);
     }
 

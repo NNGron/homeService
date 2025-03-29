@@ -38,7 +38,7 @@ public interface UserService {
      * @param pageable the pagination configuration specifying page number, size, and sorting
      * @return a list of {@link UserResponseDto} representing all users
      */
-    List<UserResponseDto> getALldUsers(Pageable pageable);
+    List<UserResponseDto> getALlUsers(Pageable pageable);
 
     /**
      * Removes specific categories from an expert's associated categories.
@@ -164,4 +164,8 @@ public interface UserService {
     UserResponseDto updateUser(UserUpdateRequestDto userUpdateRequestDto,
                                String email,
                                String password);
+
+    void authenticateAdmin(String email, String password);
+
+    void addExpertToCategoriesByAdmin(String expertEmail, List<String> subCategoryNames);
 }
