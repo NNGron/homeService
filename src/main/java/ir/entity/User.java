@@ -57,7 +57,8 @@ import java.time.LocalDateTime;
  * @see ir.entity.enums.UserStatus
  * @see BaseEntity
  */
-@Inheritance(strategy = InheritanceType.JOINED)
+@Inheritance(strategy = InheritanceType.SINGLE_TABLE)
+@DiscriminatorColumn(name = "user_type", discriminatorType = DiscriminatorType.STRING)
 @Getter
 @Setter
 @NoArgsConstructor

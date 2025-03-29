@@ -13,8 +13,8 @@ import java.util.List;
 @Setter
 @NoArgsConstructor
 @AllArgsConstructor
+@DiscriminatorValue("EXPERT")
 @Entity
-@Table(name = "experts")
 public class Expert extends User {
 
     @DecimalMin(value = "0.0", inclusive = true, message = "Rating must be non-negative")
