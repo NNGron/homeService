@@ -28,6 +28,8 @@ import java.util.List;
  *             <li>First name</li>
  *             <li>Last name</li>
  *             <li>Email</li>
+ *             <li>User type</li>
+ *             <li>Rating</li>
  *             <li>Associated categories</li>
  *         </ul>
  *     </li>
@@ -61,6 +63,10 @@ public class UserSpecification {
 
             if (userFilterDto.userType() != null) {
                 predicates.add(criteriaBuilder.equal(root.type(), userFilterDto.userType().name()));
+            }
+
+            if (userFilterDto.rating() != null) {
+                predicates.add(criteriaBuilder.equal(root.get("rating"), userFilterDto.rating()));
             }
 
             if (categoryList != null && !categoryList.isEmpty()) {

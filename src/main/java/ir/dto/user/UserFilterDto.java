@@ -6,6 +6,7 @@ import java.util.List;
 
 public record UserFilterDto(
         UserType userType,
+        Double rating,
         String firstName,
         String lastName,
         String email,
