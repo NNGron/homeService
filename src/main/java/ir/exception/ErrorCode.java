@@ -62,6 +62,7 @@ public enum ErrorCode {
     INVALID_EMAIL_OR_PASSWORD(50),
     ROLE_NOT_ALLOWED(51),
     INVALID_DATA(52),
+    DUPLICATE_CATEGORY(53),
 
     // 5xx: Server Errors
     INTERNAL_SERVER_ERROR(500),

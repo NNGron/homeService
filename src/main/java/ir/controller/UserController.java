@@ -35,7 +35,8 @@ public class UserController {
                                                              @RequestParam(defaultValue = "firstName") String sortBy,
                                                              @RequestParam(defaultValue = "asc") String sortDir) {
 
-        Sort.Direction direction = sortDir.equalsIgnoreCase("desc") ? Sort.Direction.DESC : Sort.Direction.ASC;
+        Sort.Direction direction =
+                sortDir.equalsIgnoreCase("desc") ? Sort.Direction.DESC : Sort.Direction.ASC;
         Pageable pageable = PageRequest.of(pageNumber, size, Sort.by(direction, sortBy));
 
         List<UserResponseDto> aLldUsers = userService.getALldUsers(pageable);
@@ -85,7 +86,8 @@ public class UserController {
                                                                   @RequestParam(defaultValue = "firstName") String sortBy,
                                                                   @RequestParam(defaultValue = "asc") String sortDir) {
 
-        Sort.Direction direction = sortDir.equalsIgnoreCase("desc") ? Sort.Direction.DESC : Sort.Direction.ASC;
+        Sort.Direction direction =
+                sortDir.equalsIgnoreCase("desc") ? Sort.Direction.DESC : Sort.Direction.ASC;
         Pageable pageable = PageRequest.of(pageNumber, size, Sort.by(direction, sortBy));
 
         List<UserResponseDto> userResponseDtos = userService.getFilteredUsers(filterDto, pageable);

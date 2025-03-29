@@ -232,15 +232,16 @@ public class UserServiceImpl implements UserService {
     }
 
     /**
-     * Adds specified categories to an expert's associated categories.
+     * Adds categories to an expert's profile.
      *
-     * <p>Validates the user's status and ensures that the provided categories exist
-     * before associating them with the expert.</p>
+     * <p>This method checks if the user exists and is an expert. It ensures the user is approved
+     * and does not already have the categories being added. If all validations pass, the new
+     * categories are added to the expert's profile.</p>
      *
-     * @param email         the expert's email for identification
-     * @param categoryNames the names of the categories to be added
-     * @return the updated user as a {@link UserResponseDto}
-     * @throws CustomException if the user is not approved or validation fails
+     * @param email the email of the expert
+     * @param categoryNames a list of category names to add
+     * @return the updated expert as a {@link UserResponseDto}
+     * @throws CustomException if the user is not approved, not found, or if there are duplicate categories
      */
     @Override
     public UserResponseDto addExpertToCategories(String email, List<String> categoryNames) {
@@ -248,26 +249,36 @@ public class UserServiceImpl implements UserService {
 
         Optional<User> optionalUser = userRepository.findByEmail(email);
         List<Category> shouldBeAdd = categoryService.findSubCategoriesByNames(categoryNames);
-        Expert expert = null;
-        if (optionalUser.isPresent()) {
-            User user = optionalUser.get();
-            if (user.getStatus().equals(UserStatus.NEW)) {
-                log.error("Expert with email {} is not approved", email);
-                throw new CustomException("User should be approved", ErrorCode.USER_STATUS_NOT_APPROVED.getCode());
-            }
-            if (user instanceof Expert) {
-                expert = (Expert) user;
-                if (user.getStatus().equals(UserStatus.NEW)) {
-                    throw new CustomException("User should be approved", ErrorCode.USER_STATUS_NOT_APPROVED.getCode());
-                }
-                List<Category> categories = expert.getCategories();
-                categories.addAll(shouldBeAdd);
-                expert.setCategories(categories);
-                expert = userRepository.save(expert);
-            }
+
+        if (optionalUser.isEmpty() || !(optionalUser.get() instanceof Expert expert)) {
+            log.error("User not found or is not an expert. Email: {}", email);
+            throw new CustomException("User not found or is not an expert", ErrorCode.NOT_FOUND.getCode());
         }
-        UserResponseDto responseDto = userEntityToUserResponseDtoConvertor.apply(expert);
-        return responseDto;
+
+        if (expert.getStatus().equals(UserStatus.NEW)) {
+            log.error("Expert with email {} is not approved", email);
+            throw new CustomException("User should be approved", ErrorCode.USER_STATUS_NOT_APPROVED.getCode());
+        }
+
+        List<Category> existingCategories = expert.getCategories();
+        List<String> duplicateCategories = shouldBeAdd.stream()
+                .map(Category::getName)
+                .filter(existingCategories.stream().map(Category::getName).toList()::contains)
+                .toList();
+
+        if (!duplicateCategories.isEmpty()) {
+            log.error("Duplicate categories detected for expert with email {}: {}", email, duplicateCategories);
+            throw new CustomException(
+                    "Duplicate categories: " + duplicateCategories, ErrorCode.DUPLICATE_CATEGORY.getCode());
+        }
+
+        log.info("Adding new categories to expert with email: {}", email);
+        existingCategories.addAll(shouldBeAdd);
+        expert.setCategories(existingCategories);
+        Expert updatedExpert = userRepository.save(expert);
+        log.info("Categories successfully added to expert with email: {}", email);
+
+        return userEntityToUserResponseDtoConvertor.apply(updatedExpert);
     }
 
     /**
