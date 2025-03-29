@@ -53,12 +53,14 @@ public class OrderServiceImpl implements OrderService {
     @Override
     public OrderResponseDto saveOrder(OrderRequestDto orderDto, String email, String password) {
         log.info("Attempting to save order for customer with email: {}", email);
+
         User user = userService.findByEmailAndPassword(email, password);
         if (user instanceof Customer customer) {
             if (user.getStatus().equals(UserStatus.DELETED)) {
                 log.error("User with email {} is deleted and cannot create orders.", email);
                 throw new CustomException("User already deleted", ErrorCode.NOT_FOUND.getCode());
             }
+
             if (user.getStatus().equals(UserStatus.NEW)) {
                 log.error("User with email {} is not approved to create orders.", email);
                 throw new CustomException("User should be approved", ErrorCode.USER_STATUS_NOT_APPROVED.getCode());
@@ -89,6 +91,38 @@ public class OrderServiceImpl implements OrderService {
         }
         log.error("User not found with email: {}", email);
         throw new CustomException("User not found with provided email and password", ErrorCode.NOT_FOUND.getCode());
+    }
+
+    /**
+     * Retrieves a list of orders associated with a customer using their email and password.
+     *
+     * <p>This method authenticates the customer using their email and password. It ensures
+     * that the user is a valid registered customer. After successful authentication, it fetches
+     * all orders linked to the customer's email and converts them into a list of DTOs.</p>
+     *
+     * @param email    the email of the customer for authentication
+     * @param password the password of the customer for authentication
+     * @return a list of {@link OrderResponseDto} representing the customer's orders
+     * @throws CustomException if the user is not a customer, not found, or authentication fails
+     */
+    @Override
+    public List<OrderResponseDto> getOrdersByCustomerEmail(String email, String password) {
+        log.info("Fetching orders for customer with email: {}", email);
+
+        User user = userService.findByEmailAndPassword(email, password);
+        if (!(user instanceof Customer)) {
+            log.error("User is not a customer or not found. Email: {}", email);
+            throw new CustomException("User not found or is not a customer", ErrorCode.NOT_FOUND.getCode());
+        }
+
+        List<Order> orders = orderRepository.findAllByCustomerEmail(email);
+        log.info("Successfully fetched {} orders for customer with email: {}", orders.size(), email);
+
+        List<OrderResponseDto> responseDtos = orderEntityToOrderResponseDtoConvertor.convertList(orders);
+        log.info("Successfully converted {} orders to DTO format for customer with email: {}",
+                responseDtos.size(), email);
+
+        return responseDtos;
     }
 
     /**

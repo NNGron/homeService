@@ -29,6 +29,19 @@ public interface OrderService {
                                String password);
 
     /**
+     * Retrieves a list of orders for a customer using their email and password.
+     *
+     * <p>This method authenticates the customer based on their email and password,
+     * and fetches all orders associated with the customer's email. It ensures
+     * that the user is valid and is a registered customer before proceeding.</p>
+     *
+     * @param email    the customer's email for authentication
+     * @param password the customer's password for authentication
+     * @return a list of {@link OrderResponseDto} representing the customer's orders
+     */
+    List<OrderResponseDto> getOrdersByCustomerEmail(String email, String password);
+
+    /**
      * Finds orders based on the given categories.
      *
      * @param categories the list of categories to filter orders by

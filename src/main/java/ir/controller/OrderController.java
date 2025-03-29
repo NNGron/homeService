@@ -7,11 +7,13 @@ import ir.entity.enums.OrderStatus;
 import ir.service.order.OrderService;
 import jakarta.validation.Valid;
 import lombok.AllArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
 
+@Slf4j
 @RestController
 @AllArgsConstructor
 @RequestMapping("/v1/orders")
@@ -45,6 +47,16 @@ public class OrderController {
     public ResponseEntity<List<OrderResponseDto>> getAllUsers(@Valid @RequestParam String email,
                                                               @RequestParam String password) {
         List<OrderResponseDto> orders = orderService.getOrder(email, password);
+        return ResponseEntity.ok(orders);
+    }
+
+    @GetMapping("/orders_history")
+    @Operation(summary = "(Customer only)")
+    public ResponseEntity<List<OrderResponseDto>> getCustomerOrders(@Valid @RequestParam String email,
+                                                                    @RequestParam String password) {
+        log.info("Fetching order history for customer with email: {}", email);
+
+        List<OrderResponseDto> orders = orderService.getOrdersByCustomerEmail(email, password);
         return ResponseEntity.ok(orders);
     }
 

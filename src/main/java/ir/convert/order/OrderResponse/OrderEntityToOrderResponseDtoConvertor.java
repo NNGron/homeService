@@ -10,7 +10,6 @@ import java.util.function.Function;
 @Component
 public class OrderEntityToOrderResponseDtoConvertor implements Function<Order, OrderResponseDto> {
 
-
     @Override
     public OrderResponseDto apply(Order order) {
         OrderResponseDto orderResponseDto = new OrderResponseDto();
@@ -25,7 +24,6 @@ public class OrderEntityToOrderResponseDtoConvertor implements Function<Order, O
         orderResponseDto.setOfferCustomerPrice(order.getOfferCustomerPrice());
         return orderResponseDto;
     }
-
 
     public List<OrderResponseDto> convertList(List<Order> orders) {
         return orders.stream()
