@@ -1,6 +1,7 @@
 package ir.service.review;
 
 import ir.convert.review.ReviewEntityToReviewResponseDtoConvertor;
+import ir.dto.expert.ExpertReviewResponseDto;
 import ir.dto.review.ReviewRequestDto;
 import ir.dto.review.ReviewResponseDto;
 import ir.entity.*;
@@ -117,17 +118,19 @@ public class ReviewServiceImpl implements ReviewService {
     }
 
     /**
-     * Retrieves all reviews for the authenticated expert.
+     * Retrieves a list of reviews for an authenticated expert.
      *
-     * <p>Validates the expert's authentication and ensures the expert has an approved status.</p>
+     * <p>This method fetches all reviews associated with the authenticated expert. It ensures
+     * that the user is an expert and is approved before proceeding. The returned reviews
+     * only include the rating and the subcategory name.</p>
      *
-     * @param email the expert's email for authentication
+     * @param email    the expert's email for authentication
      * @param password the expert's password for authentication
-     * @return a list of {@link ReviewResponseDto} representing the expert's reviews
-     * @throws CustomException if the user is not an expert or is not approved
+     * @return a list of {@link ExpertReviewResponseDto} containing the rating and subcategory name of each review
+     * @throws CustomException if the user is not an expert, not approved, or not found
      */
     @Override
-    public List<ReviewResponseDto> getReviewsForExpert(String email, String password) {
+    public List<ExpertReviewResponseDto> getReviewsForExpert(String email, String password) {
         log.info("Fetching reviews for expert with email: {}", email);
 
         User user = userService.findByEmailAndPassword(email, password);
@@ -145,7 +148,8 @@ public class ReviewServiceImpl implements ReviewService {
         log.info("Successfully fetched {} reviews for expert with email: {}", reviews.size(), email);
 
         return reviews.stream()
-                .map(reviewEntityToReviewResponseDtoConvertor)
+                .map(review -> new ExpertReviewResponseDto(
+                        review.getRating(), review.getOrder().getCategory().getName()))
                 .toList();
     }
 }

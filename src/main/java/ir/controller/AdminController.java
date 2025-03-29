@@ -1,7 +1,6 @@
 package ir.controller;
 
 import io.swagger.v3.oas.annotations.Operation;
-import ir.service.category.CategoryService;
 import ir.service.user.UserService;
 import lombok.AllArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
@@ -17,7 +16,6 @@ import java.util.List;
 public class AdminController {
 
     private final UserService userService;
-    private final CategoryService categoryService;
 
     /**
      * Adds subcategories to an expert's profile.

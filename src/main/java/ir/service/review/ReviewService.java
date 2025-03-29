@@ -1,5 +1,6 @@
 package ir.service.review;
 
+import ir.dto.expert.ExpertReviewResponseDto;
 import ir.dto.review.ReviewRequestDto;
 import ir.dto.review.ReviewResponseDto;
 import ir.entity.Review;
@@ -33,11 +34,10 @@ public interface ReviewService {
     List<Review> findAllReviewsByExpertId(Long expertId);
 
     /**
-     * Retrieves all reviews for the authenticated expert.
+     * Retrieves a list of reviews visible to an expert.
      *
-     * @param email the expert's email for authentication
+     * @param email    the expert's email for authentication
      * @param password the expert's password for authentication
-     * @return a list of {@link ReviewResponseDto} representing the expert's reviews
      */
-    List<ReviewResponseDto> getReviewsForExpert(String email, String password);
+    public List<ExpertReviewResponseDto> getReviewsForExpert(String email, String password);
 }

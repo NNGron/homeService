@@ -1,6 +1,7 @@
 package ir.controller;
 
 import io.swagger.v3.oas.annotations.Operation;
+import ir.dto.expert.ExpertReviewResponseDto;
 import ir.dto.review.ReviewRequestDto;
 import ir.dto.review.ReviewResponseDto;
 import ir.service.review.ReviewService;
@@ -30,9 +31,11 @@ public class ReviewController {
 
     @GetMapping("/expert-comments")
     @Operation(summary = "(Expert only)")
-    public ResponseEntity<List<ReviewResponseDto>> getReviewsForExpert(@RequestParam String email,
-                                                                       @RequestParam String password) {
-        List<ReviewResponseDto> reviews = reviewService.getReviewsForExpert(email, password);
+    public ResponseEntity<List<ExpertReviewResponseDto>> getReviewsForExpert(@RequestParam String email,
+                                                                             @RequestParam String password) {
+        log.info("Fetching reviews visible to expert with email: {}", email);
+
+        List<ExpertReviewResponseDto> reviews = reviewService.getReviewsForExpert(email, password);
         return ResponseEntity.ok(reviews);
     }
 }
