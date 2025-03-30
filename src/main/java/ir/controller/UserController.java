@@ -59,7 +59,6 @@ public class UserController {
         return ResponseEntity.ok(userResponseDto);
     }
 
-
     @PutMapping("/update-password")
     @Operation(summary = "(Customer & Expert)")
     public ResponseEntity<UserMessageDto> updatePassword(@RequestParam String email,
@@ -69,14 +68,12 @@ public class UserController {
         return ResponseEntity.ok(userMessageDto);
     }
 
-
     @PutMapping("/approve-user")
     @Operation(summary = "(Admin only)")
     public ResponseEntity<UserMessageDto> updateUserStatus(@RequestParam String email) {
         UserMessageDto userMessageDto = userService.updateStatusUser(email);
         return ResponseEntity.ok(userMessageDto);
     }
-
 
     @PostMapping("/filter-users")
     @Operation(summary = "(Admin only)")

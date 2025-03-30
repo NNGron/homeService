@@ -3,7 +3,7 @@ package ir.service.offer;
 import ir.entity.Offer;
 import ir.exception.CustomException;
 import ir.exception.ErrorCode;
-import ir.repository.OfferRepository;
+import ir.repository.offer.OfferRepository;
 import lombok.AllArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;

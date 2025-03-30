@@ -1,4 +1,4 @@
-package ir.repository;
+package ir.repository.offer;
 
 import ir.entity.Offer;
 import org.springframework.data.jpa.repository.JpaRepository;

@@ -3,9 +3,9 @@ package ir.convert.offer;
 import ir.convert.order.OrderResponse.OrderEntityToOrderResponseDtoConvertor;
 import ir.dto.offer.OfferResponseDto;
 import ir.dto.order.OrderResponseDto;
+import ir.entity.Expert;
 import ir.entity.Offer;
 import ir.entity.Order;
-import ir.entity.User;
 import lombok.AllArgsConstructor;
 import org.springframework.stereotype.Component;
 
@@ -21,7 +21,7 @@ public class OfferEntityToOfferResponseDtoConvertor implements Function<Offer, O
     @Override
     public OfferResponseDto apply(Offer offer) {
         OfferResponseDto offerResponseDto = new OfferResponseDto();
-        User user = offer.getExpert();
+        Expert user = offer.getExpert();
         Order order = offer.getOrder();
         OrderResponseDto orderResponseDto = orderEntityToOrderResponseDtoConvertor.apply(order);
         offerResponseDto.setOfferNumber(offer.getId());
@@ -31,6 +31,7 @@ public class OfferEntityToOfferResponseDtoConvertor implements Function<Offer, O
         offerResponseDto.setEstimatedTime(offer.getEstimatedTime());
         offerResponseDto.setStartTime(offer.getStartTime());
         offerResponseDto.setProposedPrice(offer.getProposedPrice());
+        offerResponseDto.setExpertRating(user.getRating());
         return offerResponseDto;
     }
 

@@ -319,7 +319,8 @@ public class UserServiceImpl implements UserService {
         log.info("Fetching filtered users with criteria: {}", filterDto);
 
         List<String> categoryNames = filterDto.categoryNames();
-        List<Category> categoryList = categoryNames != null ? categoryService.findSubCategoriesByNames(categoryNames) : List.of();
+        List<Category> categoryList =
+                categoryNames != null ? categoryService.findSubCategoriesByNames(categoryNames) : List.of();
 
         Specification<User> spec = UserSpecification.filterUsers(filterDto, categoryList);
         Page<User> userPage = userRepository.findAll(spec, pageable);
