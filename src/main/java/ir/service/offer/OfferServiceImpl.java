@@ -1,12 +1,18 @@
 package ir.service.offer;
 
+import ir.convert.offer.OfferEntityToOfferResponseDtoConvertor;
+import ir.dto.offer.OfferResponseDto;
 import ir.entity.Offer;
 import ir.exception.CustomException;
 import ir.exception.ErrorCode;
 import ir.repository.offer.OfferRepository;
 import lombok.AllArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.data.domain.Pageable;
+import org.springframework.data.jpa.domain.Specification;
 import org.springframework.stereotype.Service;
+
+import java.util.List;
 
 /**
  * Service implementation for managing offers.
@@ -20,6 +26,7 @@ import org.springframework.stereotype.Service;
 public class OfferServiceImpl implements OfferService {
 
     private final OfferRepository offerRepository;
+    private final OfferEntityToOfferResponseDtoConvertor offerEntityToOfferResponseDtoConvertor;
 
     /**
      * Saves the provided offer.
@@ -56,5 +63,21 @@ public class OfferServiceImpl implements OfferService {
     public void deleteOffer(Offer offer) {
         log.info("Deleting offer with ID: {}", offer.getId());
         offerRepository.delete(offer);
+    }
+
+    /**
+     * Retrieves a paginated list of offers associated with a specific customer.
+     *
+     * @param customerId the ID of the customer whose offers should be retrieved
+     * @param pageable   the pagination configuration specifying page number, size, and sorting
+     * @return a list of {@link OfferResponseDto} representing the paginated offers related to the customer
+     */
+    @Override
+    public List<OfferResponseDto> findAllOffers(Long customerId, Pageable pageable) {
+        Specification<Offer> spec =
+                (root, query, criteriaBuilder) ->
+                        criteriaBuilder.equal(root.get("order").get("customer").get("id"), customerId);
+        List<Offer> offers = offerRepository.findAll(spec, pageable).getContent();
+        return offerEntityToOfferResponseDtoConvertor.convertList(offers);
     }
 }

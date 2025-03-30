@@ -1,7 +1,11 @@
 package ir.service.offer;
 
 
+import ir.dto.offer.OfferResponseDto;
 import ir.entity.Offer;
+import org.springframework.data.domain.Pageable;
+
+import java.util.List;
 
 /**
  * Service interface for managing offers.
@@ -31,4 +35,13 @@ public interface OfferService {
      * @param offer the offer to be deleted
      */
     void deleteOffer(Offer offer);
+
+    /**
+     * Retrieves a paginated list of offers associated with a specific customer.
+     *
+     * @param customerId the unique ID of the customer whose offers need to be retrieved
+     * @param pageable   the pagination and sorting configuration specifying page number, size, and sorting order
+     * @return a list of {@link OfferResponseDto} representing the paginated and sorted offers related to the customer
+     */
+    List<OfferResponseDto> findAllOffers(Long customerId, Pageable pageable);
 }

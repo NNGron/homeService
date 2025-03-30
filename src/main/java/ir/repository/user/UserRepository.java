@@ -18,8 +18,5 @@ public interface UserRepository extends JpaRepository<User, Long>, JpaSpecificat
 
     Optional<User> findByEmailAndPassword(String email, String password);
 
-//    Page<User> findByStatusNot(UserStatus status, Pageable pageable);
-
     Page<User> findByStatusNotAndRoleNot(UserStatus status, Role role, Pageable pageable);
-
 }

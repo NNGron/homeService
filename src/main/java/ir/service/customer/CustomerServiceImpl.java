@@ -3,16 +3,19 @@ package ir.service.customer;
 import ir.convert.offer.OfferEntityToOfferResponseDtoConvertor;
 import ir.dto.offer.OfferResponseDto;
 import ir.entity.Customer;
+import ir.entity.User;
 import ir.entity.enums.UserStatus;
 import ir.exception.CustomException;
 import ir.exception.ErrorCode;
 import ir.repository.user.UserRepository;
+import ir.service.offer.OfferService;
 import lombok.AllArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
-import java.util.stream.Collectors;
+import java.util.Optional;
 
 /**
  * Provides functionality for customer-related operations.
@@ -40,39 +43,54 @@ import java.util.stream.Collectors;
 public class CustomerServiceImpl implements CustomerService {
 
     private final UserRepository userRepository;
-    private final OfferEntityToOfferResponseDtoConvertor offerEntityToOfferResponseDtoConvertor;
+    private final OfferService offerService;
 
     /**
-     * Retrieves a list of offers for the authenticated customer's orders.
+     * Retrieves a paginated list of offers associated with a specific customer.
+     * <p>
+     * Validates the email and password parameters and ensures that the user is authenticated
+     * and has the role of "Customer."
+     * </p>
      *
-     * @param email    the customer's email for login
-     * @param password the customer's password for login
-     * @return a list of offers converted to {@link OfferResponseDto}
-     * @throws CustomException if:
-     *                         <ul>
-     *                             <li>The customer is not found or credentials are incorrect.</li>
-     *                             <li>The customer's account has been deleted.</li>
-     *                         </ul>
+     * @param email    the email of the customer for authentication
+     * @param password the password of the customer for authentication
+     * @param pageable the pagination and sorting configuration
+     * @return a list of {@link OfferResponseDto} representing the offers associated with the customer
+     * @throws CustomException if validation fails, the user is not authenticated,
+     *                         the user is not a customer, or the customer has been deleted
      */
     @Override
-    public List<OfferResponseDto> getCustomerOffers(String email, String password) {
-        log.info("Attempting to retrieve offers for customer with email: {}", email);
-        return userRepository.findByEmailAndPassword(email, password)
-                .filter(user -> {
-                    if (user.getStatus().equals(UserStatus.DELETED)) {
-                        log.error("User with email {} has been deleted and cannot retrieve offers.", email);
-                        throw new CustomException("User already deleted", ErrorCode.NOT_FOUND.getCode());
-                    }
-                    return user instanceof Customer;
-                })
-                .map(user -> (Customer) user)
-                .map(customer -> customer.getOrders().stream()
-                        .flatMap(order -> order.getOffers().stream())
-                        .collect(Collectors.toList()))
-                .map(offerEntityToOfferResponseDtoConvertor::convertList)
-                .orElseThrow(() -> {
-                    log.error("Authentication failed for user with email: {}. User not found.", email);
-                    return new CustomException("User not found", ErrorCode.NOT_FOUND.getCode());
-                });
+    public List<OfferResponseDto> getOffersForCustomer(String email, String password, Pageable pageable) {
+        log.info("Authenticating customer with email: {}", email);
+
+        Optional<User> optionalUser = userRepository.findByEmailAndPassword(email, password);
+
+        if (optionalUser.isEmpty()) {
+            log.error("Authentication failed for user with email: {}. User not found.", email);
+            throw new CustomException("User not found", ErrorCode.NOT_FOUND.getCode());
+        }
+
+        User user = optionalUser.get();
+
+        if (user.getStatus().equals(UserStatus.NEW)) {
+            log.error("User with email {} is not approved.", email);
+            throw new CustomException("User should be approved", ErrorCode.USER_STATUS_NOT_APPROVED.getCode());
+        }
+
+        if (user.getStatus().equals(UserStatus.DELETED)) {
+            log.error("User with email {} has been deleted.", email);
+            throw new CustomException("User already deleted", ErrorCode.NOT_FOUND.getCode());
+        }
+
+        if (!(user instanceof Customer customer)) {
+            log.error("User with email {} is not a customer.", email);
+            throw new CustomException("User is not a customer", ErrorCode.NOT_AUTHORIZED.getCode());
+        }
+
+        Long customerId = customer.getId();
+        List<OfferResponseDto> offerResponseDtos = offerService.findAllOffers(customerId, pageable);
+
+        log.info("Successfully retrieved {} offers for customer with email: {}", offerResponseDtos.size(), email);
+        return offerResponseDtos;
     }
 }

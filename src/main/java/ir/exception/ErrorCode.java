@@ -64,6 +64,7 @@ public enum ErrorCode {
     INVALID_DATA(52),
     DUPLICATE_CATEGORY(53),
     NO_USERS_FOUND(54),
+    NOT_AUTHORIZED(55),
 
     // 5xx: Server Errors
     INTERNAL_SERVER_ERROR(500),

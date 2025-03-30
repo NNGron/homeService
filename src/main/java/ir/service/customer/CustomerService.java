@@ -2,6 +2,7 @@ package ir.service.customer;
 
 import ir.dto.offer.OfferResponseDto;
 import ir.exception.CustomException;
+import org.springframework.data.domain.Pageable;
 
 import java.util.List;
 
@@ -14,12 +15,13 @@ import java.util.List;
 public interface CustomerService {
 
     /**
-     * Retrieves offers linked to the authenticated customer's orders.
+     * Retrieves a paginated list of offers for a given customer based on their email and password.
      *
-     * @param email    the email address of the customer
-     * @param password the password of the customer
-     * @return a list of offers related to the customer's orders
-     * @throws CustomException if authentication fails or the customer is not found
+     * @param email    the email of the customer for authentication
+     * @param password the password of the customer for authentication
+     * @param pageable the pagination information including page number, size, and sorting
+     * @return a paginated list of {@link OfferResponseDto} representing the offers associated with the customer
+     * @throws CustomException if authentication fails, the user is not a customer, or the customer has been deleted
      */
-    List<OfferResponseDto> getCustomerOffers(String email, String password);
+    List<OfferResponseDto> getOffersForCustomer(String email, String password, Pageable pageable);
 }
