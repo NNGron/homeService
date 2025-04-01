@@ -196,6 +196,24 @@ public class UserServiceImpl implements UserService {
         }
     }
 
+    @Override
+    public boolean authenticateUser(String email, String password) {
+        log.info("Authenticating user with email: {}", email);
+
+        User user = userRepository.findByEmail(email).orElseThrow(() ->
+                new CustomException("No users found", ErrorCode.NO_USERS_FOUND.getCode())
+        );
+
+        if (password.equals(user.getPassword())) {
+            log.info("Authentication successful for user: {}", email);
+            return true;
+        } else {
+            log.warn("Authentication failed for user: {}", email);
+            return false;
+        }
+    }
+
+
     /**
      * Retrieves a paginated list of users, excluding those with the ADMIN role.
      *

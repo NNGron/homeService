@@ -32,6 +32,8 @@ import java.util.List;
  */
 public interface UserService {
 
+    boolean authenticateUser(String email, String password);
+
     /**
      * Retrieves all users with pagination support.
      *

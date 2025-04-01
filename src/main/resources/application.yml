@@ -23,7 +23,23 @@ spring:
         jdbc:
           lob:
             non_contextual_creation: true
+
+    # تنظیمات فایل‌های استاتیک و قالب
+  mvc:
+    view:
+      prefix: classpath:/templates/
+      suffix: .html
+  web:
+    resources:
+      static-locations: classpath:/static
+
+  # تنظیمات آپلود فایل
   servlet:
     multipart:
       max-file-size: 300KB
       max-request-size: 300KB
+
+logging:
+  level:
+    root: info
+    org.springframework: debug # فعال‌سازی لاگ در سطح Debug

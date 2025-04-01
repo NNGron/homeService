@@ -1,7 +1,6 @@
 package ir.dto.review;
 
 import com.fasterxml.jackson.annotation.JsonInclude;
-import jakarta.validation.constraints.*;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Getter;
@@ -41,34 +40,13 @@ import lombok.Setter;
 @Setter
 @JsonInclude(JsonInclude.Include.NON_NULL)
 public class ReviewResponseDto {
-
-    @NotNull(message = "Rating must not be null")
-    @Min(value = 1, message = "Rating must be at least 1")
-    @Max(value = 5, message = "Rating must be at most 5")
     private Integer rating;
-
-    @Size(max = 500, message = "Comment must not exceed 500 characters")
     private String comment;
-
-    @NotNull(message = "Order number must not be null")
     private Long orderNumber;
-
-    @NotBlank(message = "Order description must not be blank")
-    @Size(max = 500, message = "Order description must not exceed 500 characters")
     private String orderDescription;
-
-    @NotBlank(message = "Customer first name must not be blank")
     private String customerFirstName;
-
-    @NotBlank(message = "Customer last name must not be blank")
     private String customerLastName;
-
-    @NotBlank(message = "Expert first name must not be blank")
     private String expertFirstName;
-
-    @NotBlank(message = "Expert last name must not be blank")
     private String expertLastName;
-
-    @NotBlank(message = "Subcategory name must not be blank")
     private String subCategoryName;
 }

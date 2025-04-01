@@ -5,9 +5,11 @@ import ir.dto.user.*;
 import ir.service.user.UserService;
 import jakarta.validation.Valid;
 import lombok.AllArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.domain.Sort;
+import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
@@ -15,6 +17,7 @@ import org.springframework.web.multipart.MultipartFile;
 
 import java.util.List;
 
+@Slf4j
 @RestController
 @AllArgsConstructor
 @RequestMapping("/v1/users")
@@ -27,6 +30,23 @@ public class UserController {
         UserResponseDto responseDto = userService.saveUser(requestDto);
         return ResponseEntity.ok(responseDto);
     }
+
+    @PostMapping("/login")
+    @Operation(summary = "User Login")
+    public ResponseEntity<UserMessageDto> loginUser(@Valid @RequestBody LoginRequestDto loginRequestDto) {
+        log.info("Starting login process for user: {}", loginRequestDto.getEmail());
+
+        boolean isAuthenticated = userService.authenticateUser(loginRequestDto.getEmail(), loginRequestDto.getPassword());
+
+        if (isAuthenticated) {
+            log.info("User successfully logged in: {}", loginRequestDto.getEmail());
+            return ResponseEntity.ok(new UserMessageDto("Login Successful"));
+        } else {
+            log.warn("Login failed for user: {}", loginRequestDto.getEmail());
+            return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body(new UserMessageDto("Invalid credentials"));
+        }
+    }
+
 
     @GetMapping("/all-user")
     @Operation(summary = "(Admin only)")

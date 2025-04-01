@@ -6,7 +6,6 @@ import ir.dto.category.CategoryResponseDto;
 import ir.entity.Offer;
 import ir.entity.Review;
 import ir.entity.enums.OrderStatus;
-import jakarta.validation.constraints.*;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
@@ -38,40 +37,16 @@ import java.util.List;
 @JsonInclude(JsonInclude.Include.NON_NULL)
 public class OrderResponseDto {
 
-    @NotNull(message = "Order number cannot be null")
     private Long orderNumber;
-
-    @PositiveOrZero(message = "Final price must be zero or a positive value")
     private BigDecimal finalPrice;
-
-    @NotNull(message = "Order date cannot be null")
     private LocalDate orderDate;
-
-    @NotBlank(message = "Order description cannot be blank")
-    @Size(max = 500, message = "Order description must not exceed 500 characters")
     private String orderDescription;
-
-    @NotBlank(message = "Order name cannot be blank")
-    @Size(max = 100, message = "Order name must not exceed 100 characters")
     private String orderName;
-
-    @NotNull(message = "Execution date cannot be null")
-    @Future(message = "Execution date must be in the future")
     private LocalDate executionDate;
-
-    @NotBlank(message = "Order address cannot be blank")
-    @Size(max = 255, message = "Order address must not exceed 255 characters")
     private String orderAddress;
-
     private CategoryResponseDto categoryResponseDto;
-
-    @NotNull(message = "Order status cannot be null")
     private OrderStatus status;
-
-    @Size(min = 1, message = "Offers list must not be empty")
     private List<Offer> offers;
-
     private Review review;
-
     private BigDecimal offerCustomerPrice;
 }
