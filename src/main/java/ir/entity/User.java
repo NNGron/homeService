@@ -64,12 +64,4 @@ public abstract class User extends BaseEntity {
     @Enumerated(EnumType.STRING)
     @Column(name = "role")
     private Role role;
-
-//    @Column(name = "registration_date", nullable = false, updatable = false)
-//    private LocalDateTime registrationDate;
-//
-//    @PrePersist
-//    protected void onCreate() {
-//        this.registrationDate = LocalDateTime.now();
-//    }
 }

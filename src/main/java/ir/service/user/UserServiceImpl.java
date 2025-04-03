@@ -110,7 +110,6 @@ public class UserServiceImpl implements UserService {
         expert.setCategories(categoryList);
         expert.setStatus(UserStatus.NEW);
         expert.setRole(Role.USER);
-        // expert.setRegistrationDate(LocalDateTime.now());
 
         User savedExpert = userRepository.save(expert);
         log.info("Expert entity saved successfully: {}", savedExpert);
@@ -135,7 +134,6 @@ public class UserServiceImpl implements UserService {
         customer.setAddress(userRequestDto.getAddress());
         customer.setStatus(UserStatus.NEW);
         customer.setRole(Role.USER);
-        // customer.setRegistrationDate(LocalDateTime.now());
 
         customer = userRepository.save(customer);
         log.info("Customer entity saved successfully: {}", customer);
@@ -153,7 +151,6 @@ public class UserServiceImpl implements UserService {
         admin.setEmail(userRequestDto.getEmail());
         admin.setAddress(userRequestDto.getAddress());
         admin.setRole(Role.ADMIN);
-        // admin.setRegistrationDate(LocalDateTime.now());
 
         admin = userRepository.save(admin);
         log.info("Admin entity saved successfully: {}", admin);
@@ -209,7 +206,6 @@ public class UserServiceImpl implements UserService {
         }
     }
 
-
     /**
      * Retrieves a paginated list of users, excluding those with the ADMIN role.
      *
@@ -255,13 +251,11 @@ public class UserServiceImpl implements UserService {
         }
 
         User user = optionalUser.get();
-        // بررسی وضعیت کاربر (باید تأیید شده باشد)
         if (user.getStatus().equals(UserStatus.NEW)) {
             log.error("User with email {} is not approved", email);
             throw new CustomException("User should be approved", ErrorCode.USER_STATUS_NOT_APPROVED.getCode());
         }
 
-        // بررسی اینکه کاربر از نوع Expert هست یا نه
         if (!(user instanceof Expert)) {
             log.error("User with email {} is not an expert", email);
             throw new CustomException("User is not an expert", ErrorCode.NOT_FOUND.getCode());
@@ -271,7 +265,6 @@ public class UserServiceImpl implements UserService {
         List<Category> shouldBeRemoveCategoryList = categoryService.findSubCategoriesByNames(categoryNames);
         List<Category> categories = expert.getCategories();
 
-        // حذف دسته‌بندی‌های مشخص شده از لیست
         categories.removeAll(shouldBeRemoveCategoryList);
         expert.setCategories(categories);
 
@@ -623,6 +616,11 @@ public class UserServiceImpl implements UserService {
                 .orElseThrow(() -> new CustomException(
                         "User not found with provided email and password",
                         ErrorCode.NOT_FOUND.getCode()));
+
+        if (user.getStatus() == UserStatus.DELETED) {
+            log.error("User with email {} is deleted and cannot be updated", email);
+            throw new CustomException("User is deleted and cannot be updated", ErrorCode.UNAUTHORIZED.getCode());
+        }
 
         log.info("Updating user details for email: {}", email);
         user.setFirstName(userUpdateRequestDto.getFirstName());
