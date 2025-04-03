@@ -1,6 +1,6 @@
 package ir.service.order;
 
-import ir.convert.order.OrderResponse.OrderEntityToOrderResponseDtoConvertor;
+import ir.convert.order.order_response.OrderEntityToOrderResponseDtoConvertor;
 import ir.dto.order.OrderRequestDto;
 import ir.dto.order.OrderResponseDto;
 import ir.entity.*;
@@ -365,6 +365,7 @@ public class OrderServiceImpl implements OrderService {
                     ErrorCode.UNPROCESSABLE_ENTITY.getCode());
         }
 
+        assert order != null;
         if (!order.getCustomer().equals(customer)) {
             log.error("Unauthorized attempt to update order with ID: {} by customer with email: {}", orderId, email);
             throw new CustomException("This order does not belong to the customer", ErrorCode.UNAUTHORIZED.getCode());

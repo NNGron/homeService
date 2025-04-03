@@ -11,11 +11,11 @@ import jakarta.validation.constraints.NotNull;
 import jakarta.validation.constraints.Size;
 import lombok.*;
 
-@EqualsAndHashCode(callSuper = true)
 @Getter
 @Setter
 @NoArgsConstructor
 @AllArgsConstructor
+@EqualsAndHashCode(callSuper = true)
 @Entity
 public class Review extends BaseEntity {
 
@@ -40,5 +40,4 @@ public class Review extends BaseEntity {
     @NotNull(message = "Expert must not be null")
     @ManyToOne
     private Expert expert;
-
 }

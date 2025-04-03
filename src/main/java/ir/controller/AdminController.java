@@ -2,17 +2,20 @@ package ir.controller;
 
 import io.swagger.v3.oas.annotations.Operation;
 import ir.service.user.UserService;
-import lombok.AllArgsConstructor;
+import jakarta.validation.Valid;
+import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.ResponseEntity;
+import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
 
-@RestController
-@RequestMapping("/api/admin")
-@AllArgsConstructor
 @Slf4j
+@RequiredArgsConstructor
+@Validated
+@RestController
+@RequestMapping("/v1/admin")
 public class AdminController {
 
     private final UserService userService;
@@ -31,9 +34,9 @@ public class AdminController {
     public ResponseEntity<String> addSubcategoriesToExpert(@RequestParam String adminEmail,
                                                            @RequestParam String adminPassword,
                                                            @RequestParam String expertEmail,
-                                                           @RequestBody List<String> subCategoryNames) {
-
+                                                           @Valid @RequestBody List<String> subCategoryNames) {
         log.info("Admin with email {} is attempting to add subcategories to expert with email {}", adminEmail, expertEmail);
+
         userService.authenticateAdmin(adminEmail, adminPassword);
         userService.addExpertToCategoriesByAdmin(expertEmail, subCategoryNames);
 

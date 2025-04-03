@@ -290,3 +290,114 @@ body.bg-spring {
     color: #721c24;
     border: 1px solid #f5c6cb;
 }
+
+#defaultCategories {
+    display: flex;
+    flex-direction: column; /* مرتب‌سازی عمودی */
+    align-items: center; /* دسته‌بندی‌ها در مرکز صفحه */
+    text-align: center; /* متن چپ‌چین */
+    gap: 10px; /* فاصله بین دسته‌بندی‌ها */
+    margin: 20px auto; /* فاصله اطراف */
+}
+
+#defaultCategories div {
+    width: 80%; /* عرض مناسب برای هر دسته */
+}
+
+#newCategoryContainer {
+    display: flex;
+    flex-direction: column; /* مرتب‌سازی عمودی */
+    align-items: center; /* وسط‌چین کردن کادر ورودی */
+    margin-top: 20px; /* فاصله از لیست دسته‌بندی‌ها */
+}
+
+#newCategoryName {
+    width: 50%; /* عرض کادر 50 درصد صفحه */
+    margin: 0 auto; /* وسط‌چین شدن کادر */
+}
+
+#addCategoryBtn {
+    margin-top: 10px; /* فاصله دکمه از کادر ورودی */
+}
+
+.half-width {
+    width: 50%; /* تنظیم عرض به ۵۰ درصد */
+    margin: 0 auto; /* مرکز چین کردن کادر ورودی */
+    display: block; /* اطمینان از اینکه کادر به صورت بلوکی است */
+}
+
+/* Style for Category Cards */
+.card {
+    background-color: #ffffff;
+    border-radius: 10px;
+    box-shadow: 0px 4px 8px rgba(0, 0, 0, 0.1); /* Light shadow for distinction */
+}
+
+.card:hover {
+    transform: scale(1.05);
+    box-shadow: 0 8px 16px rgba(0, 0, 0, 0.2);
+}
+
+.card-title {
+    font-size: 1.5rem;
+    font-weight: bold;
+    color: #007bff; /* Highlight "Main Category" */
+}
+
+.card-text {
+    font-size: 1rem;
+    margin-bottom: 0.5rem;
+}
+
+.text-main {
+    color: #007bff; /* Consistent primary color */
+}
+
+/* Spacing for Cards */
+#categoriesContainer {
+    display: flex;
+    flex-direction: column; /* Aligns cards vertically */
+    align-items: center; /* Centers the cards horizontally on the page */
+    gap: 20px; /* Adds space between each card */
+}
+
+.col-md-4 {
+    max-width: 300px; /* Standard width for each card */
+}
+
+.row {
+    display: flex;
+    justify-content: center; /* Center the columns horizontally */
+    gap: 20px; /* Space between columns */
+}
+
+.col-md-6 {
+    background-color: #f8f9fa; /* Light background for distinction */
+    border: 1px solid #dee2e6;
+    border-radius: 10px;
+    padding: 20px;
+    max-height: 400px; /* Limit height */
+    overflow-y: auto; /* Scroll if overflow */
+}
+
+.card-body {
+    text-align: left;
+}
+
+.card-subtitle {
+    font-size: 1.25rem;
+    font-weight: normal;
+    color: #343a40; /* Regular text color for names */
+}
+
+.text-main {
+    color: #007bff;
+    font-weight: bold;
+    margin-bottom: 10px;
+}
+
+.list-item {
+    font-size: 1rem;
+    margin-bottom: 10px;
+}
+

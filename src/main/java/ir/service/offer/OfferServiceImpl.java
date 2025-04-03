@@ -5,7 +5,7 @@ import ir.dto.offer.OfferResponseDto;
 import ir.entity.Offer;
 import ir.exception.CustomException;
 import ir.exception.ErrorCode;
-import ir.repository.offer.OfferRepository;
+import ir.repository.OfferRepository;
 import lombok.AllArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.data.domain.Pageable;

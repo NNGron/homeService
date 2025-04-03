@@ -7,7 +7,7 @@
 	},
 	"item": [
 		{
-			"name": "01-create-main-category(admin)",
+          "name": "add-admin",
 			"request": {
 				"method": "POST",
 				"header": [
@@ -22,7 +22,47 @@
 				],
 				"body": {
 					"mode": "raw",
-					"raw": "{\r\n  \"name\": \"دکوراسیون ساختمان\"\r\n}\r\n{\r\n  \"name\": \"تاسسیات ساختمان\"\r\n}\r\n{\r\n  \"name\": \"وسایل نقلیه\"\r\n}\r\n{\r\n  \"name\": \"اسباب کشی و باربری\"\r\n}\r\n{\r\n  \"name\": \"لوازم خانگی\"\r\n}\r\n{\r\n  \"name\": \"نظافت و بهداشت\"\r\n}\r\n",
+                  "raw": "{\n  \"userName\": \"admin1\",\n  \"password\": \"admin123\",\n  \"firstName\": \"admin1\",\n  \"lastName\": \"admin1\",\n  \"email\": \"admin1@yahoo.com\",\n  \"address\": \"Tehran\",\n  \"userType\": \"ADMIN\"\n}",
+                  "options": {
+                    "raw": {
+                      "language": "json"
+                    }
+                  }
+                },
+              "url": {
+                "raw": "http://localhost:8080/v1/users/signup",
+                "protocol": "http",
+                "host": [
+                  "localhost"
+                ],
+                "port": "8080",
+                "path": [
+                  "v1",
+                  "users",
+                  "signup"
+                ]
+              },
+              "description": "Generated from cURL: curl -X 'POST' \\\n  'http://localhost:8080/v1/users/signup' \\\n  -H 'accept: */*' \\\n  -H 'Content-Type: application/json' \\\n  -d '{\n  \"userName\": \"admin1\",\n  \"password\": \"admin123\",\n  \"firstName\": \"admin1\",\n  \"lastName\": \"admin1\",\n  \"email\": \"admin1@yahoo.com\",\n  \"address\": \"tehran\",\n  \"userType\": \"SUPERVISOR\"\n}'"
+            },
+          "response": []
+        },
+      {
+        "name": "F-01-create-main-category(admin)",
+        "request": {
+          "method": "POST",
+          "header": [
+            {
+              "key": "accept",
+              "value": "*/*"
+            },
+            {
+              "key": "Content-Type",
+              "value": "application/json"
+            }
+          ],
+          "body": {
+            "mode": "raw",
+            "raw": "{\r\n  \"name\": \"دکوراسیون ساختمان\"\r\n}\r\n{\r\n  \"name\": \"For delete\"\r\n}\r\n{\r\n  \"name\": \"تاسسیات ساختمان\"\r\n}\r\n{\r\n  \"name\": \"وسایل نقلیه\"\r\n}\r\n{\r\n  \"name\": \"اسباب کشی و باربری\"\r\n}\r\n{\r\n  \"name\": \"لوازم خانگی\"\r\n}\r\n{\r\n  \"name\": \"نظافت و بهداشت\"\r\n}\r\n",
 					"options": {
 						"raw": {
 							"language": "json"
@@ -47,7 +87,7 @@
 			"response": []
 		},
 		{
-			"name": "02-create-sub-category(admin)",
+          "name": "F-02-create-sub-category(admin)",
 			"request": {
 				"method": "POST",
 				"header": [
@@ -62,7 +102,7 @@
 				],
 				"body": {
 					"mode": "raw",
-					"raw": "{\r\n  \"name\": \"طراح\",\r\n  \"description\": \"طراحی فضاهای داخلی با سبک‌های مدرن و کلاسیک\",\r\n  \"basePrice\": 1000,\r\n  \"parentName\": \"دکوراسیون ساختمان\"\r\n}\r\n{\r\n  \"name\": \"لوله‌کشی آب و گاز\",\r\n  \"description\": \"نصب و تعمیر سیستم‌های لوله‌کشی ساختمان\",\r\n  \"basePrice\": 800,\r\n  \"parentName\": \"تاسسیات ساختمان\"\r\n}\r\n{\r\n  \"name\": \"تعمیر خودرو\",\r\n  \"description\": \"ارائه خدمات تخصصی تعمیر و نگهداری خودرو\",\r\n  \"basePrice\": 1200,\r\n  \"parentName\": \"وسایل نقلیه\"\r\n}\r\n{\r\n  \"name\": \"بسته‌بندی اثاثیه\",\r\n  \"description\": \"خدمات بسته‌بندی حرفه‌ای برای اثاثیه منزل\",\r\n  \"basePrice\": 500,\r\n  \"parentName\": \"اسباب کشی و باربری\"\r\n}\r\n{\r\n  \"name\": \"ماشین لباسشویی\",\r\n  \"description\": \"سرویس و تعمیر انواع ماشین لباسشویی\",\r\n  \"basePrice\": 700,\r\n  \"parentName\": \"لوازم خانگی\"\r\n}\r\n{\r\n  \"name\": \"نظافت منازل\",\r\n  \"description\": \"نظافت کامل و تخصصی منازل\",\r\n  \"basePrice\": 300,\r\n  \"parentName\": \"نظافت و بهداشت\"\r\n}\r\n",
+                  "raw": "{\r\n  \"name\": \"Designer\",\r\n  \"description\": \"Designing interiors with modern and classic styles\",\r\n  \"basePrice\": 1000,\r\n  \"parentName\": \"دکوراسیون ساختمان\"\r\n}\r\n{\r\n  \"name\": \"For delete\",\r\n  \"description\": \"Installation and repair of building plumbing systems\",\r\n  \"basePrice\": 800,\r\n  \"parentName\": \"دکوراسیون ساختمان\"\r\n}\r\n{\r\n  \"name\": \"For update\",\r\n  \"description\": \"Providing professional car repair and maintenance services\",\r\n  \"basePrice\": 1200,\r\n  \"parentName\": \"دکوراسیون ساختمان\"\r\n}\r\n{\r\n  \"name\": \"For add to expert\",\r\n  \"description\": \"Professional packing services for home furniture\",\r\n  \"basePrice\": 500,\r\n  \"parentName\": \"دکوراسیون ساختمان\"\r\n}\r\n{\r\n  \"name\": \"For add-categories-to-expert(admin)\",\r\n  \"description\": \"Service and repair of all types of washing machines\",\r\n  \"basePrice\": 700,\r\n  \"parentName\": \"دکوراسیون ساختمان\"\r\n}\r\n{\r\n  \"name\": \"Home Cleaning\",\r\n  \"description\": \"Complete and professional home cleaning\",\r\n  \"basePrice\": 300,\r\n  \"parentName\": \"Cleaning and Hygiene\"\r\n}'",
 					"options": {
 						"raw": {
 							"language": "json"
@@ -87,7 +127,7 @@
 			"response": []
 		},
 		{
-			"name": "03-customer-signup",
+          "name": "F-03-customer-signup",
 			"request": {
 				"method": "POST",
 				"header": [
@@ -102,7 +142,7 @@
 				],
 				"body": {
 					"mode": "raw",
-					"raw": "{\n  \"userName\": \"customer1\",\n  \"password\": \"customer1\",\n  \"firstName\": \"customer1\",\n  \"lastName\": \"customer1\",\n  \"email\": \"customer1@yahoo.com\",\n  \"address\": \"customer1\",\n  \"credit\": 0,\n  \"userType\": \"CUSTOMER\"\n}",
+                  "raw": "{\n  \"userName\": \"customer1\",\n  \"password\": \"customer1\",\n  \"firstName\": \"customer1\",\n  \"lastName\": \"customer1\",\n  \"email\": \"customer1@yahoo.com\",\n  \"address\": \"customer1\",\n  \"credit\": 0,\n  \"userType\": \"CUSTOMER\"\n}\n{\n  \"userName\": \"DEleteCustomer\",\n  \"password\": \"DEleteCustomer1\",\n  \"firstName\": \"DEleteCustomer\",\n  \"lastName\": \"DEleteCustomer\",\n  \"email\": \"DEleteCustomer@yahoo.com\",\n  \"address\": \"DEleteCustomer\",\n  \"credit\": 0,\n  \"userType\": \"CUSTOMER\"\n}",
 					"options": {
 						"raw": {
 							"language": "json"
@@ -127,7 +167,7 @@
 			"response": []
 		},
 		{
-			"name": "04-expert-signup",
+          "name": "F-04-expert-signup",
 			"request": {
 				"method": "POST",
 				"header": [
@@ -142,7 +182,7 @@
 				],
 				"body": {
 					"mode": "raw",
-					"raw": "{\n  \"userName\": \"expert1\",\n  \"password\": \"expert11\",\n  \"firstName\": \"expert1\",\n  \"lastName\": \"expert1\",\n  \"email\": \"expert1@yahoo.com\",\n  \"address\": \"expert1\",\n  \"credit\": 0,\n  \"subCategoryNames\": [\n    \"طراح\"\n  ],\n  \"userType\": \"EXPERT\"\n}",
+                  "raw": "{\n  \"userName\": \"expert1\",\n  \"password\": \"expert11\",\n  \"firstName\": \"expert1\",\n  \"lastName\": \"expert1\",\n  \"email\": \"expert1@yahoo.com\",\n  \"address\": \"expert1\",\n  \"subCategoryNames\": [\n    \"Designer\"\n  ],\n  \"userType\": \"EXPERT\"\n}\n{\n  \"userName\": \"expert3\",\n  \"password\": \"expert33\",\n  \"firstName\": \"expert3\",\n  \"lastName\": \"expert3\",\n  \"email\": \"expert3@yahoo.com\",\n  \"address\": \"expert3\",\n  \"subCategoryNames\": [\n    \"لوله‌کشی آب و گاز\"\n  ],\n  \"userType\": \"EXPERT\"\n}\n{\n  \"userName\": \"expert4\",\n  \"password\": \"expert44\",\n  \"firstName\": \"expert4\",\n  \"lastName\": \"expert4\",\n  \"email\": \"expert4@yahoo.com\",\n  \"address\": \"expert4\",\n  \"subCategoryNames\": [\n    \"تعمیر خودرو\"\n  ],\n  \"userType\": \"EXPERT\"\n}",
 					"options": {
 						"raw": {
 							"language": "json"
@@ -167,7 +207,7 @@
 			"response": []
 		},
 		{
-			"name": "05-all-users(admin)",
+          "name": "F-05-all-users(admin)",
 			"request": {
 				"method": "GET",
 				"header": [
@@ -212,7 +252,7 @@
 			"response": []
 		},
 		{
-			"name": "06-approve-user(admin)",
+          "name": "F-06-approve-user(admin)",
 			"request": {
 				"method": "PUT",
 				"header": [
@@ -260,7 +300,7 @@
 				],
 				"body": {
 					"mode": "raw",
-					"raw": "{\r\n  \"offerCustomerPrice\": 100,\r\n  \"orderDate\": \"2025-03-30\",\r\n  \"orderDescription\": \"for update and delete\",\r\n  \"executionDate\": \"2025-03-30\",\r\n  \"orderAddress\": \"karaj\",\r\n  \"subCategoryName\": \"طراح\"\r\n}",
+                  "raw": "{\r\n  \"offerCustomerPrice\": 3000,\r\n  \"orderDate\": \"2025-04-03\",\r\n  \"orderDescription\": \"Designe my room\",\r\n  \"executionDate\": \"2025-04-03\",\r\n  \"orderAddress\": \"karaj\",\r\n  \"subCategoryName\": \"Designer\"\r\n}\r\n{\r\n  \"offerCustomerPrice\": 1000,\r\n  \"orderDate\": \"2025-04-03\",\r\n  \"orderDescription\": \"For Delete Order\",\r\n  \"executionDate\": \"2025-04-03\",\r\n  \"orderAddress\": \"karaj\",\r\n  \"subCategoryName\": \"Designer\"\r\n}\r\n{\r\n  \"offerCustomerPrice\": 1000,\r\n  \"orderDate\": \"2025-04-03\",\r\n  \"orderDescription\": \"For Update Order\",\r\n  \"executionDate\": \"2025-04-03\",\r\n  \"orderAddress\": \"karaj\",\r\n  \"subCategoryName\": \"Designer\"\r\n}",
 					"options": {
 						"raw": {
 							"language": "json"
@@ -295,7 +335,7 @@
 			"response": []
 		},
 		{
-			"name": "08-show-order(expert)",
+          "name": "08-show-orders(expert)",
 			"request": {
 				"method": "GET",
 				"header": [
@@ -347,7 +387,7 @@
 				],
 				"body": {
 					"mode": "raw",
-					"raw": "{\n  \"orderNumber\": 1,\n  \"proposedPrice\": 6666,\n  \"estimatedTime\": 2,\n  \"startTime\": \"20:50\"\n}",
+                  "raw": "{\n  \"orderNumber\": 1,\n  \"proposedPrice\": 160,\n  \"estimatedTime\": 16,\n  \"startTime\": \"16:00\"\n}\n{\n  \"orderNumber\": 1,\n  \"proposedPrice\": 6666,\n  \"estimatedTime\": 66,\n  \"startTime\": \"16:00\"\n}\n{\n  \"orderNumber\": 1,\n  \"proposedPrice\": 5555,\n  \"estimatedTime\": 5,\n  \"startTime\": \"15:00\"\n}",
 					"options": {
 						"raw": {
 							"language": "json"
@@ -382,7 +422,7 @@
 			"response": []
 		},
 		{
-			"name": "10-show-offer(customer)",
+          "name": "10-show-sorting(desc-asc)-offer-by(proposedPrice)(expert.rating)(customer)",
 			"request": {
 				"method": "GET",
 				"header": [
@@ -392,7 +432,7 @@
 					}
 				],
 				"url": {
-					"raw": "http://localhost:8080/v1/customers/order-offers?email=customer1@yahoo.com&password=customer1",
+                  "raw": "http://localhost:8080/v1/customers/order-offers?email=customer1@yahoo.com&password=customer1&pageNumber=0&size=10&sortBy=proposedPrice&sortDir=asc",
 					"protocol": "http",
 					"host": [
 						"localhost"
@@ -411,10 +451,26 @@
 						{
 							"key": "password",
 							"value": "customer1"
+                        },
+                      {
+                        "key": "pageNumber",
+                        "value": "0"
+                      },
+                      {
+                        "key": "size",
+                        "value": "10"
+                      },
+                      {
+                        "key": "sortBy",
+                        "value": "proposedPrice"
+                      },
+                      {
+                        "key": "sortDir",
+                        "value": "asc"
 						}
 					]
 				},
-				"description": "Generated from cURL: curl -X 'GET' \\\r\n  'http://localhost:8080/v1/customers/order-offers?email=customer1%40yahoo.com&password=123' \\\r\n  -H 'accept: */*'"
+              "description": "Generated from cURL: curl -X 'GET' \\\n  'http://localhost:8080/v1/customers/order-offers?email=customer1%40yahoo.com&password=customer1&pageNumber=0&size=10&sortBy=proposedPrice&sortDir=desc' \\\n  -H 'accept: */*'"
 			},
 			"response": []
 		},
@@ -429,7 +485,7 @@
 					}
 				],
 				"url": {
-					"raw": "http://localhost:8080/v1/orders/update-status?email=customer1@yahoo.com&password=customer1&status=WAITING_FOR_EXPERT_ARRIVAL&orderNumber=1&offerNumber=3",
+                  "raw": "http://localhost:8080/v1/orders/update-status?email=customer1@yahoo.com&password=customer1&status=WAITING_FOR_EXPERT_ARRIVAL&orderNumber=1&offerNumber=1",
 					"protocol": "http",
 					"host": [
 						"localhost"
@@ -459,7 +515,7 @@
 						},
 						{
 							"key": "offerNumber",
-							"value": "3"
+                          "value": "1"
 						}
 					]
 				},
@@ -576,7 +632,7 @@
 					}
 				],
 				"url": {
-					"raw": "http://localhost:8080/v1/credits/add-balance?email=customer1@yahoo.com&balance=50000",
+                  "raw": "http://localhost:8080/v1/credits/add-balance?email=customer1@yahoo.com&balance=5000",
 					"protocol": "http",
 					"host": [
 						"localhost"
@@ -594,7 +650,7 @@
 						},
 						{
 							"key": "balance",
-							"value": "50000"
+                          "value": "5000"
 						}
 					]
 				},
@@ -782,7 +838,7 @@
 					}
 				],
 				"url": {
-					"raw": "http://localhost:8080/v1/users/update-password?email=customer1@yahoo.com&oldPassword=customer11&newPassword=customer1",
+                  "raw": "http://localhost:8080/v1/users/update-password?email=customer1@yahoo.com&oldPassword=customer1&newPassword=customer11",
 					"protocol": "http",
 					"host": [
 						"localhost"
@@ -800,11 +856,11 @@
 						},
 						{
 							"key": "oldPassword",
+                          "value": "customer1"
+                        },
+                      {
+                        "key": "newPassword",
 							"value": "customer11"
-						},
-						{
-							"key": "newPassword",
-							"value": "customer1"
 						}
 					]
 				},
@@ -829,7 +885,7 @@
 							"key": "image",
 							"contentType": "image/jpeg",
 							"type": "file",
-							"src": []
+                          "src": "postman-cloud:///1f009a0c-3016-4030-bb74-93f73a333d3d"
 						}
 					]
 				},
@@ -872,7 +928,7 @@
 				],
 				"body": {
 					"mode": "raw",
-					"raw": "{\n  \"firstName\": \"expert1\",\n  \"lastName\": \"expert1\",\n  \"email\": \"expert1@yahoo.com\",\n  \"categoryNames\": [\n    \"طراح\"\n  ]\n}",
+                  "raw": "{\n  \"userType\": \"EXPERT\",\n  \"rating\": 4,\n  \"firstName\": \"expert1\",\n  \"lastName\": \"expert1\",\n  \"email\": \"expert1@yahoo.com\",\n  \"categoryNames\": [\n    \"Designer\"\n  ]\n}",
 					"options": {
 						"raw": {
 							"language": "json"
@@ -1006,7 +1062,7 @@
 			"response": []
 		},
 		{
-			"name": "26-all-categories-with-pagination-sorting",
+          "name": "F-26-all-categories-with-pagination-sorting",
 			"request": {
 				"method": "GET",
 				"header": [
@@ -1016,7 +1072,7 @@
 					}
 				],
 				"url": {
-					"raw": "http://localhost:8080/v1/categories/pageable-sort?pageNumber=0&size=10&sortBy=name&sortDir=asc",
+                  "raw": "http://localhost:8080/v1/categories/pageable-sort?pageNumber=0&size=10&sortBy=basePrice&sortDir=asc",
 					"protocol": "http",
 					"host": [
 						"localhost"
@@ -1038,7 +1094,7 @@
 						},
 						{
 							"key": "sortBy",
-							"value": "name"
+                          "value": "basePrice"
 						},
 						{
 							"key": "sortDir",
@@ -1098,7 +1154,7 @@
 					}
 				],
 				"url": {
-					"raw": "http://localhost:8080/v1/users/expert-category?email=expert1@yahoo.com&categoryNames=طراح",
+                  "raw": "http://localhost:8080/v1/users/expert-category?email=DeleteExpert@yahoo.com&categoryNames=For add to expert",
 					"protocol": "http",
 					"host": [
 						"localhost"
@@ -1112,11 +1168,11 @@
 					"query": [
 						{
 							"key": "email",
-							"value": "expert1@yahoo.com"
+                          "value": "DeleteExpert@yahoo.com"
 						},
 						{
 							"key": "categoryNames",
-							"value": "طراح"
+                          "value": "For add to expert"
 						}
 					]
 				},
@@ -1135,7 +1191,7 @@
 					}
 				],
 				"url": {
-					"raw": "http://localhost:8080/v1/users/add-expert-categories?email=expert1@yahoo.com&categoryNames=طراح",
+                  "raw": "http://localhost:8080/v1/users/add-expert-categories?email=DeleteExpert@yahoo.com&categoryNames=For add to expert",
 					"protocol": "http",
 					"host": [
 						"localhost"
@@ -1149,11 +1205,11 @@
 					"query": [
 						{
 							"key": "email",
-							"value": "expert1@yahoo.com"
+                          "value": "DeleteExpert@yahoo.com"
 						},
 						{
 							"key": "categoryNames",
-							"value": "طراح"
+                          "value": "For add to expert"
 						}
 					]
 				},
@@ -1162,7 +1218,61 @@
 			"response": []
 		},
 		{
-			"name": "30-update-order(customer)",
+          "name": "30-add-categories-to-expert(admin)",
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "accept",
+                "value": "*/*"
+              },
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "[\n  \"add-categories-to-expert(admin)\"\n]",
+              "options": {
+                "raw": {
+                  "language": "json"
+                }
+              }
+            },
+            "url": {
+              "raw": "http://localhost:8080/v1/admin/add-expert-subcategories?adminEmail=admin1@yahoo.com&adminPassword=admin123&expertEmail=expert1@yahoo.com",
+              "protocol": "http",
+              "host": [
+                "localhost"
+              ],
+              "port": "8080",
+              "path": [
+                "v1",
+                "admin",
+                "add-expert-subcategories"
+              ],
+              "query": [
+                {
+                  "key": "adminEmail",
+                  "value": "admin1@yahoo.com"
+                },
+                {
+                  "key": "adminPassword",
+                  "value": "admin123"
+                },
+                {
+                  "key": "expertEmail",
+                  "value": "expert1@yahoo.com"
+                }
+              ]
+            },
+            "description": "Generated from cURL: curl -X 'POST' \\\n  'http://localhost:8080/v1/admin/add-expert-subcategories?adminEmail=admin1%40yahoo.com&adminPassword=admin123&expertEmail=expert1%40yahoo.com' \\\n  -H 'accept: */*' \\\n  -H 'Content-Type: application/json' \\\n  -d '[\n  \"Painter\"\n]'"
+          },
+          "response": []
+        },
+      {
+        "name": "31-update-order(customer)",
 			"request": {
 				"method": "PUT",
 				"header": [
@@ -1177,7 +1287,7 @@
 				],
 				"body": {
 					"mode": "raw",
-					"raw": "{\n  \"offerCustomerPrice\": 6000,\n  \"orderDate\": \"2025-03-30\",\n  \"orderDescription\": \"update\",\n  \"executionDate\": \"2025-03-30\",\n  \"orderAddress\": \"teh\",\n  \"subCategoryName\": \"طراحی\"\n}",
+                  "raw": "{\n  \"offerCustomerPrice\": 6000,\n  \"orderDate\": \"2025-04-04\",\n  \"orderDescription\": \"update\",\n  \"executionDate\": \"2025-04-04\",\n  \"orderAddress\": \"teh\",\n  \"subCategoryName\": \"طراحی\"\n}",
 					"options": {
 						"raw": {
 							"language": "json"
@@ -1185,7 +1295,7 @@
 					}
 				},
 				"url": {
-					"raw": "http://localhost:8080/v1/orders/update-order?email=customer1@yahoo.com&password=customer1&orderId=1",
+                  "raw": "http://localhost:8080/v1/orders/update-order?email=customer1@yahoo.com&password=customer1&orderId=3",
 					"protocol": "http",
 					"host": [
 						"localhost"
@@ -1207,7 +1317,7 @@
 						},
 						{
 							"key": "orderId",
-							"value": "1"
+                          "value": "3"
 						}
 					]
 				},
@@ -1216,7 +1326,7 @@
 			"response": []
 		},
 		{
-			"name": "31-delete-order(customer)",
+          "name": "32-delete-order(customer)",
 			"request": {
 				"method": "DELETE",
 				"header": [
@@ -1257,7 +1367,44 @@
 			"response": []
 		},
 		{
-			"name": "32-update-offer(expert)",
+          "name": "33-order-history(customer)",
+          "request": {
+            "method": "GET",
+            "header": [
+              {
+                "key": "accept",
+                "value": "*/*"
+              }
+            ],
+            "url": {
+              "raw": "http://localhost:8080/v1/orders/orders_history?email=customer1@yahoo.com&password=customer1",
+              "protocol": "http",
+              "host": [
+                "localhost"
+              ],
+              "port": "8080",
+              "path": [
+                "v1",
+                "orders",
+                "orders_history"
+              ],
+              "query": [
+                {
+                  "key": "email",
+                  "value": "customer1@yahoo.com"
+                },
+                {
+                  "key": "password",
+                  "value": "customer1"
+                }
+              ]
+            },
+            "description": "Generated from cURL: curl -X 'GET' \\\n  'http://localhost:8080/v1/orders/orders_history?email=expert%40yahoo.com&password=expert1' \\\n  -H 'accept: */*'"
+          },
+          "response": []
+        },
+      {
+        "name": "34-update-offer(expert)",
 			"request": {
 				"method": "PUT",
 				"header": [
@@ -1280,7 +1427,7 @@
 					}
 				},
 				"url": {
-					"raw": "http://localhost:8080/v1/experts/update-offer?email=expert1@yahoo.com&password=expert11&offerNumber=3",
+                  "raw": "http://localhost:8080/v1/experts/update-offer?email=expert1@yahoo.com&password=expert11&offerNumber=1",
 					"protocol": "http",
 					"host": [
 						"localhost"
@@ -1302,7 +1449,7 @@
 						},
 						{
 							"key": "offerNumber",
-							"value": "3"
+                          "value": "1"
 						}
 					]
 				},
@@ -1311,7 +1458,7 @@
 			"response": []
 		},
 		{
-			"name": "33-delete-offer(expert)",
+          "name": "35-delete-offer(expert)",
 			"request": {
 				"method": "DELETE",
 				"header": [
@@ -1321,7 +1468,7 @@
 					}
 				],
 				"url": {
-					"raw": "http://localhost:8080/v1/experts/delete-offer?email=expert1@yahoo.com&password=expert11&offerNumber=3",
+                  "raw": "http://localhost:8080/v1/experts/delete-offer?email=expert1@yahoo.com&password=expert11&offerNumber=1",
 					"protocol": "http",
 					"host": [
 						"localhost"
@@ -1343,7 +1490,7 @@
 						},
 						{
 							"key": "offerNumber",
-							"value": "3"
+                          "value": "1"
 						}
 					]
 				},
@@ -1352,7 +1499,57 @@
 			"response": []
 		},
 		{
-			"name": "34-delete-user(customer & expert)",
+          "name": "36-update-users(customer & expert)",
+          "request": {
+            "method": "PUT",
+            "header": [
+              {
+                "key": "accept",
+                "value": "*/*"
+              },
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"userName\": \"customer33\",\n  \"firstName\": \"customer33\",\n  \"lastName\": \"customer33\",\n  \"address\": \"customer33\"\n}\n{\n  \"userName\": \"customer1\",\n  \"firstName\": \"customer1\",\n  \"lastName\": \"customer1\",\n  \"address\": \"customer1\"\n}",
+              "options": {
+                "raw": {
+                  "language": "json"
+                }
+              }
+            },
+            "url": {
+              "raw": "http://localhost:8080/v1/users/update_users?email=customer1@yahoo.com&password=customer1",
+              "protocol": "http",
+              "host": [
+                "localhost"
+              ],
+              "port": "8080",
+              "path": [
+                "v1",
+                "users",
+                "update_users"
+              ],
+              "query": [
+                {
+                  "key": "email",
+                  "value": "customer1@yahoo.com"
+                },
+                {
+                  "key": "password",
+                  "value": "customer1"
+                }
+              ]
+            },
+            "description": "Generated from cURL: curl -X 'PUT' \\\n  'http://localhost:8080/v1/users/update_users?email=customer1%40yahoo.com&password=customer1' \\\n  -H 'accept: */*' \\\n  -H 'Content-Type: application/json' \\\n  -d '{\n  \"userName\": \"customer33\",\n  \"firstName\": \"customer33\",\n  \"lastName\": \"customer33\",\n  \"address\": \"customer33\"\n}'"
+          },
+          "response": []
+        },
+      {
+        "name": "37-delete-user(customer & expert)",
 			"request": {
 				"method": "DELETE",
 				"header": [
@@ -1362,7 +1559,7 @@
 					}
 				],
 				"url": {
-					"raw": "http://localhost:8080/v1/users/delete-user?email=customer1%40yahoo.com&password=customer1",
+                  "raw": "http://localhost:8080/v1/users/delete-user?email=DEleteCustomer@yahoo.com&password=DEleteCustomer1",
 					"protocol": "http",
 					"host": [
 						"localhost"
@@ -1376,11 +1573,11 @@
 					"query": [
 						{
 							"key": "email",
-							"value": "customer1%40yahoo.com"
+                          "value": "DEleteCustomer@yahoo.com"
 						},
 						{
 							"key": "password",
-							"value": "customer1"
+                          "value": "DEleteCustomer1"
 						}
 					]
 				},
@@ -1389,9 +1586,75 @@
 			"response": []
 		},
 		{
-			"name": "35-update-users(customer & expert)",
+          "name": "F-delete-sub-category",
 			"request": {
-				"method": "PUT",
+              "method": "DELETE",
+              "header": [
+                {
+                  "key": "accept",
+                  "value": "*/*"
+                }
+              ],
+              "url": {
+                "raw": "http://localhost:8080/v1/categories/delete-sub-category?subCategoryName=For delete",
+                "protocol": "http",
+                "host": [
+                  "localhost"
+                ],
+                "port": "8080",
+                "path": [
+                  "v1",
+                  "categories",
+                  "delete-sub-category"
+                ],
+                "query": [
+                  {
+                    "key": "subCategoryName",
+                    "value": "For delete"
+                  }
+                ]
+              },
+              "description": "Generated from cURL: curl -X 'DELETE' \\\n  'http://localhost:8080/v1/categories/delete-sub-category?subCategoryName=Home%20Cleaning' \\\n  -H 'accept: */*'"
+            },
+          "response": []
+        },
+      {
+        "name": "F-delete-main-category",
+        "request": {
+          "method": "DELETE",
+          "header": [
+            {
+              "key": "accept",
+              "value": "*/*"
+            }
+          ],
+          "url": {
+            "raw": "http://localhost:8080/v1/categories/delete-main-category?mainCategoryName=For delete",
+            "protocol": "http",
+            "host": [
+              "localhost"
+            ],
+            "port": "8080",
+            "path": [
+              "v1",
+              "categories",
+              "delete-main-category"
+            ],
+            "query": [
+              {
+                "key": "mainCategoryName",
+                "value": "For delete"
+              }
+            ]
+          },
+          "description": "Generated from cURL: curl -X 'DELETE' \\\n  'http://localhost:8080/v1/categories/delete-main-category?mainCategoryName=Cleaning%20and%20Hygiene' \\\n  -H 'accept: */*'"
+        },
+        "response": []
+      },
+      {
+        "name": "login-user",
+        "request": {
+          "method": "POST",
 				"header": [
 					{
 						"key": "accept",
@@ -1404,7 +1667,7 @@
 				],
 				"body": {
 					"mode": "raw",
-					"raw": "{\n  \"userName\": \"customer33\",\n  \"firstName\": \"customer33\",\n  \"lastName\": \"customer33\",\n  \"address\": \"customer33\"\n}",
+                  "raw": "{\n  \"email\": \"customer1@yahoo.com\",\n  \"password\": \"customer1\"\n}",
 					"options": {
 						"raw": {
 							"language": "json"
@@ -1412,7 +1675,7 @@
 					}
 				},
 				"url": {
-					"raw": "http://localhost:8080/v1/users/update_users?email=customer1@yahoo.com&password=customer1",
+                  "raw": "http://localhost:8080/v1/users/login",
 					"protocol": "http",
 					"host": [
 						"localhost"
@@ -1421,20 +1684,10 @@
 					"path": [
 						"v1",
 						"users",
-						"update_users"
-					],
-					"query": [
-						{
-							"key": "email",
-							"value": "customer1@yahoo.com"
-						},
-						{
-							"key": "password",
-							"value": "customer1"
-						}
+                      "login"
 					]
 				},
-				"description": "Generated from cURL: curl -X 'PUT' \\\n  'http://localhost:8080/v1/users/update_users?email=customer1%40yahoo.com&password=customer1' \\\n  -H 'accept: */*' \\\n  -H 'Content-Type: application/json' \\\n  -d '{\n  \"userName\": \"customer33\",\n  \"firstName\": \"customer33\",\n  \"lastName\": \"customer33\",\n  \"address\": \"customer33\"\n}'"
+          "description": "Generated from cURL: curl -X 'POST' \\\n  'http://localhost:8080/v1/users/login' \\\n  -H 'accept: */*' \\\n  -H 'Content-Type: application/json' \\\n  -d '{\n  \"email\": \"customer111@yahoo.com\",\n  \"password\": \"customer111\"\n}'"
 			},
 			"response": []
 		}

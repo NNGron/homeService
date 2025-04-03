@@ -12,11 +12,11 @@ import lombok.*;
 
 import java.math.BigDecimal;
 
-@EqualsAndHashCode(callSuper = true)
 @Getter
 @Setter
 @NoArgsConstructor
 @AllArgsConstructor
+@EqualsAndHashCode(callSuper = true)
 @Entity
 public class Offer extends BaseEntity {
 

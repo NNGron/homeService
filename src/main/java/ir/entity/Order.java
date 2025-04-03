@@ -10,11 +10,11 @@ import java.math.BigDecimal;
 import java.time.LocalDate;
 import java.util.List;
 
-@EqualsAndHashCode(callSuper = true)
 @Getter
 @Setter
 @NoArgsConstructor
 @AllArgsConstructor
+@EqualsAndHashCode(callSuper = true)
 @Entity
 @Table(name = "orders")
 public class Order extends BaseEntity {
@@ -64,5 +64,4 @@ public class Order extends BaseEntity {
     @PositiveOrZero(message = "Offer Customer Price must be a positive value or zero")
     @Column(name = "offer_customer_price")
     private BigDecimal offerCustomerPrice;
-
 }

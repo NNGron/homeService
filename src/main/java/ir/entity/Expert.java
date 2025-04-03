@@ -8,11 +8,11 @@ import lombok.*;
 
 import java.util.List;
 
-@EqualsAndHashCode(callSuper = true)
 @Getter
 @Setter
 @NoArgsConstructor
 @AllArgsConstructor
+@EqualsAndHashCode(callSuper = true)
 @DiscriminatorValue("EXPERT")
 @Entity
 public class Expert extends User {
@@ -36,5 +36,4 @@ public class Expert extends User {
             inverseJoinColumns = @JoinColumn(name = "category_id")
     )
     private List<Category> categories;
-
 }

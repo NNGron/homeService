@@ -22,7 +22,6 @@
     <button class="back-btn" onclick="navigateBack()">Back</button>
     <button class="forward-btn" onclick="navigateForward()">Forward</button>
 </div>
-
 <script>
     // عملکرد دکمه Back
     function navigateBack() {
@@ -44,7 +43,7 @@
     <div class="mt-5">
         <button class="btn btn-lg btn-main mx-2" onclick="navigateToAddMainCategory()">Add Main Category</button>
         <button class="btn btn-lg btn-main mx-2" onclick="navigateToAddSubcategory()">Add Subcategory</button>
-        <button class="btn btn-lg btn-main mx-2" onclick="navigateToEditCategory()">Edit Category</button>
+        <button class="btn btn-lg btn-main mx-2" onclick="navigateToCategoryDisplay()">Show Categories</button>
         <button class="btn btn-lg btn-main mx-2" onclick="navigateToDeleteCategory()">Delete Category</button>
     </div>
 </div>
@@ -59,8 +58,8 @@
         window.location.href = "/add-subcategory.html"; // انتقال به افزودن زیر‌دسته
     }
 
-    function navigateToEditCategory() {
-        window.location.href = "/edit-category.html"; // انتقال به ویرایش دسته‌بندی
+    function navigateToCategoryDisplay() {
+        window.location.href = "http://localhost:8080/display-categories.html";
     }
 
     function navigateToDeleteCategory() {

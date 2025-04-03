@@ -13,7 +13,7 @@
     <a href="/index.html">Home</a>
     <a href="/role-selection.html">Role Selection</a>
     <a href="/admin-actions.html">Admin Actions</a>
-    <a class="current-page" href="/admin-dashboard.html">Dashboard</a>
+    <a class="current-page" href="/admin-dashboard.html">Admin Dashboard</a>
 </div>
 
 <!-- Buttons: Back and Forward -->
@@ -40,7 +40,7 @@
 
     <div class="mt-5">
         <button class="btn btn-lg btn-main mx-2" onclick="navigateToCategoryManagement()">Manage Categories</button>
-        <button class="btn btn-lg btn-main mx-2" onclick="navigateToUserApproval()">Approve Users</button>
+        <button class="btn btn-lg btn-main mx-2" onclick="navigateToApproveUser()">Approve Users</button>
         <button class="btn btn-lg btn-main mx-2" onclick="navigateToGetUsers()">Get All Users</button>
         <button class="btn btn-lg btn-main mx-2" onclick="navigateToAddBalance()">Add Balance to Customer</button>
     </div>
@@ -51,8 +51,8 @@
         window.location.href = "/category-management.html";
     }
 
-    function navigateToUserApproval() {
-        window.location.href = "/user-approval.html";
+    function navigateToApproveUser() {
+        window.location.href = "admin-approve-user.html"; // Redirects to the admin approval page
     }
 
     function navigateToGetUsers() {

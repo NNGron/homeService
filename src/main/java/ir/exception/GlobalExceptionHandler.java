@@ -46,7 +46,7 @@ import org.springframework.web.method.annotation.MethodArgumentTypeMismatchExcep
  * @see MethodArgumentTypeMismatchException
  */
 @Slf4j
-//@RestControllerAdvice
+@RestControllerAdvice
 public class GlobalExceptionHandler {
 
     /**
@@ -61,7 +61,7 @@ public class GlobalExceptionHandler {
      *
      * @param ex The {@link CustomException} instance that contains the error message and error code.
      * @return A {@link ResponseEntity} containing an {@link ErrorResponseDto} with the error details.
-     *         The HTTP status code in the response is 200 (OK).
+     * The HTTP status code in the response is 200 (OK).
      * @see CustomException
      * @see ErrorResponseDto
      */
@@ -70,6 +70,7 @@ public class GlobalExceptionHandler {
         log.error("Custom exception occurred: {}", ex.getMessage());
         ErrorResponseDto responseDto = new ErrorResponseDto(ex.getErrorCode(), ex.getMessage());
         return new ResponseEntity<>(responseDto, HttpStatus.OK);
+//        return new ResponseEntity<>(responseDto, HttpStatus.BAD_REQUEST);  // حالا کد 400 برمی‌گردد
     }
 
     /**
@@ -90,7 +91,7 @@ public class GlobalExceptionHandler {
      *
      * @param ex The {@link Exception} that caused the error.
      * @return A {@link ResponseEntity} containing the {@link ErrorResponseDto} with the error details.
-     *         The HTTP status in the response is 200 (OK) for consistency, despite the error.
+     * The HTTP status in the response is 200 (OK) for consistency, despite the error.
      * @see ErrorResponseDto
      */
     @ExceptionHandler(Exception.class)

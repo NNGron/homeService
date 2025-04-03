@@ -8,33 +8,6 @@ import lombok.Setter;
 import java.math.BigDecimal;
 import java.util.List;
 
-/**
- * Data Transfer Object (DTO) for capturing user details during user registration or updates.
- *
- * <p>This class serves as a container for user input, with validation annotations to
- * enforce input integrity and ensure valid data is captured at the application level.</p>
- *
- * <p>Fields:</p>
- * <ul>
- *     <li><b>userName</b>: The username of the user. Must not be blank.</li>
- *     <li><b>password</b>: The user's password. Must be at least 8 characters long and include at least one letter and one number.</li>
- *     <li><b>firstName</b>: The user's first name. Must not be blank.</li>
- *     <li><b>lastName</b>: The user's last name. Must not be blank.</li>
- *     <li><b>email</b>: The user's email address. Must be a valid email format and not blank.</li>
- *     <li><b>address</b>: The user's address. Must not exceed 255 characters and must not be blank.</li>
- *     <li><b>credit</b>: The user's credit balance. Must be a non-negative value.</li>
- *     <li><b>subCategoryNames</b>: A list of sub-category names associated with the user (e.g., expert skills). Must not be empty, and each entry must be valid.</li>
- *     <li><b>userType</b>: The type of user (e.g., CUSTOMER or EXPERT). Must not be null.</li>
- * </ul>
- *
- * <p>This DTO is primarily used for:</p>
- * <ul>
- *     <li>User creation requests.</li>
- *     <li>User updates where all details need to be validated and processed.</li>
- * </ul>
- *
- * @see UserType
- */
 @Setter
 @Getter
 public class UserRequestDto {

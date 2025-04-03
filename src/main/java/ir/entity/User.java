@@ -9,10 +9,8 @@ import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
-import org.hibernate.annotations.SQLDelete;
 
 import java.math.BigDecimal;
-import java.time.LocalDateTime;
 
 @Getter
 @Setter
@@ -22,7 +20,7 @@ import java.time.LocalDateTime;
 @DiscriminatorColumn(name = "user_type", discriminatorType = DiscriminatorType.STRING)
 @Entity
 @Table(name = "users")
-@SQLDelete(sql = "UPDATE users SET status = 'DELETED' WHERE id = ?")
+//@SQLDelete(sql = "UPDATE users SET status = 'DELETED' WHERE id = ?")
 public abstract class User extends BaseEntity {
 
     @NotBlank(message = "Username must not be blank")
@@ -67,11 +65,11 @@ public abstract class User extends BaseEntity {
     @Column(name = "role")
     private Role role;
 
-    @Column(name = "registration_date", nullable = false, updatable = false)
-    private LocalDateTime registrationDate;
-
-    @PrePersist
-    protected void onCreate() {
-        this.registrationDate = LocalDateTime.now();
-    }
+//    @Column(name = "registration_date", nullable = false, updatable = false)
+//    private LocalDateTime registrationDate;
+//
+//    @PrePersist
+//    protected void onCreate() {
+//        this.registrationDate = LocalDateTime.now();
+//    }
 }

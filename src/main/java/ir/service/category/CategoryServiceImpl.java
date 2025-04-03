@@ -1,7 +1,7 @@
 package ir.service.category;
 
-import ir.convert.category.categoryRequest.CategoryRequestDtoToCategoryEntityConvertor;
-import ir.convert.category.categoryResponse.CategoryEntityToCategoryResponseDtoConvertor;
+import ir.convert.category.category_request.CategoryRequestDtoToCategoryEntityConvertor;
+import ir.convert.category.category_response.CategoryEntityToCategoryResponseDtoConvertor;
 import ir.dto.category.CategoryResponseDto;
 import ir.dto.category.MainCategoryRequestDto;
 import ir.dto.category.SubCategoryRequestDto;
@@ -222,5 +222,47 @@ public class CategoryServiceImpl implements CategoryService {
     public Optional<Category> findMainCategoryByName(String name) {
         log.info("Searching for main category with name: {}", name);
         return categoryRepository.findCategoryByNameAndParentCategoryIsNull(name);
+    }
+
+    @Override
+    public String deleteSubCategory(String subCategoryName) {
+        Optional<Category> subCategory = categoryRepository.findCategoryByNameAndParentCategoryIsNotNull(subCategoryName);
+
+        if (subCategory.isEmpty()) {
+            log.warn("Sub-category '{}' not found in the database.", subCategoryName);
+            throw new CustomException("Sub-category '" + subCategoryName + "' does not exist.", ErrorCode.NOT_FOUND.getCode());
+        }
+
+        categoryRepository.delete(subCategory.get());
+        log.info("Successfully deleted sub-category: {}", subCategoryName);
+        return "Sub-category '" + subCategoryName + "' has been deleted successfully.";
+    }
+
+
+    @Override
+    public String deleteMainCategory(String mainCategoryName) {
+        Optional<Category> mainCategory = categoryRepository.findCategoryByNameAndParentCategoryIsNull(mainCategoryName);
+
+        if (mainCategory.isPresent()) {
+            Category category = mainCategory.get();
+
+            List<Category> subCategories = categoryRepository.findCategoriesByParentCategoryIsNotNull()
+                    .stream()
+                    .filter(sub -> sub.getParentCategory() != null && sub.getParentCategory().getName().equals(mainCategoryName))
+                    .toList();
+
+            if (!subCategories.isEmpty()) {
+                StringBuilder message = new StringBuilder(
+                        "Main category '" + mainCategoryName + "' has the following sub-categories: ");
+                subCategories.forEach(sub -> message.append(sub.getName()).append(", "));
+                message.append("Please delete these sub-categories first.");
+                throw new CustomException(message.toString(), ErrorCode.INVALID_DATA.getCode());
+            }
+
+            categoryRepository.delete(category);
+            return "Main category '" + mainCategoryName + "' has been deleted successfully.";
+        } else {
+            throw new CustomException("Main category '" + mainCategoryName + "' does not exist.", ErrorCode.NOT_FOUND.getCode());
+        }
     }
 }

@@ -16,12 +16,6 @@ import org.springframework.web.bind.annotation.RestController;
 
 import java.util.List;
 
-/**
- * Handles customer-related API requests.
- *
- * <p>This controller provides endpoints for customer operations, such as
- * retrieving offers linked to customer orders.</p>
- */
 @RestController
 @AllArgsConstructor
 @Slf4j

@@ -6,29 +6,14 @@ import jakarta.validation.constraints.NotNull;
 import jakarta.validation.constraints.Size;
 import lombok.Getter;
 import lombok.Setter;
+import org.springframework.validation.annotation.Validated;
 
 import java.math.BigDecimal;
 import java.time.LocalDate;
 
-/**
- * Data Transfer Object (DTO) for capturing order request details.
- *
- * <p>This class is used to collect order-related information such as pricing, dates,
- * descriptions, and addresses. Validation annotations ensure that input data
- * complies with the required business rules and constraints.</p>
- *
- * <p>Fields:</p>
- * <ul>
- *     <li><b>offerCustomerPrice</b>: The price offered by the customer, must be non-negative.</li>
- *     <li><b>orderDate</b>: The date and time when the order is placed, must not be null.</li>
- *     <li><b>orderDescription</b>: A detailed description of the order, must not be blank or exceed 500 characters.</li>
- *     <li><b>executionDate</b>: The scheduled execution date and time for the order, must not be in the past.</li>
- *     <li><b>orderAddress</b>: The address where the order will be executed, must not exceed 255 characters if provided.</li>
- *     <li><b>subCategoryName</b>: The subcategory associated with the order, must not exceed 100 characters if provided.</li>
- * </ul>
- */
 @Getter
 @Setter
+@Validated
 public class OrderRequestDto {
 
     private BigDecimal offerCustomerPrice;

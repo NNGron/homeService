@@ -98,4 +98,8 @@ public interface CategoryService {
      * @return An {@link Optional} containing the {@link Category} if found, or empty if not.
      */
     Optional<Category> findMainCategoryByName(String name);
+
+    String deleteSubCategory(String subCategoryName);
+
+    String deleteMainCategory(String mainCategoryName);
 }

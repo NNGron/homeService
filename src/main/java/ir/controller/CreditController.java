@@ -4,25 +4,30 @@ import io.swagger.v3.oas.annotations.Operation;
 import ir.dto.credit.CreditResponseDto;
 import ir.dto.user.UserResponseDto;
 import ir.service.user.UserService;
-import lombok.AllArgsConstructor;
+import lombok.RequiredArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
 import java.math.BigDecimal;
 
+@Slf4j
 @RestController
-@AllArgsConstructor
+@RequiredArgsConstructor
 @RequestMapping("/v1/credits")
 public class CreditController {
 
     private final UserService userService;
 
-
     @PutMapping("/add-balance")
     @Operation(summary = "(Admin only)")
     public ResponseEntity<UserResponseDto> addBalance(@RequestParam String email,
                                                       @RequestParam BigDecimal balance) {
+        log.info("Received request to add balance for customer with email: {}", email);
+        log.debug("Balance to be added: {}", balance);
         UserResponseDto responseDto = userService.addCreditToCustomer(email, balance);
+
+        log.info("Successfully added balance for customer with email: {}", email);
         return ResponseEntity.ok(responseDto);
     }
 
@@ -30,7 +35,11 @@ public class CreditController {
     @Operation(summary = "(Customer & Expert only)")
     public ResponseEntity<CreditResponseDto> showCredit(@RequestParam String email,
                                                         @RequestParam String password) {
+        log.info("Received request to show credit for user with email: {}", email);
+        log.debug("Authenticating user with provided email and password.");
         CreditResponseDto creditResponseDto = userService.getBalance(email, password);
+
+        log.info("Successfully retrieved credit for user with email: {}", email);
         return ResponseEntity.ok(creditResponseDto);
     }
 

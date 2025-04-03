@@ -16,7 +16,6 @@ import java.util.List;
 @Builder
 @JsonInclude(JsonInclude.Include.NON_NULL)
 public class UserResponseDto {
-    private LocalDateTime registrationDate;
     private String userName;
     private String firstName;
     private String lastName;
@@ -25,4 +24,6 @@ public class UserResponseDto {
     private UserStatus status;
     private Double averageRate;
     private List<CategoryResponseDto> categories;
+    private LocalDateTime createdAt;
+    private LocalDateTime updatedAt;
 }

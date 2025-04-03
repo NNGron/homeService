@@ -25,7 +25,6 @@ import org.springframework.web.multipart.MultipartFile;
 
 import java.io.IOException;
 import java.math.BigDecimal;
-import java.time.LocalDateTime;
 import java.util.List;
 import java.util.Optional;
 
@@ -77,7 +76,6 @@ public class UserServiceImpl implements UserService {
         }
 
         UserResponseDto responseDto = userEntityToUserResponseDtoConvertor.apply(user);
-        responseDto.setRegistrationDate(user.getRegistrationDate());
         log.info("User successfully saved and converted to response DTO: {}", responseDto);
         return responseDto;
     }
@@ -91,7 +89,6 @@ public class UserServiceImpl implements UserService {
      */
     private User createExpert(UserRequestDto userRequestDto) {
 
-        User user;
         log.info("User type EXPERT detected. Creating an Expert entity.");
         Expert expert = new Expert();
         expert.setFirstName(userRequestDto.getFirstName());
@@ -113,12 +110,11 @@ public class UserServiceImpl implements UserService {
         expert.setCategories(categoryList);
         expert.setStatus(UserStatus.NEW);
         expert.setRole(Role.USER);
-        expert.setRegistrationDate(LocalDateTime.now());
+        // expert.setRegistrationDate(LocalDateTime.now());
 
-        Expert savedExpert = userRepository.save(expert);
+        User savedExpert = userRepository.save(expert);
         log.info("Expert entity saved successfully: {}", savedExpert);
-        user = savedExpert;
-        return user;
+        return savedExpert;
     }
 
     /**
@@ -130,7 +126,7 @@ public class UserServiceImpl implements UserService {
      */
     private User createCustomer(UserRequestDto userRequestDto) {
         log.info("User type CUSTOMER detected. Creating a Customer entity.");
-        Customer customer = new Customer();
+        User customer = new Customer();
         customer.setFirstName(userRequestDto.getFirstName());
         customer.setLastName(userRequestDto.getLastName());
         customer.setUserName(userRequestDto.getUserName());
@@ -139,7 +135,7 @@ public class UserServiceImpl implements UserService {
         customer.setAddress(userRequestDto.getAddress());
         customer.setStatus(UserStatus.NEW);
         customer.setRole(Role.USER);
-        customer.setRegistrationDate(LocalDateTime.now());
+        // customer.setRegistrationDate(LocalDateTime.now());
 
         customer = userRepository.save(customer);
         log.info("Customer entity saved successfully: {}", customer);
@@ -157,7 +153,7 @@ public class UserServiceImpl implements UserService {
         admin.setEmail(userRequestDto.getEmail());
         admin.setAddress(userRequestDto.getAddress());
         admin.setRole(Role.ADMIN);
-        admin.setRegistrationDate(LocalDateTime.now());
+        // admin.setRegistrationDate(LocalDateTime.now());
 
         admin = userRepository.save(admin);
         log.info("Admin entity saved successfully: {}", admin);
@@ -225,7 +221,7 @@ public class UserServiceImpl implements UserService {
      * @throws CustomException if no users are found
      */
     @Override
-    public List<UserResponseDto> getALlUsers(Pageable pageable) {
+    public List<UserResponseDto> getAllUsers(Pageable pageable) {
         log.info("Fetching all non-admin users with pagination details: {}", pageable);
 
         Page<User> userPage = userRepository.findByStatusNotAndRoleNot(UserStatus.DELETED, Role.ADMIN, pageable);
@@ -252,27 +248,35 @@ public class UserServiceImpl implements UserService {
         log.info("Removing categories from user with email: {}", email);
 
         Optional<User> optionalUser = userRepository.findByEmail(email);
-        List<Category> shouldBeRemoveCategoryList = categoryService.findSubCategoriesByNames(categoryNames);
-        Expert expert = null;
-        if (optionalUser.isPresent()) {
-            User user = optionalUser.get();
-            if (user.getStatus().equals(UserStatus.NEW)) {
-                log.error("User with email {} is not approved", email);
-                throw new CustomException("User should be approved", ErrorCode.USER_STATUS_NOT_APPROVED.getCode());
-            }
-            if (user instanceof Expert) {
-                expert = (Expert) user;
-                if (user.getStatus().equals(UserStatus.NEW)) {
-                    throw new CustomException("User should be approved", ErrorCode.USER_STATUS_NOT_APPROVED.getCode());
-                }
-                List<Category> categories = expert.getCategories();
-                categories.removeAll(shouldBeRemoveCategoryList);
-                expert.setCategories(categories);
-                expert = userRepository.save(expert);
-            }
+
+        if (optionalUser.isEmpty()) {
+            log.error("User with email {} not found", email);
+            throw new CustomException("User not found", ErrorCode.NOT_FOUND.getCode());
         }
-        UserResponseDto responseDto = userEntityToUserResponseDtoConvertor.apply(expert);
-        return responseDto;
+
+        User user = optionalUser.get();
+        // بررسی وضعیت کاربر (باید تأیید شده باشد)
+        if (user.getStatus().equals(UserStatus.NEW)) {
+            log.error("User with email {} is not approved", email);
+            throw new CustomException("User should be approved", ErrorCode.USER_STATUS_NOT_APPROVED.getCode());
+        }
+
+        // بررسی اینکه کاربر از نوع Expert هست یا نه
+        if (!(user instanceof Expert)) {
+            log.error("User with email {} is not an expert", email);
+            throw new CustomException("User is not an expert", ErrorCode.NOT_FOUND.getCode());
+        }
+
+        Expert expert = (Expert) user;
+        List<Category> shouldBeRemoveCategoryList = categoryService.findSubCategoriesByNames(categoryNames);
+        List<Category> categories = expert.getCategories();
+
+        // حذف دسته‌بندی‌های مشخص شده از لیست
+        categories.removeAll(shouldBeRemoveCategoryList);
+        expert.setCategories(categories);
+
+        expert = userRepository.save(expert);
+        return userEntityToUserResponseDtoConvertor.apply(expert);
     }
 
     /**
@@ -388,25 +392,25 @@ public class UserServiceImpl implements UserService {
      */
     @Override
     public UserMessageDto updateStatusUser(String email) {
-        log.info("Updating status for user with email: {}", email);
+        log.info("Starting updateStatusUser for email: {}", email);
 
-        Optional<User> byEmail = userRepository.findByEmail(email);
-        if (byEmail.isPresent()) {
-            User user = byEmail.get();
-            if (user.getStatus().equals(UserStatus.DELETED)) {
-                throw new CustomException("User already deleted", ErrorCode.NOT_FOUND.getCode());
-            }
-            if (user.getStatus().equals(UserStatus.NEW)) {
-                user.setStatus(UserStatus.APPROVED);
-            }
+        // Fetch user from database
+        User user = userRepository.findByEmail(email)
+                .orElseThrow(() -> new CustomException("User not found", ErrorCode.NOT_FOUND.getCode()));
+        log.debug("Fetched user: {}", user);
+
+        // Update status logic
+        if (user.getStatus() == UserStatus.NEW) {
+            user.setStatus(UserStatus.APPROVED);
             userRepository.save(user);
+            log.info("Updated status to APPROVED for user: {}", user.getEmail());
         } else {
-            log.error("User with email {} not found", email);
-            throw new CustomException("User not found", ErrorCode.NOT_FOUND.getCode());
+            log.warn("User status is not NEW. Current status: {}", user.getStatus());
         }
-        log.info("Status updated to APPROVED for user with email: {}", email);
-        return new UserMessageDto("Status updated is approved");
+
+        return new UserMessageDto("User approved successfully");
     }
+
 
     /**
      * Uploads a profile image for the authenticated expert.

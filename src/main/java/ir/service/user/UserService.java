@@ -40,7 +40,7 @@ public interface UserService {
      * @param pageable the pagination configuration specifying page number, size, and sorting
      * @return a list of {@link UserResponseDto} representing all users
      */
-    List<UserResponseDto> getALlUsers(Pageable pageable);
+    List<UserResponseDto> getAllUsers(Pageable pageable);
 
     /**
      * Removes specific categories from an expert's associated categories.

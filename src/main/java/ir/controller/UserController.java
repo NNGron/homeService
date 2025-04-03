@@ -12,6 +12,7 @@ import org.springframework.data.domain.Sort;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
+import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
 
@@ -19,6 +20,7 @@ import java.util.List;
 
 @Slf4j
 @RestController
+@Validated
 @AllArgsConstructor
 @RequestMapping("/v1/users")
 public class UserController {
@@ -27,7 +29,12 @@ public class UserController {
     @PostMapping("/signup")
     @Operation(summary = "(Customer & Expert)")
     public ResponseEntity<UserResponseDto> saveUser(@Valid @RequestBody UserRequestDto requestDto) {
+        log.info("Received request to sign up a new user: {}", requestDto.getEmail());
+        log.debug("User details for signup: {}", requestDto);
+
         UserResponseDto responseDto = userService.saveUser(requestDto);
+
+        log.info("Successfully signed up user: {}", requestDto.getEmail());
         return ResponseEntity.ok(responseDto);
     }
 
@@ -35,6 +42,7 @@ public class UserController {
     @Operation(summary = "User Login")
     public ResponseEntity<UserMessageDto> loginUser(@Valid @RequestBody LoginRequestDto loginRequestDto) {
         log.info("Starting login process for user: {}", loginRequestDto.getEmail());
+        log.debug("Login request details: {}", loginRequestDto);
 
         boolean isAuthenticated = userService.authenticateUser(loginRequestDto.getEmail(), loginRequestDto.getPassword());
 
@@ -54,20 +62,30 @@ public class UserController {
                                                              @RequestParam(defaultValue = "10") int size,
                                                              @RequestParam(defaultValue = "firstName") String sortBy,
                                                              @RequestParam(defaultValue = "asc") String sortDir) {
+        log.info("Fetching all users with pagination - pageNumber: {}, pageSize: {}, sortBy: {}, sortDir: {}",
+                pageNumber, size, sortBy, sortDir);
 
         Sort.Direction direction =
                 sortDir.equalsIgnoreCase("desc") ? Sort.Direction.DESC : Sort.Direction.ASC;
         Pageable pageable = PageRequest.of(pageNumber, size, Sort.by(direction, sortBy));
 
-        List<UserResponseDto> aLldUsers = userService.getALlUsers(pageable);
-        return ResponseEntity.ok(aLldUsers);
+        List<UserResponseDto> allUsers = userService.getAllUsers(pageable);
+
+        log.info("Successfully fetched {} users.", allUsers.size());
+        return ResponseEntity.ok(allUsers);
     }
+
 
     @DeleteMapping("/expert-category")
     @Operation(summary = "(Admin & Expert)")
     public ResponseEntity<UserResponseDto> deleteExpertCategory(@RequestParam String email,
                                                                 @RequestParam List<String> categoryNames) {
+        log.info("Deleting categories from expert with email: {}", email);
+        log.debug("Categories to delete: {}", categoryNames);
+
         UserResponseDto userResponseDto = userService.deleteCategoryFromUser(email, categoryNames);
+
+        log.info("Successfully deleted categories for expert with email: {}", email);
         return ResponseEntity.ok(userResponseDto);
     }
 
@@ -75,7 +93,12 @@ public class UserController {
     @Operation(summary = "(Expert only)")
     public ResponseEntity<UserResponseDto> addExpertToCategories(@RequestParam String email,
                                                                  @RequestParam List<String> categoryNames) {
+        log.info("Adding categories to expert with email: {}", email);
+        log.debug("Categories to add: {}", categoryNames);
+
         UserResponseDto userResponseDto = userService.addExpertToCategories(email, categoryNames);
+
+        log.info("Successfully added categories for expert with email: {}", email);
         return ResponseEntity.ok(userResponseDto);
     }
 
@@ -84,14 +107,22 @@ public class UserController {
     public ResponseEntity<UserMessageDto> updatePassword(@RequestParam String email,
                                                          @RequestParam String oldPassword,
                                                          @RequestParam String newPassword) {
+        log.info("Updating password for user with email: {}", email);
+
         UserMessageDto userMessageDto = userService.updateUserPassword(email, oldPassword, newPassword);
+
+        log.info("Successfully updated password for user with email: {}", email);
         return ResponseEntity.ok(userMessageDto);
     }
 
     @PutMapping("/approve-user")
     @Operation(summary = "(Admin only)")
     public ResponseEntity<UserMessageDto> updateUserStatus(@RequestParam String email) {
+        log.info("Approving user with email: {}", email);
+
         UserMessageDto userMessageDto = userService.updateStatusUser(email);
+
+        log.info("Successfully approved user with email: {}", email);
         return ResponseEntity.ok(userMessageDto);
     }
 
@@ -102,12 +133,15 @@ public class UserController {
                                                                   @RequestParam(defaultValue = "10") int size,
                                                                   @RequestParam(defaultValue = "firstName") String sortBy,
                                                                   @RequestParam(defaultValue = "asc") String sortDir) {
+        log.info("Filtering users with criteria: {}", filterDto);
 
         Sort.Direction direction =
                 sortDir.equalsIgnoreCase("desc") ? Sort.Direction.DESC : Sort.Direction.ASC;
         Pageable pageable = PageRequest.of(pageNumber, size, Sort.by(direction, sortBy));
 
         List<UserResponseDto> userResponseDtos = userService.getFilteredUsers(filterDto, pageable);
+
+        log.info("Successfully filtered {} users.", userResponseDtos.size());
         return ResponseEntity.ok(userResponseDtos);
     }
 
@@ -115,7 +149,11 @@ public class UserController {
     @Operation(summary = "(Expert only)")
     public ResponseEntity<UserMessageDto> uploadImage(@RequestPart("image") MultipartFile image,
                                                        @RequestParam String email) {
+        log.info("Uploading image for user with email: {}", email);
+
         UserMessageDto userMessageDto = userService.uploadImage(email, image);// new
+
+        log.info("Successfully uploaded image for user with email: {}", email);
         return ResponseEntity.ok(userMessageDto);
     }
 
@@ -123,7 +161,11 @@ public class UserController {
     @Operation(summary = "(Customer or Expert)")
     public ResponseEntity<String> deleteUser(@RequestParam String email,
                                              @RequestParam String password) {
+        log.info("Deleting user with email: {}", email);
+
         userService.deleteUser(email, password);
+
+        log.info("Successfully deleted user with email: {}", email);
         return ResponseEntity.ok("User with email " + email + " has been successfully deleted.");
     }
 
@@ -132,8 +174,12 @@ public class UserController {
     public ResponseEntity<UserResponseDto> saveUser(@Valid @RequestBody UserUpdateRequestDto userUpdateRequestDto,
                                                     @RequestParam String email,
                                                     @RequestParam String password) {
+        log.info("Updating user with email: {}", email);
+        log.debug("Updated user details: {}", userUpdateRequestDto);
+
         UserResponseDto responseDto = userService.updateUser(userUpdateRequestDto, email, password);
+
+        log.info("Successfully updated user with email: {}", email);
         return ResponseEntity.ok(responseDto);
     }
 }
-

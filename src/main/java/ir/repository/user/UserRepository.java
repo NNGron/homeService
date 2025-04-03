@@ -20,3 +20,13 @@ public interface UserRepository extends JpaRepository<User, Long>, JpaSpecificat
 
     Page<User> findByStatusNotAndRoleNot(UserStatus status, Role role, Pageable pageable);
 }
+/*
+JpaRepository<User, Long>
+این واسط امکان انجام عملیات استاندارد CRUD (ایجاد، خواندن، به‌روزرسانی، حذف) روی موجودیت User را فراهم می‌کند.
+*/
+
+/*
+JpaSpecificationExecutor<User>
+این واسط برای انجام جستجوهای داینامیک (Dynamic Queries) با استفاده از Specification طراحی شده است.
+*/
+
