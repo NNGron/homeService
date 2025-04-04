@@ -90,7 +90,8 @@ public class CategoryController {
         log.info("Fetching categories with pagination and sorting - pageNumber: {}, pageSize: {}, sortBy: {}, sortDir: {}",
                 pageNumber, size, sortBy, sortDir);
 
-        Sort.Direction direction = sortDir.equalsIgnoreCase("desc") ? Sort.Direction.DESC : Sort.Direction.ASC;
+        Sort.Direction direction =
+                sortDir.equalsIgnoreCase("desc") ? Sort.Direction.DESC : Sort.Direction.ASC;
         Pageable pageable = PageRequest.of(pageNumber, size, Sort.by(direction, sortBy));
 
         List<CategoryResponseDto> categories = categoryService.findAll(pageable);

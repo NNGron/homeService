@@ -175,8 +175,10 @@ public class UserServiceImpl implements UserService {
         }
 
         if (!userRequestDto.getPassword().matches("^(?=.*[A-Za-z])(?=.*\\d)[A-Za-z\\d]{8,}$")) {
-            log.error("Validation failed: Password must contain at least one letter and one number. Email: {}", userRequestDto.getEmail());
-            throw new CustomException("Password must contain at least one letter and one number", ErrorCode.INVALID_EMAIL_OR_PASSWORD.getCode());
+            log.error("Validation failed: Password must contain at least one letter and one number. Email: {}",
+                    userRequestDto.getEmail());
+            throw new CustomException("Password must contain at least one letter and one number",
+                    ErrorCode.INVALID_EMAIL_OR_PASSWORD.getCode());
         }
 
         Optional<User> optionalUser = userRepository.findByEmailAndPassword(
@@ -397,11 +399,12 @@ public class UserServiceImpl implements UserService {
             user.setStatus(UserStatus.APPROVED);
             userRepository.save(user);
             log.info("Updated status to APPROVED for user: {}", user.getEmail());
+            return new UserMessageDto("User approved successfully");
         } else {
             log.warn("User status is not NEW. Current status: {}", user.getStatus());
         }
-
-        return new UserMessageDto("User approved successfully");
+        log.warn("User status is already approved. Current status: {}", user.getStatus());
+        return new UserMessageDto("User is already approved");
     }
 
 
@@ -540,7 +543,8 @@ public class UserServiceImpl implements UserService {
         User user = findByEmailAndPassword(email, password);
         if (user == null) {
             log.error("User not found with provided email: {}", email);
-            throw new CustomException("User not found with provided email and password", ErrorCode.NOT_FOUND.getCode());
+            throw new CustomException("User not found with provided email and password",
+                    ErrorCode.NOT_FOUND.getCode());
         }
         if (user.getStatus().equals(UserStatus.NEW)) {
             log.error("User with email {} is not approved", email);
@@ -693,7 +697,8 @@ public class UserServiceImpl implements UserService {
 
         if (!duplicates.isEmpty()) {
             log.error("Duplicate subcategories detected for expert with email {}: {}", expertEmail, duplicates);
-            throw new CustomException("Duplicate subcategories: " + duplicates, ErrorCode.DUPLICATE_CATEGORY.getCode());
+            throw new CustomException(
+                    "Duplicate subcategories: " + duplicates, ErrorCode.DUPLICATE_CATEGORY.getCode());
         }
 
         // Add new subcategories

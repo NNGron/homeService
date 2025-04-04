@@ -35,7 +35,8 @@ public class AdminController {
                                                            @RequestParam String adminPassword,
                                                            @RequestParam String expertEmail,
                                                            @Valid @RequestBody List<String> subCategoryNames) {
-        log.info("Admin with email {} is attempting to add subcategories to expert with email {}", adminEmail, expertEmail);
+        log.info("Admin with email {} is attempting to add subcategories to expert with email {}",
+                adminEmail, expertEmail);
 
         userService.authenticateAdmin(adminEmail, adminPassword);
         userService.addExpertToCategoriesByAdmin(expertEmail, subCategoryNames);

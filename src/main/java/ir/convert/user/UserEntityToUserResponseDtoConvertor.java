@@ -6,6 +6,7 @@ import ir.dto.user.UserResponseDto;
 import ir.entity.Category;
 import ir.entity.Expert;
 import ir.entity.User;
+import ir.entity.enums.UserType;
 import lombok.AllArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Component;
@@ -56,6 +57,7 @@ public class UserEntityToUserResponseDtoConvertor implements Function<User, User
                 .categories(categoryResponseDtos)
                 .createdAt(user.getCreatedAt())
                 .updatedAt(user.getUpdatedAt())
+                .userType(UserType.valueOf(user.getClass().getSimpleName().toUpperCase()))
                 .build();
     }
 

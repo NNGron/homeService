@@ -67,6 +67,16 @@ public class ExpertServiceImpl implements ExpertService {
                 log.error("Expert with email {} has been deleted.", email);
                 throw new CustomException("User already deleted", ErrorCode.NOT_FOUND.getCode());
             }
+            // Check if the expert has already made an offer for this order
+            boolean hasExistingOffer = order.getOffers().stream()
+                    .anyMatch(offer -> offer.getExpert().getId().equals(expert.getId()));
+            if (hasExistingOffer) {
+                log.warn("Expert with email {} has already made an offer for orderNumber {}",
+                        email, offerRequestDto.getOrderNumber());
+                throw new CustomException(
+                        "Expert has already made an offer for orderNumber " + offerRequestDto.getOrderNumber(),
+                        ErrorCode.DUPLICATE_OFFER.getCode());
+            }
             log.info("Creating new offer for order with ID: {}", offerRequestDto.getOrderNumber());
             Offer offer = new Offer();
             offer.setExpert(expert);
@@ -117,7 +127,8 @@ public class ExpertServiceImpl implements ExpertService {
             Offer offer = offerService.findOfferById(offerNumber);
             if (offer == null) {
                 log.error("Offer not found with ID: {}", offerNumber);
-                throw new CustomException("Offer not found with offer ID: " + offerNumber, ErrorCode.NOT_FOUND.getCode());
+                throw new CustomException(
+                        "Offer not found with offer ID: " + offerNumber, ErrorCode.NOT_FOUND.getCode());
             }
 
             if (offer.getOrder() != null && offer.getOrder().getStatus() != WAITING_FOR_EXPERT_SELECTION_BY_CUSTOMER) {
@@ -127,7 +138,8 @@ public class ExpertServiceImpl implements ExpertService {
             }
             if (!offer.getExpert().equals(expert)) {
                 log.error("Offer with ID: {} does not belong to expert with email: {}", offerNumber, email);
-                throw new CustomException("This offer does not belong to the expert", ErrorCode.UNAUTHORIZED.getCode());
+                throw new CustomException(
+                        "This offer does not belong to the expert", ErrorCode.UNAUTHORIZED.getCode());
             }
             log.info("Updating offer with ID: {}", offerNumber);
             offer.setProposedPrice(offerRequestDto.getProposedPrice());

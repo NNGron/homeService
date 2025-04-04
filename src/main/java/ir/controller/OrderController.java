@@ -50,7 +50,8 @@ public class OrderController {
         OrderResponseDto orderResponseDto =
                 orderService.updateOrderStatus(email, password, status, orderNumber, offerNumber);
 
-        log.info("Order status successfully updated for order number: {} by customer with email: {}", orderNumber, email);
+        log.info("Order status successfully updated for order number: {} by customer with email: {}",
+                orderNumber, email);
         return ResponseEntity.ok(orderResponseDto);
     }
 

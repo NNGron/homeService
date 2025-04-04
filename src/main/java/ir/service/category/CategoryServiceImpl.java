@@ -226,11 +226,13 @@ public class CategoryServiceImpl implements CategoryService {
 
     @Override
     public String deleteSubCategory(String subCategoryName) {
-        Optional<Category> subCategory = categoryRepository.findCategoryByNameAndParentCategoryIsNotNull(subCategoryName);
+        Optional<Category> subCategory =
+                categoryRepository.findCategoryByNameAndParentCategoryIsNotNull(subCategoryName);
 
         if (subCategory.isEmpty()) {
             log.warn("Sub-category '{}' not found in the database.", subCategoryName);
-            throw new CustomException("Sub-category '" + subCategoryName + "' does not exist.", ErrorCode.NOT_FOUND.getCode());
+            throw new CustomException(
+                    "Sub-category '" + subCategoryName + "' does not exist.", ErrorCode.NOT_FOUND.getCode());
         }
 
         categoryRepository.delete(subCategory.get());
@@ -241,14 +243,16 @@ public class CategoryServiceImpl implements CategoryService {
 
     @Override
     public String deleteMainCategory(String mainCategoryName) {
-        Optional<Category> mainCategory = categoryRepository.findCategoryByNameAndParentCategoryIsNull(mainCategoryName);
+        Optional<Category> mainCategory =
+                categoryRepository.findCategoryByNameAndParentCategoryIsNull(mainCategoryName);
 
         if (mainCategory.isPresent()) {
             Category category = mainCategory.get();
 
             List<Category> subCategories = categoryRepository.findCategoriesByParentCategoryIsNotNull()
                     .stream()
-                    .filter(sub -> sub.getParentCategory() != null && sub.getParentCategory().getName().equals(mainCategoryName))
+                    .filter(sub -> sub.getParentCategory() != null &&
+                            sub.getParentCategory().getName().equals(mainCategoryName))
                     .toList();
 
             if (!subCategories.isEmpty()) {
@@ -262,7 +266,8 @@ public class CategoryServiceImpl implements CategoryService {
             categoryRepository.delete(category);
             return "Main category '" + mainCategoryName + "' has been deleted successfully.";
         } else {
-            throw new CustomException("Main category '" + mainCategoryName + "' does not exist.", ErrorCode.NOT_FOUND.getCode());
+            throw new CustomException("Main category '" + mainCategoryName + "' does not exist.",
+                    ErrorCode.NOT_FOUND.getCode());
         }
     }
 }

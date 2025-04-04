@@ -65,7 +65,24 @@ public class OrderServiceImpl implements OrderService {
                 log.error("User with email {} is not approved to create orders.", email);
                 throw new CustomException("User should be approved", ErrorCode.USER_STATUS_NOT_APPROVED.getCode());
             }
-            log.info("User is valid. Creating a new order for customer with email: {}", email);
+            log.info("User is valid. Checking for duplicate orders for customer with email: {}", email);
+
+            List<Order> existingOrders = orderRepository.findAllByCustomerEmail(email);
+            boolean isDuplicate = existingOrders.stream().anyMatch(existingOrder ->
+                    existingOrder.getOrderDescription().equals(orderDto.getOrderDescription()) &&
+                            existingOrder.getOrderDate().equals(orderDto.getOrderDate()) &&
+                            existingOrder.getExecutionDate().equals(orderDto.getExecutionDate()) &&
+                            existingOrder.getOrderAddress().equals(orderDto.getOrderAddress()) &&
+                            existingOrder.getCategory().getName().equals(orderDto.getSubCategoryName()) &&
+                            existingOrder.getOfferCustomerPrice().compareTo(orderDto.getOfferCustomerPrice()) == 0
+            );
+
+            if (isDuplicate) {
+                log.warn("Duplicate order found for customer with email: {}", email);
+                throw new CustomException("Your order is a duplicate", ErrorCode.DUPLICATE_ORDER.getCode());
+            }
+
+            log.info("No duplicate order found. Creating a new order for customer with email: {}", email);
 
             Order order = new Order();
             order.setCustomer(customer);
@@ -80,7 +97,7 @@ public class OrderServiceImpl implements OrderService {
             log.info("Validating subcategory with name: {}", subCategoryName);
 
             Optional<Category> optionalCategory = categoryService.findSubCategoryByName(subCategoryName);
-            if(optionalCategory.isEmpty()) {
+            if (optionalCategory.isEmpty()) {
                 log.error("Subcategory not found with name: {}", subCategoryName);
                 throw new CustomException("Category not found with provided name", ErrorCode.NOT_FOUND.getCode());
             }
@@ -246,6 +263,23 @@ public class OrderServiceImpl implements OrderService {
             log.error("Order not found with orderNumber: {}", orderNumber);
             throw new CustomException("Order not found with provided order number",
                     ErrorCode.NOT_FOUND.getCode());
+        }
+
+        if (OrderStatus.WAITING_FOR_EXPERT_ARRIVAL.equals(order.getStatus()) &&
+                OrderStatus.WAITING_FOR_EXPERT_ARRIVAL.equals(orderStatus)) {
+            log.error("Order with orderNumber: {} is already 'WAITING_FOR_EXPERT_ARRIVAL'", orderNumber);
+            throw new CustomException("Order is already 'WAITING_FOR_EXPERT_ARRIVAL'",
+                    ErrorCode.ORDER_ALREADY_WAITING_FOR_EXPERT_ARRIVAL.getCode());
+        }
+
+        if (OrderStatus.STARTED.equals(order.getStatus()) && OrderStatus.STARTED.equals(orderStatus)) {
+            log.error("Order with orderNumber: {} is already 'STARTED'", orderNumber);
+            throw new CustomException("Order is already 'STARTED'", ErrorCode.ORDER_ALREADY_STARTED.getCode());
+        }
+
+        if (OrderStatus.COMPLETED.equals(order.getStatus()) && OrderStatus.COMPLETED.equals(orderStatus)) {
+            log.error("Order with orderNumber: {} is already completed", orderNumber);
+            throw new CustomException("Order is already completed", ErrorCode.ORDER_ALREADY_COMPLETE.getCode());
         }
 
         log.info("Validating offer with offerNumber: {}", offerNumber);

@@ -42,5 +42,4 @@ public class CreditController {
         log.info("Successfully retrieved credit for user with email: {}", email);
         return ResponseEntity.ok(creditResponseDto);
     }
-
 }

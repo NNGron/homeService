@@ -44,7 +44,8 @@ public class UserController {
         log.info("Starting login process for user: {}", loginRequestDto.getEmail());
         log.debug("Login request details: {}", loginRequestDto);
 
-        boolean isAuthenticated = userService.authenticateUser(loginRequestDto.getEmail(), loginRequestDto.getPassword());
+        boolean isAuthenticated =
+                userService.authenticateUser(loginRequestDto.getEmail(), loginRequestDto.getPassword());
 
         if (isAuthenticated) {
             log.info("User successfully logged in: {}", loginRequestDto.getEmail());
