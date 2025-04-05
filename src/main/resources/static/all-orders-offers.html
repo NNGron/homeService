@@ -1,0 +1,146 @@
+<!--<!DOCTYPE html>-->
+<!--<html lang="en">-->
+<!--<head>-->
+<!--    <meta charset="UTF-8">-->
+<!--    <meta content="width=device-width, initial-scale=1.0" name="viewport">-->
+<!--    <title>All Orders Offers</title>-->
+<!--    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0-alpha3/dist/css/bootstrap.min.css" rel="stylesheet">-->
+<!--    <link href="/style.css" rel="stylesheet">-->
+<!--    <style>-->
+<!--        /* تنظیمات برای جلوگیری از نمایش چند خطی و افزودن ellipsis */-->
+<!--        td, th {-->
+<!--            white-space: nowrap; /* جلوگیری از انتقال متن به خط بعدی */-->
+<!--            overflow: hidden; /* مخفی کردن محتوای اضافی */-->
+<!--            text-overflow: ellipsis; /* نمایش ... به جای متن اضافی */-->
+<!--        }-->
+<!--    </style>-->
+<!--</head>-->
+<!--<body class="bg-spring">-->
+<!--&lt;!&ndash; Navigator &ndash;&gt;-->
+<!--<div class="navigator">-->
+<!--    <a href="/index.html">Home</a>-->
+<!--    <a href="/order-management.html">Order Management</a>-->
+<!--    <a class="current-page" href="/all-orders-offers.html">All Orders Offers</a>-->
+<!--</div>-->
+
+<!--&lt;!&ndash; Back Button &ndash;&gt;-->
+<!--<button class="back-btn" onclick="navigateBack()">Back</button>-->
+<!--<script>-->
+<!--    function navigateBack() {-->
+<!--        window.location.href = "/order-management.html";-->
+<!--    }-->
+<!--</script>-->
+
+<!--&lt;!&ndash; Title &ndash;&gt;-->
+<!--<div class="container mt-5 text-center" style="width: 80%; margin: 0 auto;">-->
+<!--    <h1 class="title">All Offers</h1>-->
+<!--    <p class="mt-3">Browse and review all available offers:</p>-->
+
+<!--    &lt;!&ndash; Offers Table &ndash;&gt;-->
+<!--    <div class="d-flex" style="gap: 10px;">-->
+<!--        &lt;!&ndash; Offer Details Table &ndash;&gt;-->
+<!--        <div style="width: 72%;"> &lt;!&ndash; جدول اصلی کوچک‌تر شده &ndash;&gt;-->
+<!--            <table class="table table-striped" style="font-size: 0.85rem; table-layout: fixed; width: 100%;">-->
+<!--                <thead>-->
+<!--                <tr>-->
+<!--                    <th style="width: 5%;">#</th>-->
+<!--                    <th style="width: 20%;">Expert Name</th>-->
+<!--                    <th style="width: 20%;">Expert Email</th>-->
+<!--                    <th style="width: 15%;">Proposed Price</th>-->
+<!--                    <th style="width: 20%;">Estimated Time</th>-->
+<!--                    <th style="width: 10%;">Rating</th>-->
+<!--                </tr>-->
+<!--                </thead>-->
+<!--                <tbody id="offersTableBody">-->
+<!--                &lt;!&ndash; Dynamic offer rows will be appended here &ndash;&gt;-->
+<!--                </tbody>-->
+<!--            </table>-->
+<!--        </div>-->
+
+<!--        &lt;!&ndash; Dates Table &ndash;&gt;-->
+<!--        <div style="width: 18%;"> &lt;!&ndash; جدول تاریخ‌ها کوچک‌تر شده &ndash;&gt;-->
+<!--            <table class="table table-striped" style="font-size: 0.85rem; width: 100%; border-spacing: 24px 0;">-->
+<!--                <thead>-->
+<!--                <tr>-->
+<!--                    <th style="width: 50%; text-align: left;">Created At</th>-->
+<!--                    <th style="width: 50%; text-align: left;">Updated At</th>-->
+<!--                </tr>-->
+<!--                </thead>-->
+<!--                <tbody id="datesTableBody">-->
+<!--                &lt;!&ndash; Dynamic date rows will be appended here &ndash;&gt;-->
+<!--                </tbody>-->
+<!--            </table>-->
+<!--        </div>-->
+<!--    </div>-->
+
+<!--    &lt;!&ndash; Status Message &ndash;&gt;-->
+<!--    <div class="mt-4" id="statusMessage"></div>-->
+<!--</div>-->
+
+<!--<script>-->
+<!--    document.addEventListener("DOMContentLoaded", () => {-->
+<!--        const offersTableBody = document.getElementById("offersTableBody");-->
+<!--        const datesTableBody = document.getElementById("datesTableBody");-->
+
+<!--        // Fetch offers from the backend-->
+<!--        fetch('http://localhost:8080/v1/customers/order-offers?email=customer1%40yahoo.com&password=customer1&pageNumber=0&size=10&sortBy=proposedPrice&sortDir=asc')-->
+<!--            .then(response => {-->
+<!--                if (!response.ok) {-->
+<!--                    return response.text().then(text => { throw new Error(text); });-->
+<!--                }-->
+<!--                return response.json();-->
+<!--            })-->
+<!--            .then(offers => {-->
+<!--                offersTableBody.innerHTML = ""; // Clear offers table-->
+<!--                datesTableBody.innerHTML = ""; // Clear dates table-->
+
+<!--                if (offers.length === 0) {-->
+<!--                    displayMessage("No offers found!", "error");-->
+<!--                    return;-->
+<!--                }-->
+
+<!--                offers.forEach((offer, index) => {-->
+<!--                    const offerRow = `-->
+<!--                    <tr>-->
+<!--                        <td>${index + 1}</td>-->
+<!--                        <td>${offer.expertName}</td>-->
+<!--                        <td>${offer.expertEmail}</td>-->
+<!--                        <td>${offer.proposedPrice}</td>-->
+<!--                        <td>${offer.estimatedTime}</td>-->
+<!--                        <td>${offer.expertRating !== null && offer.expertRating !== undefined ? offer.expertRating : "-"}</td>-->
+<!--                    </tr>-->
+<!--                `;-->
+
+<!--                    const datesRow = `-->
+<!--                    <tr>-->
+<!--                        <td>${offer.createdAt || "N/A"}</td>-->
+<!--                        <td>${offer.updatedAt || "N/A"}</td>-->
+<!--                    </tr>-->
+<!--                `;-->
+
+<!--                    offersTableBody.innerHTML += offerRow;-->
+<!--                    datesTableBody.innerHTML += datesRow;-->
+<!--                });-->
+
+<!--                displayMessage("Offers fetched successfully!", "success");-->
+<!--            })-->
+<!--            .catch(error => {-->
+<!--                displayMessage(`Error fetching offers: ${error.message}`, "error");-->
+<!--            });-->
+
+<!--        function displayMessage(message, type) {-->
+<!--            const statusMessage = document.getElementById("statusMessage");-->
+<!--            statusMessage.className = `status-message ${type === "success" ? "status-success" : "status-error"}`;-->
+<!--            statusMessage.textContent = message;-->
+
+<!--            // Automatically remove the message after 2 seconds-->
+<!--            setTimeout(() => {-->
+<!--                statusMessage.className = '';-->
+<!--                statusMessage.textContent = '';-->
+<!--            }, 2000);-->
+<!--        }-->
+<!--    });-->
+
+<!--</script>-->
+<!--</body>-->
+<!--</html>-->

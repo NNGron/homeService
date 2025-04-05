@@ -1,0 +1,159 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta content="width=device-width, initial-scale=1.0" name="viewport">
+    <title>View Orders for Expert</title>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0-alpha3/dist/css/bootstrap.min.css" rel="stylesheet">
+    <link href="/style.css" rel="stylesheet">
+    <style>
+        .container {
+            margin-top: 30px;
+        }
+
+        .table-container {
+            width: 90%;
+            margin: 0 auto;
+            margin-top: 20px;
+        }
+
+        .status-message {
+            text-align: center;
+            margin-top: 20px;
+            padding: 10px;
+            border-radius: 5px;
+        }
+
+        .status-success {
+            color: #155724;
+            background-color: #d4edda;
+            border: 1px solid #c3e6cb;
+        }
+
+        .status-error {
+            color: #721c24;
+            background-color: #f8d7da;
+            border: 1px solid #f5c6cb;
+        }
+
+        .table {
+            margin-top: 20px;
+        }
+    </style>
+</head>
+<body class="bg-spring">
+<!-- Navigator -->
+<div class="navigator">
+    <a href="/index.html">Home</a>
+    <a href="/expert-dashboard.html">Expert Dashboard</a>
+    <a class="current-page" href="/view-orders-for-expert.html">View Orders</a>
+</div>
+
+<!-- Back Button -->
+<button class="btn back-btn" onclick="navigateBack()">Back</button>
+<script>
+    function navigateBack() {
+        window.location.href = "/expert-dashboard.html";
+    }
+</script>
+
+<!-- Title -->
+<div class="container text-center">
+    <h1 class="title">View Orders for Expert</h1>
+    <p class="mt-3">Below is the list of orders assigned to you:</p>
+</div>
+
+<!-- Orders Table -->
+<div class="table-container">
+    <table class="table table-bordered table-striped">
+        <thead>
+        <tr>
+            <th>Order Number</th>
+            <th>Order Name</th>
+            <th>Description</th>
+            <th>Final Price</th>
+            <th>Status</th>
+            <th>Execution Date</th>
+            <th>Created At</th>
+            <th>Updated At</th>
+        </tr>
+        </thead>
+        <tbody id="ordersTableBody">
+        <!-- اطلاعات سفارش‌ها به صورت داینامیک اضافه می‌شوند -->
+        </tbody>
+    </table>
+</div>
+
+<!-- Status Message -->
+<div class="status-message d-none" id="statusMessage"></div>
+
+<script>
+    document.addEventListener("DOMContentLoaded", async () => {
+        const ordersTableBody = document.getElementById("ordersTableBody");
+        const statusMessage = document.getElementById("statusMessage");
+
+        // Retrieve logged-in expert's email and password from LocalStorage
+        const expertEmail = localStorage.getItem("email");
+        const expertPassword = localStorage.getItem("password");
+
+        if (!expertEmail || !expertPassword) {
+            displayMessage("You must be logged in to view your orders.", "error");
+            return;
+        }
+
+        try {
+            // Fetch orders for the expert
+            const response = await fetch(`http://localhost:8080/v1/orders/show-orders?email=${encodeURIComponent(expertEmail)}&password=${encodeURIComponent(expertPassword)}`, {
+                method: 'GET',
+                headers: {
+                    'Accept': '*/*'
+                }
+            });
+
+            if (!response.ok) {
+                const errorMessage = await response.text();
+                throw new Error(errorMessage || "Failed to fetch orders.");
+            }
+
+            const orders = await response.json();
+            if (orders.length === 0) {
+                displayMessage("No orders found.", "success");
+                return;
+            }
+
+            orders.forEach(order => {
+                const row = `
+                    <tr>
+                        <td>${order.orderNumber}</td>
+                        <td>${order.orderName}</td>
+                        <td>${order.orderDescription}</td>
+                        <td>${order.finalPrice ? `$${order.finalPrice}` : "-"}</td>
+                        <td>${order.status}</td>
+                        <td>${order.executionDate || "-"}</td>
+                        <td>${order.createdAt}</td>
+                        <td>${order.updatedAt}</td>
+                    </tr>
+                `;
+                ordersTableBody.innerHTML += row;
+            });
+
+            displayMessage("Orders loaded successfully.", "success");
+        } catch (error) {
+            displayMessage(`Error: ${error.message}`, "error");
+        }
+
+        function displayMessage(message, type) {
+            statusMessage.className = `status-message ${type === "success" ? "status-success" : "status-error"}`;
+            statusMessage.textContent = message;
+            statusMessage.classList.remove("d-none");
+
+            // Clear the message after 3 seconds
+            setTimeout(() => {
+                statusMessage.className = "status-message d-none";
+                statusMessage.textContent = "";
+            }, 3000);
+        }
+    });
+</script>
+</body>
+</html>

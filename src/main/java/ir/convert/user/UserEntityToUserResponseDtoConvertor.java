@@ -30,12 +30,10 @@ public class UserEntityToUserResponseDtoConvertor implements Function<User, User
     public UserResponseDto apply(User user) {
         log.debug("Converting User entity with username: {}", user.getUserName());
 
-        // Initialize default values
         List<CategoryResponseDto> categoryResponseDtos = null;
         Double averageRate = null;
         BigDecimal balance = user.getCredit() == null ? BigDecimal.ZERO : user.getCredit();
 
-        // Handle Expert-specific fields
         if (user instanceof Expert expert) {
             log.debug("User is an Expert with username: {}", expert.getUserName());
 
@@ -51,6 +49,7 @@ public class UserEntityToUserResponseDtoConvertor implements Function<User, User
                 .lastName(user.getLastName())
                 .email(user.getEmail())
                 .firstName(user.getFirstName())
+                .address(user.getAddress())
                 .balance(balance)
                 .status(user.getStatus())
                 .averageRate(averageRate)

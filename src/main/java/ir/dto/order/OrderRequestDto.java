@@ -16,6 +16,14 @@ import java.time.LocalDate;
 @Validated
 public class OrderRequestDto {
 
+    @NotBlank(message = "Main Category name must not be null")
+    @Size(max = 100, message = "Main Category name must not exceed 100 characters")
+    private String mainCategoryName;
+
+    @NotBlank(message = "SubCategory name must not be null")
+    @Size(max = 100, message = "SubCategory name must not exceed 100 characters")
+    private String subCategoryName;
+
     private BigDecimal offerCustomerPrice;
 
     @NotNull(message = "Order date must not be null")
@@ -32,8 +40,4 @@ public class OrderRequestDto {
     @NotBlank(message = "Order address must not be null")
     @Size(max = 255, message = "Order address must not exceed 255 characters")
     private String orderAddress;
-
-    @NotBlank(message = "SubCategory name must not be null")
-    @Size(max = 100, message = "Subcategory name must not exceed 100 characters")
-    private String subCategoryName;
 }

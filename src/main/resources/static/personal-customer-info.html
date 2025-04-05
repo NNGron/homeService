@@ -1,0 +1,149 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta content="width=device-width, initial-scale=1.0" name="viewport">
+    <title>Your Profile</title>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0-alpha3/dist/css/bootstrap.min.css" rel="stylesheet">
+    <link href="/style.css" rel="stylesheet">
+    <style>
+        td, th {
+            white-space: nowrap;
+            overflow: hidden;
+            text-overflow: ellipsis;
+            text-align: center;
+        }
+
+        .table-container {
+            width: 70%;
+            margin: 30px auto;
+        }
+
+        .status-message {
+            font-size: 1rem;
+            margin-top: 20px;
+            padding: 10px;
+            border-radius: 5px;
+            text-align: center;
+        }
+
+        .status-success {
+            color: #155724;
+            background-color: #d4edda;
+            border: 1px solid #c3e6cb;
+        }
+
+        .status-error {
+            color: #721c24;
+            background-color: #f8d7da;
+            border: 1px solid #f5c6cb;
+        }
+    </style>
+</head>
+<body class="bg-spring">
+<!-- Navigator -->
+<div class="navigator">
+    <a href="/index.html">Home</a>
+    <a href="/profile-customer.html">Profile</a>
+    <a class="current-page" href="/change-address.html">Change Address</a>
+</div>
+
+<!-- Back Button -->
+<button class="btn back-btn" onclick="navigateBack()">Back</button>
+<script>
+    function navigateBack() {
+        window.location.href = "/profile-customer.html";
+    }
+</script>
+
+<!-- Title -->
+<div class="container mt-5 text-center" style="width: 80%; margin: 0 auto;">
+    <h1 class="title">Your Profile</h1>
+    <p class="mt-3">Here are your account details:</p>
+
+    <!-- Customer Info Table -->
+    <div class="table-container">
+        <table class="table table-striped" style="font-size: 0.85rem; table-layout: fixed;">
+            <thead>
+            <tr>
+                <th>First Name</th>
+                <th>Last Name</th>
+                <th>Email</th>
+                <th>Balance</th>
+                <th>Address</th>
+                <th>Status</th>
+                <th>Created At</th>
+                <th>Updated At</th>
+            </tr>
+            </thead>
+            <tbody id="customerInfoTableBody">
+            <!-- اطلاعات کاربر به صورت داینامیک اینجا اضافه می‌شود -->
+            </tbody>
+        </table>
+    </div>
+
+    <!-- Status Message -->
+    <div class="mt-4" id="statusMessage"></div>
+</div>
+
+<script>
+    document.addEventListener("DOMContentLoaded", () => {
+        const customerInfoTableBody = document.getElementById("customerInfoTableBody");
+        const statusMessage = document.getElementById("statusMessage");
+
+        // Fetch the current logged-in user's data from the backend
+        fetch('http://localhost:8080/v1/users/all-user?pageNumber=0&size=10&sortBy=email&sortDir=asc')
+            .then(response => {
+                if (!response.ok) {
+                    return response.text().then(text => {
+                        throw new Error(text);
+                    });
+                }
+                return response.json();
+            })
+            .then(users => {
+                customerInfoTableBody.innerHTML = ""; // Clear table
+
+                // Filter the logged-in customer
+                const currentUser = users.find(user => user.userType === "CUSTOMER");
+
+                if (!currentUser) {
+                    displayMessage("No information found for the logged-in user.", "error");
+                    return;
+                }
+
+                // Populate the table with user data
+                const row = `
+                <tr>
+                    <td>${currentUser.firstName}</td>
+                    <td>${currentUser.lastName}</td>
+                    <td>${currentUser.email}</td>
+                    <td>${currentUser.balance || "-"}</td>
+                    <td>${currentUser.address || "No address provided"}</td>
+                    <td>${currentUser.status}</td>
+                    <td>${currentUser.createdAt || "N/A"}</td>
+                    <td>${currentUser.updatedAt || "N/A"}</td>
+                </tr>
+                `;
+                customerInfoTableBody.innerHTML += row;
+
+                displayMessage("Your profile data loaded successfully.", "success");
+            })
+            .catch(error => {
+                displayMessage(`Error loading your profile data: ${error.message}`, "error");
+            });
+
+        function displayMessage(message, type) {
+            statusMessage.className = `status-message ${type === "success" ? "status-success" : "status-error"}`;
+            statusMessage.textContent = message;
+
+            // Automatically remove the message after 3 seconds
+            setTimeout(() => {
+                statusMessage.className = '';
+                statusMessage.textContent = '';
+            }, 3000);
+        }
+    });
+</script>
+</body>
+</html>

@@ -121,9 +121,7 @@
 
                 categoriesToAdd.forEach(category => {
                     if (existingCategoryNames.includes(category)) {
-                        // Message if the category already exists
-                        document.getElementById('status-message').className = 'status-message status-error';
-                        document.getElementById('status-message').innerHTML = `The category "${category}" already exists!`;
+                        displayMessage(`The category "${category}" already exists!`, 'error');
                     } else {
                         // Send a request to add the new category
                         fetch('http://localhost:8080/v1/categories/create-main-category', {
@@ -146,19 +144,16 @@
                                 li.textContent = category;
                                 document.getElementById('addedCategoriesList').appendChild(li);
 
-                                document.getElementById('status-message').className = 'status-message status-success';
-                                document.getElementById('status-message').innerHTML = `The category "${category}" has been successfully added!`;
+                                displayMessage(`The category "${category}" has been successfully added!`, 'success');
                             })
                             .catch(error => {
-                                document.getElementById('status-message').className = 'status-message status-error';
-                                document.getElementById('status-message').innerHTML = `Error: ${error.message}`;
+                                displayMessage(`Error: ${error.message}`, 'error');
                             });
                     }
                 });
             })
             .catch(error => {
-                document.getElementById('status-message').className = 'status-message status-error';
-                document.getElementById('status-message').innerHTML = `Error: ${error.message}`;
+                displayMessage(`Error: ${error.message}`, 'error');
             });
 
         // Clear input fields
@@ -167,6 +162,18 @@
             input.checked = false;
         });
     });
+
+    function displayMessage(message, type) {
+        const statusMessage = document.getElementById("status-message");
+        statusMessage.className = `status-message ${type === 'success' ? 'status-success' : 'status-error'}`;
+        statusMessage.innerHTML = message;
+
+        // Automatically remove the message after 2 seconds
+        setTimeout(() => {
+            statusMessage.className = '';
+            statusMessage.innerHTML = '';
+        }, 2000);
+    }
 </script>
 </body>
 </html>

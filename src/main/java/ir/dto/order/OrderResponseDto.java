@@ -29,7 +29,8 @@ public class OrderResponseDto {
     private String orderName;
     private LocalDate executionDate;
     private String orderAddress;
-    private CategoryResponseDto categoryResponseDto;
+    private CategoryResponseDto mainCategory; // اضافه کردن Main Category
+    private CategoryResponseDto subCategory; // اضافه کردن Sub Category
     private OrderStatus status;
     private List<Offer> offers;
     private Review review;

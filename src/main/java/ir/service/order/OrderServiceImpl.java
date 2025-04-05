@@ -1,6 +1,8 @@
 package ir.service.order;
 
+import ir.convert.category.category_response.CategoryEntityToCategoryResponseDtoConvertor;
 import ir.convert.order.order_response.OrderEntityToOrderResponseDtoConvertor;
+import ir.dto.category.CategoryResponseDto;
 import ir.dto.order.OrderRequestDto;
 import ir.dto.order.OrderResponseDto;
 import ir.entity.*;
@@ -38,6 +40,8 @@ public class OrderServiceImpl implements OrderService {
     private final CategoryService categoryService;
     private final UserService userService;
     private final OrderEntityToOrderResponseDtoConvertor orderEntityToOrderResponseDtoConvertor;
+    private final CategoryEntityToCategoryResponseDtoConvertor categoryEntityToCategoryResponseDtoConvertor;
+
 
     /**
      * Saves a new order for the authenticated customer.
@@ -56,33 +60,10 @@ public class OrderServiceImpl implements OrderService {
 
         User user = userService.findByEmailAndPassword(email, password);
         if (user instanceof Customer customer) {
-            if (user.getStatus().equals(UserStatus.DELETED)) {
-                log.error("User with email {} is deleted and cannot create orders.", email);
-                throw new CustomException("User already deleted", ErrorCode.NOT_FOUND.getCode());
-            }
+            validateCustomer(user, email);
 
-            if (user.getStatus().equals(UserStatus.NEW)) {
-                log.error("User with email {} is not approved to create orders.", email);
-                throw new CustomException("User should be approved", ErrorCode.USER_STATUS_NOT_APPROVED.getCode());
-            }
-            log.info("User is valid. Checking for duplicate orders for customer with email: {}", email);
-
-            List<Order> existingOrders = orderRepository.findAllByCustomerEmail(email);
-            boolean isDuplicate = existingOrders.stream().anyMatch(existingOrder ->
-                    existingOrder.getOrderDescription().equals(orderDto.getOrderDescription()) &&
-                            existingOrder.getOrderDate().equals(orderDto.getOrderDate()) &&
-                            existingOrder.getExecutionDate().equals(orderDto.getExecutionDate()) &&
-                            existingOrder.getOrderAddress().equals(orderDto.getOrderAddress()) &&
-                            existingOrder.getCategory().getName().equals(orderDto.getSubCategoryName()) &&
-                            existingOrder.getOfferCustomerPrice().compareTo(orderDto.getOfferCustomerPrice()) == 0
-            );
-
-            if (isDuplicate) {
-                log.warn("Duplicate order found for customer with email: {}", email);
-                throw new CustomException("Your order is a duplicate", ErrorCode.DUPLICATE_ORDER.getCode());
-            }
-
-            log.info("No duplicate order found. Creating a new order for customer with email: {}", email);
+            log.info("Checking for duplicate orders...");
+            checkForDuplicateOrders(orderDto, email);
 
             Order order = new Order();
             order.setCustomer(customer);
@@ -93,22 +74,75 @@ public class OrderServiceImpl implements OrderService {
             order.setExecutionDate(orderDto.getExecutionDate());
             order.setOfferCustomerPrice(orderDto.getOfferCustomerPrice());
 
+            // Validate Main Category
+            String mainCategoryName = orderDto.getMainCategoryName();
+            log.info("Validating main category with name: {}", mainCategoryName);
+            Optional<Category> mainCategoryOptional = categoryService.findMainCategoryByName(mainCategoryName);
+            if (mainCategoryOptional.isEmpty()) {
+                log.error("Main category not found with name: {}", mainCategoryName);
+                throw new CustomException("Main category not found", ErrorCode.NOT_FOUND.getCode());
+            }
+
+            // Validate Sub Category
             String subCategoryName = orderDto.getSubCategoryName();
             log.info("Validating subcategory with name: {}", subCategoryName);
-
-            Optional<Category> optionalCategory = categoryService.findSubCategoryByName(subCategoryName);
-            if (optionalCategory.isEmpty()) {
+            Optional<Category> subCategoryOptional = categoryService.findSubCategoryByName(subCategoryName);
+            if (subCategoryOptional.isEmpty()) {
                 log.error("Subcategory not found with name: {}", subCategoryName);
-                throw new CustomException("Category not found with provided name", ErrorCode.NOT_FOUND.getCode());
+                throw new CustomException("Sub category not found", ErrorCode.NOT_FOUND.getCode());
             }
-            order.setCategory(optionalCategory.get());
+
+            // Setting categories
+            order.setCategory(subCategoryOptional.get());
+            CategoryResponseDto mainCategoryResponse = categoryEntityToCategoryResponseDtoConvertor.apply(mainCategoryOptional.get());
+            CategoryResponseDto subCategoryResponse = categoryEntityToCategoryResponseDtoConvertor.apply(subCategoryOptional.get());
+
             order = orderRepository.save(order);
             log.info("Order saved successfully for customer with email: {}", email);
-            return orderEntityToOrderResponseDtoConvertor.apply(order);
+            OrderResponseDto orderResponse = orderEntityToOrderResponseDtoConvertor.apply(order);
+            orderResponse.setMainCategory(mainCategoryResponse);
+            orderResponse.setSubCategory(subCategoryResponse);
+
+            return orderResponse;
         }
+
         log.error("User not found with email: {}", email);
         throw new CustomException("User not found with provided email and password", ErrorCode.NOT_FOUND.getCode());
     }
+
+    private void validateCustomer(User user, String email) {
+        if (user.getStatus().equals(UserStatus.DELETED)) {
+            log.error("User with email {} is deleted and cannot create orders.", email);
+            throw new CustomException("User already deleted", ErrorCode.NOT_FOUND.getCode());
+        }
+
+        if (user.getStatus().equals(UserStatus.NEW)) {
+            log.error("User with email {} is not approved to create orders.", email);
+            throw new CustomException("User should be approved", ErrorCode.USER_STATUS_NOT_APPROVED.getCode());
+        }
+
+        log.info("Customer with email {} is valid.", email);
+    }
+
+    private void checkForDuplicateOrders(OrderRequestDto orderDto, String email) {
+        List<Order> existingOrders = orderRepository.findAllByCustomerEmail(email);
+        boolean isDuplicate = existingOrders.stream().anyMatch(existingOrder ->
+                existingOrder.getOrderDescription().equals(orderDto.getOrderDescription()) &&
+                        existingOrder.getOrderDate().equals(orderDto.getOrderDate()) &&
+                        existingOrder.getExecutionDate().equals(orderDto.getExecutionDate()) &&
+                        existingOrder.getOrderAddress().equals(orderDto.getOrderAddress()) &&
+                        existingOrder.getCategory().getName().equals(orderDto.getSubCategoryName()) &&
+                        existingOrder.getOfferCustomerPrice().compareTo(orderDto.getOfferCustomerPrice()) == 0
+        );
+
+        if (isDuplicate) {
+            log.warn("Duplicate order found for customer with email: {}", email);
+            throw new CustomException("Your order is a duplicate", ErrorCode.DUPLICATE_ORDER.getCode());
+        }
+
+        log.info("No duplicate order found for customer with email: {}", email);
+    }
+
 
     /**
      * Retrieves a list of orders associated with a customer using their email and password.

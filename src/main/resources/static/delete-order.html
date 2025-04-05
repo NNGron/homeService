@@ -1,0 +1,144 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta content="width=device-width, initial-scale=1.0" name="viewport">
+    <title>Delete Order</title>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0-alpha3/dist/css/bootstrap.min.css" rel="stylesheet">
+    <link href="/style.css" rel="stylesheet">
+    <style>
+        .form-control {
+            width: 50%;
+            margin: 0 auto;
+        }
+
+        .form-container {
+            text-align: center;
+            margin-top: 50px;
+        }
+
+        .btn-primary {
+            margin-top: 20px;
+        }
+
+        .status-message {
+            font-size: 1rem;
+            margin-top: 15px;
+            text-align: center;
+            padding: 10px;
+            border-radius: 8px;
+        }
+
+        .status-success {
+            background-color: #d4edda;
+            color: #155724;
+            border: 1px solid #c3e6cb;
+        }
+
+        .status-error {
+            background-color: #f8d7da;
+            color: #721c24;
+            border: 1px solid #f5c6cb;
+        }
+    </style>
+</head>
+<body class="bg-spring">
+<!-- Navigator -->
+<div class="navigator">
+    <a href="/index.html">Home</a>
+    <a href="/order-management.html">Order Management</a>
+    <a class="current-page" href="/delete-order.html">Delete Order</a>
+</div>
+
+<!-- Back Button -->
+<button class="btn back-btn" onclick="navigateBack()">Back</button>
+<script>
+    function navigateBack() {
+        window.location.href = "/order-management.html";
+    }
+</script>
+
+<!-- Title -->
+<div class="container mt-5 text-center">
+    <h1 class="title">Delete Order</h1>
+    <p>Enter the Order Number below to delete your order:</p>
+</div>
+
+<!-- Delete Order Form -->
+<div class="form-container">
+    <form id="deleteOrderForm">
+        <div class="mb-3">
+            <label class="form-label" for="orderNumber">Order Number:</label>
+            <input class="form-control" id="orderNumber" placeholder="Enter order number" required type="number">
+        </div>
+        <button class="btn btn-main btn-lg" type="submit">Submit Delete</button>
+    </form>
+
+    <!-- Status Message -->
+    <div class="status-message" id="statusMessage"></div>
+</div>
+
+<script>
+    document.addEventListener("DOMContentLoaded", () => {
+        const deleteOrderForm = document.getElementById("deleteOrderForm");
+        const statusMessage = document.getElementById("statusMessage");
+
+        deleteOrderForm.addEventListener("submit", async (event) => {
+            event.preventDefault();
+
+            const orderNumber = document.getElementById("orderNumber").value.trim();
+
+            if (!orderNumber) {
+                displayMessage("Please enter a valid Order Number.", "error");
+                return;
+            }
+
+            try {
+                const response = await fetch(`http://localhost:8080/v1/orders/delete-order?email=customer1%40yahoo.com&password=customer1&orderNumber=${orderNumber}`, {
+                    method: "DELETE",
+                    headers: {
+                        "Accept": "*/*"
+                    }
+                });
+
+                if (!response.ok) {
+                    const errorData = await response.json();
+                    let userFriendlyMessage;
+
+                    switch (errorData.errorCode) {
+                        case 422:
+                            userFriendlyMessage = "The order cannot be deleted because it has already been used or processed.";
+                            break;
+                        case 404:
+                            userFriendlyMessage = `No order found with Order ID: ${orderNumber}. It may have already been deleted.`;
+                            break;
+                        default:
+                            userFriendlyMessage = "An unexpected error occurred. Please try again later.";
+                            break;
+                    }
+
+                    displayMessage(userFriendlyMessage, "error");
+                    return;
+                }
+
+                // ✅ Only one read of response.text()
+                const data = await response.text();
+                displayMessage(data || "The order has been successfully deleted.", "success");
+            } catch (error) {
+                displayMessage("Not found,Maybe This Order Number already deleted.", "error");
+            }
+        });
+
+        function displayMessage(message, type) {
+            statusMessage.className = `status-message ${type === "success" ? "status-success" : "status-error"}`;
+            statusMessage.textContent = `${type === "success" ? "✅" : "❌"} ${message}`;
+
+            setTimeout(() => {
+                statusMessage.className = '';
+                statusMessage.textContent = '';
+            }, 5000);
+        }
+    });
+</script>
+</body>
+</html>

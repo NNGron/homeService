@@ -69,8 +69,8 @@ public class GlobalExceptionHandler {
     public ResponseEntity<ErrorResponseDto> handleResourceNotFoundException(CustomException ex) {
         log.error("Custom exception occurred: {}", ex.getMessage());
         ErrorResponseDto responseDto = new ErrorResponseDto(ex.getErrorCode(), ex.getMessage());
-        return new ResponseEntity<>(responseDto, HttpStatus.OK);
-//        return new ResponseEntity<>(responseDto, HttpStatus.BAD_REQUEST);  // حالا کد 400 برمی‌گردد
+//        return new ResponseEntity<>(responseDto, HttpStatus.OK);
+        return new ResponseEntity<>(responseDto, HttpStatus.BAD_REQUEST);  // حالا کد 400 برمی‌گردد
     }
 
     /**
@@ -99,7 +99,8 @@ public class GlobalExceptionHandler {
         log.error("Unexpected error occurred: {}", ex.getMessage(), ex);
         String message = "Oops! Something went wrong. Please contact support if the issue persists.";
         ErrorResponseDto responseDto = new ErrorResponseDto(ErrorCode.SERVER_ERROR.getCode(), message);
-        return new ResponseEntity<>(responseDto, HttpStatus.OK);
+//        return new ResponseEntity<>(responseDto, HttpStatus.OK);
+        return new ResponseEntity<>(responseDto, HttpStatus.INTERNAL_SERVER_ERROR);
     }
 
     /**
@@ -127,9 +128,13 @@ public class GlobalExceptionHandler {
      */
     @ExceptionHandler(MethodArgumentNotValidException.class)
     public ResponseEntity<ErrorResponseDto> handleValidationException(MethodArgumentNotValidException ex) {
-        String errorMessage = ex.getBindingResult().getFieldError().getDefaultMessage();
+        //String errorMessage = ex.getBindingResult().getFieldError().getDefaultMessage();
+        String errorMessage = ex.getBindingResult().getFieldError() != null
+                ? ex.getBindingResult().getFieldError().getDefaultMessage()
+                : "Invalid input data.";
         ErrorResponseDto responseDto = new ErrorResponseDto(ErrorCode.BAD_REQUEST.getCode(), errorMessage);
-        return new ResponseEntity<>(responseDto, HttpStatus.OK);
+//        return new ResponseEntity<>(responseDto, HttpStatus.OK);
+        return new ResponseEntity<>(responseDto, HttpStatus.BAD_REQUEST);
     }
 
     /**
@@ -159,10 +164,10 @@ public class GlobalExceptionHandler {
     @ExceptionHandler(MissingServletRequestParameterException.class)
     public ResponseEntity<ErrorResponseDto> handleMissingParams(MissingServletRequestParameterException ex) {
         log.warn("Missing request parameter: {}", ex.getParameterName());
-        String message = "Oops! It looks like you forgot to include the '" + ex.getParameterName() +
-                "' parameter. Please add it and try again.";
+        String message = "Missing required parameter: '" + ex.getParameterName() + "'";
         ErrorResponseDto responseDto = new ErrorResponseDto(ErrorCode.BAD_REQUEST.getCode(), message);
-        return new ResponseEntity<>(responseDto, HttpStatus.OK);
+//        return new ResponseEntity<>(responseDto, HttpStatus.OK);
+        return new ResponseEntity<>(responseDto, HttpStatus.BAD_REQUEST);
     }
 
     /**
@@ -185,7 +190,9 @@ public class GlobalExceptionHandler {
     @ExceptionHandler(MethodArgumentTypeMismatchException.class)
     public ResponseEntity<ErrorResponseDto> handleInvalidEnumValue(MethodArgumentTypeMismatchException ex) {
         log.error("Parameter type is invalid", ex);
-        ErrorResponseDto responseDto = new ErrorResponseDto(ErrorCode.BAD_REQUEST.getCode(), "Parameter type is invalid");
-        return new ResponseEntity<>(responseDto, HttpStatus.OK);
+        String message = "Invalid value for parameter '" + ex.getName() + "': '" + ex.getValue() + "'";
+        ErrorResponseDto responseDto = new ErrorResponseDto(ErrorCode.BAD_REQUEST.getCode(), message);
+//        return new ResponseEntity<>(responseDto, HttpStatus.OK);
+        return new ResponseEntity<>(responseDto, HttpStatus.BAD_REQUEST);
     }
 }

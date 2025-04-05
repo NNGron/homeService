@@ -26,8 +26,8 @@ public class OrderController {
     @PostMapping("/create-order")
     @Operation(summary = "(Customer only)")
     public ResponseEntity<OrderResponseDto> saveCustomerOrder(@Valid @RequestBody OrderRequestDto orderDto,
-                                                      @RequestParam String email,
-                                                      @RequestParam String password) {
+                                                              @RequestParam String email,
+                                                              @RequestParam String password) {
         log.info("Received request to create an order for customer with email: {}", email);
         log.debug("Order details: {}", orderDto);
 
@@ -36,6 +36,7 @@ public class OrderController {
         log.info("Successfully created order for customer with email: {}", email);
         return ResponseEntity.ok(orderResponseDto);
     }
+
 
     @PutMapping("/update-status")
     @Operation(summary = "(Customer only)")

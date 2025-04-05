@@ -21,6 +21,7 @@ public class UserResponseDto {
     private String userName;
     private String firstName;
     private String lastName;
+    private String address;
     private String email;
     private BigDecimal balance;
     private UserStatus status;

@@ -66,7 +66,7 @@
                 return response.json();
             })
             .then(data => {
-                document.getElementById('status-message').innerHTML = `<div class="alert alert-success">Welcome back, Customer ${data.firstName}!</div>`;
+                document.getElementById('status-message').innerHTML = `<div class="alert alert-success">Welcome back!</div>`;
                 setTimeout(() => {
                     window.location.href = "/customer-dashboard.html"; // انتقال به داشبورد
                 }, 2000); // 2-second delay

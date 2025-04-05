@@ -1,0 +1,167 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta content="width=device-width, initial-scale=1.0" name="viewport">
+    <title>Add Comment and Rate</title>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0-alpha3/dist/css/bootstrap.min.css" rel="stylesheet">
+    <link href="/style.css" rel="stylesheet">
+    <style>
+        .container {
+            text-align: center;
+            margin-top: 30px;
+            width: 50%;
+        }
+
+        .form-group {
+            margin-bottom: 20px;
+        }
+
+        .status-message {
+            font-size: 1rem;
+            margin-top: 20px;
+            padding: 10px;
+            border-radius: 5px;
+        }
+
+        .status-success {
+            color: #155724;
+            background-color: #d4edda;
+            border: 1px solid #c3e6cb;
+        }
+
+        .status-error {
+            color: #721c24;
+            background-color: #f8d7da;
+            border: 1px solid #f5c6cb;
+        }
+    </style>
+</head>
+<body class="bg-spring">
+<!-- Navigator -->
+<div class="navigator">
+    <a href="/index.html">Home</a>
+    <a href="/order-management.html">Order Management</a>
+    <a class="current-page" href="/add-comment-and-rate.html">Add Comment and Rate</a>
+</div>
+
+<!-- Back Button -->
+<button class="btn back-btn" onclick="navigateBack()">Back</button>
+<script>
+    function navigateBack() {
+        window.location.href = "/order-management.html";
+    }
+</script>
+
+<!-- Title -->
+<div class="container">
+    <h1 class="title">Add Comment and Rate</h1>
+    <p class="mt-3">Submit your rating and comment:</p>
+
+    <!-- Add Comment and Rate Form -->
+    <form id="commentAndRateForm">
+        <div class="form-group">
+            <label class="form-label" for="rating">Rating (1-5):</label>
+            <input
+                    class="form-control"
+                    id="rating"
+                    max="5"
+                    min="1"
+                    placeholder="Enter rating (Min:1            Max:5)"
+                    required
+                    type="number">
+        </div>
+        <div class="form-group">
+            <label class="form-label" for="comment">Comment:</label>
+            <textarea
+                    class="form-control"
+                    id="comment"
+                    maxlength="500"
+                    placeholder="Write your comment (max 500 characters)"
+                    required></textarea>
+        </div>
+        <div class="form-group">
+            <label class="form-label" for="orderNumber">Order Number:</label>
+            <input
+                    class="form-control"
+                    id="orderNumber"
+                    placeholder="Enter order number"
+                    required
+                    type="number">
+        </div>
+        <div class="form-group">
+            <label class="form-label" for="offerNumber">Offer Number:</label>
+            <input
+                    class="form-control"
+                    id="offerNumber"
+                    placeholder="Enter offer number"
+                    required
+                    type="number">
+        </div>
+        <button class="btn btn-main btn-lg" type="submit">Submit Review</button>
+    </form>
+
+    <!-- Status Message -->
+    <div class="status-message d-none" id="statusMessage"></div>
+</div>
+
+<script>
+    document.addEventListener("DOMContentLoaded", () => {
+        const commentAndRateForm = document.getElementById("commentAndRateForm");
+        const statusMessage = document.getElementById("statusMessage");
+
+        commentAndRateForm.addEventListener("submit", async (event) => {
+            event.preventDefault();
+
+            const rating = document.getElementById("rating").value.trim();
+            const comment = document.getElementById("comment").value.trim();
+            const orderNumber = document.getElementById("orderNumber").value.trim();
+            const offerNumber = document.getElementById("offerNumber").value.trim();
+
+            if (!rating || !comment || !orderNumber || !offerNumber) {
+                displayMessage("All fields are required.", "error");
+                return;
+            }
+
+            try {
+                const response = await fetch(`http://localhost:8080/v1/reviews/comment?email=customer1%40yahoo.com&password=customer1`, {
+                    method: "POST",
+                    headers: {
+                        "Accept": "*/*",
+                        "Content-Type": "application/json"
+                    },
+                    body: JSON.stringify({
+                        rating: parseInt(rating, 10),
+                        comment,
+                        orderNumber: parseInt(orderNumber, 10),
+                        offerNumber: parseInt(offerNumber, 10)
+                    })
+                });
+
+                if (!response.ok) {
+                    const errorResponse = await response.json();
+                    throw new Error(errorResponse.message || "Failed to submit review.");
+                }
+
+                const data = await response.json();
+                displayMessage("Review submitted successfully.", "success");
+            } catch (error) {
+                displayMessage(`Error: ${error.message}`, "error");
+            }
+        });
+
+        function displayMessage(message, type) {
+            statusMessage.className = `status-message ${type === "success" ? "status-success" : "status-error"}`;
+            statusMessage.textContent = message;
+            statusMessage.classList.remove("d-none");
+
+            // Clear the message after 3 seconds
+            setTimeout(() => {
+                statusMessage.className = "status-message d-none";
+                statusMessage.textContent = "";
+            }, 3000);
+        }
+    });
+</script>
+</body>
+</html>
