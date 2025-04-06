@@ -4,13 +4,14 @@ import ir.entity.base.BaseEntity;
 import ir.entity.enums.Role;
 import ir.entity.enums.UserStatus;
 import jakarta.persistence.*;
-import jakarta.validation.constraints.*;
+import jakarta.validation.constraints.Email;
+import jakarta.validation.constraints.NotBlank;
+import jakarta.validation.constraints.NotNull;
+import jakarta.validation.constraints.Size;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
-
-import java.math.BigDecimal;
 
 @Getter
 @Setter
@@ -52,9 +53,11 @@ public abstract class User extends BaseEntity {
     @Column(name = "address")
     private String address;
 
-    @PositiveOrZero(message = "Credit must be a non-negative value")
-    @Column(name = "credit")
-    private BigDecimal credit;
+    @OneToOne(mappedBy = "owner", cascade = CascadeType.ALL)
+    private Wallet wallet;
+
+    @OneToOne(mappedBy = "owner", cascade = CascadeType.ALL)
+    private BankCard card;
 
     @NotNull(message = "Status must not be null")
     @Enumerated(EnumType.STRING)

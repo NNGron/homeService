@@ -1,15 +1,17 @@
 package ir.controller;
 
 import io.swagger.v3.oas.annotations.Operation;
+import ir.dto.bankcard.BankCardInfoDto;
 import ir.dto.order.OrderRequestDto;
 import ir.dto.order.OrderResponseDto;
 import ir.entity.enums.OrderStatus;
+import ir.service.capcha.CaptchaService;
 import ir.service.order.OrderService;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
-import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
 
@@ -23,6 +25,7 @@ import java.util.List;
 public class OrderController {
 
     private final OrderService orderService;
+    private final CaptchaService captchaService;
 
     @PostMapping("/create-order")
     @Operation(summary = "(Customer only)")
@@ -88,6 +91,27 @@ public class OrderController {
         return ResponseEntity.ok(orderResponseDto);
     }
 
+    @PutMapping("/paid/online")
+    @Operation(summary = "(Customer only)")
+    public ResponseEntity<String> payOnline(@RequestHeader("Authorization") String token,
+                                            @RequestParam Long orderNumber,
+                                            @RequestParam Long offerNumber,
+                                            @RequestParam String captchaId,
+                                            @RequestParam String captchaCode,
+                                            @Valid @RequestBody BankCardInfoDto bankCardInfoDto) {
+        log.info("Processing payment for order number: {} by customer with token", orderNumber);
+
+        if (!captchaService.verifyCaptcha(captchaId, captchaCode)) {
+            return ResponseEntity.status(HttpStatus.BAD_REQUEST).body("Invalid or expired captcha");
+        }
+        if (!captchaService.verifyCaptcha(captchaId, captchaCode)) {
+            return ResponseEntity.status(HttpStatus.BAD_REQUEST).body("Invalid or expired captcha");
+        }
+        String message = orderService.payOnlineByCard(token, bankCardInfoDto, orderNumber, offerNumber);
+
+        return ResponseEntity.ok(message);
+    }
+
     @PutMapping("/update-order")
     @Operation(summary = "(Customer only)")
     public ResponseEntity<OrderResponseDto> updateCustomerOrder(@RequestHeader("Authorization") String token,
@@ -96,7 +120,7 @@ public class OrderController {
         log.info("Received request to update order with ID: {} by customer with token", orderId);
         log.debug("Updated order details: {}", orderDto);
 
-        OrderResponseDto updatedOrder = orderService.updateOrder(orderId, orderDto,token);
+        OrderResponseDto updatedOrder = orderService.updateOrder(orderId, orderDto, token);
 
         log.info("Order with ID: {} successfully updated by customer with token", orderId);
         return ResponseEntity.ok(updatedOrder);

@@ -1,7 +1,10 @@
 package ir.controller;
 
 import io.swagger.v3.oas.annotations.Operation;
+import ir.dto.bankcard.BankCardRequestDto;
+import ir.dto.bankcard.BankCardResponseDto;
 import ir.dto.user.*;
+import ir.service.card.CardService;
 import ir.service.user.UserService;
 import jakarta.validation.Valid;
 import lombok.AllArgsConstructor;
@@ -25,6 +28,7 @@ import java.util.List;
 @RequestMapping("/v1/users")
 public class UserController {
     private final UserService userService;
+    private final CardService cardService;
 
     @PostMapping("/signup")
     @Operation(summary = "(Customer & Expert)")
@@ -95,7 +99,6 @@ public class UserController {
         log.info("Successfully added categories for the expert.");
         return ResponseEntity.ok(userResponseDto);
     }
-
 
 
     @PutMapping("/update-password")
@@ -173,5 +176,14 @@ public class UserController {
 
         log.info("Successfully updated user details.");
         return ResponseEntity.ok(responseDto);
+    }
+
+    @PostMapping("/add-bank-card")
+    @Operation(summary = "(Customer & Expert)")
+    public ResponseEntity<BankCardResponseDto> saveCardBank(@RequestHeader("Authorization") String token,
+                                                            @Valid @RequestBody BankCardRequestDto bankCardRequestDto) {
+        BankCardResponseDto bankCardResponseDto = cardService.add(token, bankCardRequestDto);
+
+        return ResponseEntity.ok(bankCardResponseDto);
     }
 }

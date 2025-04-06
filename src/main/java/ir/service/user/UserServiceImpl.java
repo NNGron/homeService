@@ -127,6 +127,10 @@ public class UserServiceImpl implements UserService, UserDetailsService {
             throw new CustomException("Category is invalid", ErrorCode.CATEGORY_INVALID.getCode());
         }
 
+        Wallet wallet = new Wallet();
+        wallet.setOwner(expert);
+        wallet.setCredit(BigDecimal.ZERO);
+        expert.setWallet(wallet);
         expert.setCategories(categoryList);
         expert.setStatus(UserStatus.NEW);
         expert.setRole(Role.USER);
@@ -154,7 +158,10 @@ public class UserServiceImpl implements UserService, UserDetailsService {
         customer.setAddress(userRequestDto.getAddress());
         customer.setStatus(UserStatus.NEW);
         customer.setRole(Role.USER);
-
+        Wallet wallet = new Wallet();
+        wallet.setOwner(customer);
+        wallet.setCredit(BigDecimal.ZERO);
+        customer.setWallet(wallet);
         customer = userRepository.save(customer);
         log.info("Customer entity saved successfully: {}", customer);
         return customer;
@@ -565,7 +572,7 @@ public class UserServiceImpl implements UserService, UserDetailsService {
         log.info("Adding credit to customer with email: {}", email);
 
         User user = findByEmail(email);
-        BigDecimal credit = user.getCredit() != null ? user.getCredit() : BigDecimal.ZERO;
+        BigDecimal credit = user.getWallet().getCredit() != null ? user.getWallet().getCredit() : BigDecimal.ZERO;
 
         if (credit.add(amount).compareTo(BigDecimal.ZERO) < 0) {
             log.error("Invalid amount provided for customer with email: {}", email);
@@ -573,7 +580,7 @@ public class UserServiceImpl implements UserService, UserDetailsService {
         }
 
         credit = credit.add(amount);
-        user.setCredit(credit);
+        user.getWallet().setCredit(credit);
         user = saveUser(user);
 
         log.info("Credit added successfully to customer with email: {}", email);
@@ -596,7 +603,7 @@ public class UserServiceImpl implements UserService, UserDetailsService {
             log.error("User with username {} is not approved.", username);
             throw new CustomException("User should be approved", ErrorCode.USER_STATUS_NOT_APPROVED.getCode());
         }
-        BigDecimal balance = user.getCredit() != null ? user.getCredit() : BigDecimal.ZERO;
+        BigDecimal balance = user.getWallet().getCredit() != null ? user.getWallet().getCredit() : BigDecimal.ZERO;
         log.info("Successfully retrieved balance for user with username: {}. Balance: {}", username, balance);
 
         return new CreditResponseDto(balance);

@@ -39,7 +39,9 @@ public class SecurityConfig {
                                 "/v1/users/signup",
                                 "/swagger-ui.html",
                                 "/v3/api-docs/**",
-                                "/swagger-ui/**").permitAll()
+                                "/swagger-ui/**",
+                                "/v1/captcha/generate",
+                                "/v1/captcha/verify").permitAll()
                         .anyRequest().authenticated()
                 )
                 .exceptionHandling(ex -> ex

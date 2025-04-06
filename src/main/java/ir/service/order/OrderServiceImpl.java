@@ -2,6 +2,7 @@ package ir.service.order;
 
 import ir.convert.category.category_response.CategoryEntityToCategoryResponseDtoConvertor;
 import ir.convert.order.order_response.OrderEntityToOrderResponseDtoConvertor;
+import ir.dto.bankcard.BankCardInfoDto;
 import ir.dto.category.CategoryResponseDto;
 import ir.dto.order.OrderRequestDto;
 import ir.dto.order.OrderResponseDto;
@@ -12,18 +13,18 @@ import ir.exception.CustomException;
 import ir.exception.ErrorCode;
 import ir.repository.OrderRepository;
 import ir.security.JwtTokenProvider;
+import ir.service.card.CardService;
 import ir.service.category.CategoryService;
 import ir.service.user.UserService;
 import lombok.AllArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 
 import java.math.BigDecimal;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
-
-import static ir.entity.enums.OrderStatus.WAITING_FOR_EXPERT_PROPOSALS;
 
 /**
  * Service implementation for managing orders.
@@ -43,6 +44,8 @@ public class OrderServiceImpl implements OrderService {
     private final JwtTokenProvider jwtTokenProvider;
     private final OrderEntityToOrderResponseDtoConvertor orderEntityToOrderResponseDtoConvertor;
     private final CategoryEntityToCategoryResponseDtoConvertor categoryEntityToCategoryResponseDtoConvertor;
+    private final CardService cardService;
+    private final PasswordEncoder passwordEncoder;
 
     @Override
     public List<OrderResponseDto> getOrder(String token) {
@@ -360,14 +363,14 @@ public class OrderServiceImpl implements OrderService {
         Expert expert = offer.getExpert();
         BigDecimal finalPrice = order.getFinalPrice();
 
-        if (customer.getCredit() == null || customer.getCredit().compareTo(finalPrice) < 0) {
+        if (customer.getWallet().getCredit() == null || customer.getWallet().getCredit().compareTo(finalPrice) < 0) {
             log.error("Insufficient credit for customer with token.");
             throw new CustomException("Credit is not enough.", ErrorCode.CREDIT_NOT_ENOUGH.getCode());
         }
 
-        BigDecimal expertCredit = expert.getCredit() != null ? expert.getCredit() : BigDecimal.ZERO;
-        customer.setCredit(customer.getCredit().subtract(finalPrice));
-        expert.setCredit(expertCredit.add(finalPrice));
+        BigDecimal expertCredit = expert.getWallet().getCredit() != null ? expert.getWallet().getCredit() : BigDecimal.ZERO;
+        customer.getWallet().setCredit(customer.getWallet().getCredit().subtract(finalPrice));
+        expert.getWallet().setCredit(expertCredit.add(BigDecimal.valueOf(finalPrice.doubleValue() * 0.7))); // 70% of finalPrice added to expert credit
         userService.saveUser(customer);
         userService.saveUser(expert);
 
@@ -488,5 +491,71 @@ public class OrderServiceImpl implements OrderService {
         log.info("Deleting order with ID: {}", orderId);
         orderRepository.delete(order);
         log.info("Order with ID: {} deleted successfully.", orderId);
+    }
+
+    @Override
+    public String payOnlineByCard(String token, BankCardInfoDto bankCardInfoDto, Long orderNumber, Long offerNumber) {
+        String username = jwtTokenProvider.extractUsername(token);
+        User user = userService.findByUserName(username)
+                .orElseThrow(() -> {
+                    log.error("User with username {} not found.", username);
+                    return new CustomException("User not found.", ErrorCode.NOT_FOUND.getCode());
+                });
+
+        BankCard bankCard = cardService.findByOwner(user).orElseThrow(() -> {
+            log.error("User with username {} has not a bank-card.", username);
+            return new CustomException("Bank card not found.", ErrorCode.NOT_FOUND.getCode());
+        });
+
+
+        String cardNumber = bankCardInfoDto.getCardNumber();
+        if (!bankCard.getCardNumber().equals(cardNumber)) {
+            throw new CustomException("Bank card number is invalid.", ErrorCode.BAD_REQUEST.getCode());
+        }
+
+        String password = bankCardInfoDto.getPassword();
+        if (!bankCard.getPassword().equals(passwordEncoder.encode(password))) {
+            throw new CustomException("Bank card password is invalid.", ErrorCode.BAD_REQUEST.getCode());
+        }
+
+        Integer cvv = bankCardInfoDto.getCvv();
+        if (!bankCard.getCvv().equals(cvv)) {
+            throw new CustomException("Bank card cvv is invalid.", ErrorCode.BAD_REQUEST.getCode());
+        }
+
+        Order order = findById(orderNumber);
+        if (order == null) {
+            log.error("Order not found with orderNumber: {}", orderNumber);
+            throw new CustomException("Order not found with provided order number.", ErrorCode.NOT_FOUND.getCode());
+        }
+
+        Optional<Offer> offerOptional =
+                order.getOffers().stream().filter(offer -> offer.getId().equals(offerNumber)).findFirst();
+        if (offerOptional.isEmpty()) {
+            log.error("Offer not found for offerNumber: {}", offerNumber);
+            throw new CustomException("Offer not found with provided offer number.", ErrorCode.NOT_FOUND.getCode());
+        }
+
+        Offer offer = offerOptional.get();
+        Expert expert = offer.getExpert();
+        BigDecimal finalPrice = order.getFinalPrice();
+
+        if (bankCard.getBalance().compareTo(finalPrice) < 0) {
+            log.error("Insufficient credit for band card: {}", bankCard.getCardNumber());
+            throw new CustomException("Credit is not enough.", ErrorCode.CREDIT_NOT_ENOUGH.getCode());
+        }
+
+        BigDecimal expertCredit = expert.getWallet().getCredit() != null ? expert.getWallet().getCredit() : BigDecimal.ZERO;
+        BigDecimal newBalanceCard = bankCard.getBalance().subtract(finalPrice);
+        bankCard.setBalance(newBalanceCard);
+        expert.getWallet().setCredit(expertCredit.add(BigDecimal.valueOf(finalPrice.doubleValue() * 0.7))); // 70% of finalPrice added to expert credit
+        cardService.save(bankCard);
+        userService.saveUser(expert);
+
+        order.setStatus(OrderStatus.PAID);
+        orderRepository.save(order);
+        log.info("Order marked as paid successfully. orderNumber: {}", orderNumber);
+
+        return "Paid successfully. orderNumber: " + orderNumber;
     }
 }

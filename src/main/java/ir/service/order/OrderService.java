@@ -1,5 +1,6 @@
 package ir.service.order;
 
+import ir.dto.bankcard.BankCardInfoDto;
 import ir.dto.order.OrderRequestDto;
 import ir.dto.order.OrderResponseDto;
 import ir.entity.Category;
@@ -84,9 +85,6 @@ public interface OrderService {
 
     /**
      * Marks a specified order as paid.
-     *
-     * @param email the user's email for authentication
-     * @param password the user's password for authentication
      * @param orderNumber the number of the order to update
      * @param offerNumber the number of the offer linked to the order
      * @return the updated order as a {@link OrderResponseDto}
@@ -108,6 +106,8 @@ public interface OrderService {
      */
     void deleteOrder(Long orderId, String token);
 
-   // Optional<User> findByUserName(String username);
+    String payOnlineByCard(String token, BankCardInfoDto bankCardInfoDto, Long orderNumber, Long offerNumber);
+
+    // Optional<User> findByUserName(String username);
 
 }
