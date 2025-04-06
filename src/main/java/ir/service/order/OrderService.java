@@ -4,9 +4,11 @@ import ir.dto.order.OrderRequestDto;
 import ir.dto.order.OrderResponseDto;
 import ir.entity.Category;
 import ir.entity.Order;
+import ir.entity.User;
 import ir.entity.enums.OrderStatus;
 
 import java.util.List;
+import java.util.Optional;
 
 /**
  * Service interface for managing orders.
@@ -16,17 +18,9 @@ import java.util.List;
  */
 public interface OrderService {
 
-    /**
-     * Saves a new order for the authenticated user.
-     *
-     * @param orderDto the details of the order to be saved
-     * @param email    the user's email for authentication
-     * @param password the user's password for authentication
-     * @return the saved order as a {@link OrderResponseDto}
-     */
+
     OrderResponseDto saveOrder(OrderRequestDto orderDto,
-                               String email,
-                               String password);
+                               String token);
 
     /**
      * Retrieves a list of orders for a customer using their email and password.
@@ -39,7 +33,7 @@ public interface OrderService {
      * @param password the customer's password for authentication
      * @return a list of {@link OrderResponseDto} representing the customer's orders
      */
-    List<OrderResponseDto> getOrdersByCustomerEmail(String email, String password);
+    List<OrderResponseDto> getOrdersByCustomerEmail(String token);
 
     /**
      * Finds orders based on the given categories.
@@ -56,7 +50,7 @@ public interface OrderService {
      * @param password the user's password for authentication
      * @return a list of {@link OrderResponseDto} representing the user's orders
      */
-    List<OrderResponseDto> getOrder(String email, String password);
+    List<OrderResponseDto> getOrder(String token);
 
     /**
      * Retrieves an order by its unique ID.
@@ -84,7 +78,7 @@ public interface OrderService {
      * @param offerNumber the number of the offer linked to the order
      * @return the updated order as a {@link OrderResponseDto}
      */
-    OrderResponseDto updateOrderStatus(String email, String password,
+    OrderResponseDto updateOrderStatus(String token,
                                        OrderStatus orderStatus,
                                        Long orderNumber, Long offerNumber);
 
@@ -97,24 +91,13 @@ public interface OrderService {
      * @param offerNumber the number of the offer linked to the order
      * @return the updated order as a {@link OrderResponseDto}
      */
-    OrderResponseDto paid(String email,
-                          String password,
+    OrderResponseDto paid(String token,
                           Long orderNumber,
                           Long offerNumber);
 
-    /**
-     * Updates the details of a specified order.
-     *
-     * @param orderNumber the number of the order to update
-     * @param orderDto the new details of the order
-     * @param email the user's email for authentication
-     * @param password the user's password for authentication
-     * @return the updated order as a {@link OrderResponseDto}
-     */
     OrderResponseDto updateOrder(Long orderNumber,
                                  OrderRequestDto orderDto,
-                                 String email,
-                                 String password);
+                                 String token);
 
     /**
      * Deletes a specified order for the authenticated user.
@@ -123,5 +106,8 @@ public interface OrderService {
      * @param email the user's email for authentication
      * @param password the user's password for authentication
      */
-    void deleteOrder(Long orderId, String email, String password);
+    void deleteOrder(Long orderId, String token);
+
+   // Optional<User> findByUserName(String username);
+
 }

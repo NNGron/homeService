@@ -12,6 +12,7 @@ import ir.exception.CustomException;
 import ir.exception.ErrorCode;
 import ir.repository.user.UserRepository;
 import ir.repository.user.UserSpecification;
+import ir.security.JwtTokenProvider;
 import ir.service.category.CategoryService;
 import lombok.AllArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
@@ -19,6 +20,11 @@ import org.apache.commons.lang3.StringUtils;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.jpa.domain.Specification;
+import org.springframework.security.core.authority.SimpleGrantedAuthority;
+import org.springframework.security.core.userdetails.UserDetails;
+import org.springframework.security.core.userdetails.UserDetailsService;
+import org.springframework.security.core.userdetails.UsernameNotFoundException;
+import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.multipart.MultipartFile;
@@ -39,10 +45,24 @@ import java.util.Optional;
 @Slf4j
 @Service
 @Transactional
-public class UserServiceImpl implements UserService {
+public class UserServiceImpl implements UserService, UserDetailsService {
+
     private final UserRepository userRepository;
     private final CategoryService categoryService;
+    private final PasswordEncoder passwordEncoder;
+    private final JwtTokenProvider jwtTokenProvider;
     private final UserEntityToUserResponseDtoConvertor userEntityToUserResponseDtoConvertor;
+
+    @Override
+    public UserDetails loadUserByUsername(String username) throws UsernameNotFoundException {
+        return userRepository.findByUserName(username)
+                .map(user -> new org.springframework.security.core.userdetails.User(
+                        user.getUserName(),
+                        user.getPassword(),
+                        List.of(new SimpleGrantedAuthority("ROLE_" + user.getRole().name()))
+                ))
+                .orElseThrow(() -> new CustomException("User not found", ErrorCode.NOT_FOUND.getCode()));
+    }
 
     /**
      * Registers a new user and saves their details to the database.
@@ -94,7 +114,7 @@ public class UserServiceImpl implements UserService {
         expert.setFirstName(userRequestDto.getFirstName());
         expert.setLastName(userRequestDto.getLastName());
         expert.setUserName(userRequestDto.getUserName());
-        expert.setPassword(userRequestDto.getPassword());
+        expert.setPassword(passwordEncoder.encode(userRequestDto.getPassword()));
         expert.setEmail(userRequestDto.getEmail());
         expert.setAddress(userRequestDto.getAddress());
 
@@ -129,7 +149,7 @@ public class UserServiceImpl implements UserService {
         customer.setFirstName(userRequestDto.getFirstName());
         customer.setLastName(userRequestDto.getLastName());
         customer.setUserName(userRequestDto.getUserName());
-        customer.setPassword(userRequestDto.getPassword());
+        customer.setPassword(passwordEncoder.encode(userRequestDto.getPassword()));
         customer.setEmail(userRequestDto.getEmail());
         customer.setAddress(userRequestDto.getAddress());
         customer.setStatus(UserStatus.NEW);
@@ -147,7 +167,7 @@ public class UserServiceImpl implements UserService {
         admin.setFirstName(userRequestDto.getFirstName());
         admin.setLastName(userRequestDto.getLastName());
         admin.setUserName(userRequestDto.getUserName());
-        admin.setPassword(userRequestDto.getPassword());
+        admin.setPassword(passwordEncoder.encode(userRequestDto.getPassword()));
         admin.setEmail(userRequestDto.getEmail());
         admin.setAddress(userRequestDto.getAddress());
         admin.setRole(Role.ADMIN);
@@ -192,21 +212,29 @@ public class UserServiceImpl implements UserService {
     }
 
     @Override
-    public boolean authenticateUser(String email, String password) {
-        log.info("Authenticating user with email: {}", email);
-
-        User user = userRepository.findByEmail(email).orElseThrow(() ->
-                new CustomException("No users found", ErrorCode.NO_USERS_FOUND.getCode())
-        );
-
-        if (password.equals(user.getPassword())) {
-            log.info("Authentication successful for user: {}", email);
-            return true;
-        } else {
-            log.warn("Authentication failed for user: {}", email);
-            return false;
-        }
+    public Optional<User> findByUserName(String username) {
+        return userRepository.findByUserName(username);
     }
+
+    @Override
+    public LoginResponseDto login(String email, String password) {
+        log.info("Attempting to authenticate user with email: {}", email);
+
+        User user = userRepository.findByEmail(email)
+                .orElseThrow(() -> new CustomException(
+                        "User not found with email: " + email, ErrorCode.NO_USERS_FOUND.getCode()));
+
+        if (!passwordEncoder.matches(password, user.getPassword())) {
+            throw new CustomException(
+                    "Invalid password for email: " + email, ErrorCode.INVALID_EMAIL_OR_PASSWORD.getCode());
+        }
+
+            UserDetails userDetails = loadUserByUsername(user.getUserName());
+        String token = jwtTokenProvider.generateToken(userDetails.getUsername());
+
+        return new LoginResponseDto("Logged in successfully", userDetails.getUsername(), token);
+    }
+
 
     /**
      * Retrieves a paginated list of users, excluding those with the ADMIN role.
@@ -233,93 +261,101 @@ public class UserServiceImpl implements UserService {
         return userEntityToUserResponseDtoConvertor.convertList(userPage.getContent());
     }
 
-    /**
-     * Removes specific categories from an expert's associated categories.
-     *
-     * @param email         the expert's email for identification
-     * @param categoryNames the names of the categories to be removed
-     * @return the updated user as a {@link UserResponseDto}
-     * @throws CustomException if validation fails or the user could not be updated
-     */
     @Override
-    public UserResponseDto deleteCategoryFromUser(String email, List<String> categoryNames) {
-        log.info("Removing categories from user with email: {}", email);
+    public UserResponseDto deleteExpertCategory(String token, String email, List<String> categoryNames) {
+        log.info("Validating user and deleting categories from expert with email: {}", email);
 
-        Optional<User> optionalUser = userRepository.findByEmail(email);
+        // Step 1: Validate token and user role
+        String username = jwtTokenProvider.extractUsername(token);
+        Optional<User> userOptional = userRepository.findByUserName(username);
 
-        if (optionalUser.isEmpty()) {
-            log.error("User with email {} not found", email);
-            throw new CustomException("User not found", ErrorCode.NOT_FOUND.getCode());
+        if (userOptional.isEmpty()) {
+            log.error("User with token not found.");
+            throw new CustomException("User not found.", ErrorCode.NOT_FOUND.getCode());
         }
 
-        User user = optionalUser.get();
-        if (user.getStatus().equals(UserStatus.NEW)) {
-            log.error("User with email {} is not approved", email);
-            throw new CustomException("User should be approved", ErrorCode.USER_STATUS_NOT_APPROVED.getCode());
+        User user = userOptional.get();
+        if (!(user instanceof Admin || user instanceof Expert)) {
+            log.error("Unauthorized access by user: {}", username);
+            throw new CustomException("Access denied. Only Admin or Expert can perform this operation.", ErrorCode.UNAUTHORIZED.getCode());
         }
 
-        if (!(user instanceof Expert)) {
-            log.error("User with email {} is not an expert", email);
-            throw new CustomException("User is not an expert", ErrorCode.NOT_FOUND.getCode());
+        // Step 2: Proceed to delete categories for the expert
+        Optional<User> targetUserOptional = userRepository.findByEmail(email);
+        if (targetUserOptional.isEmpty()) {
+            log.error("Target user with email {} not found.", email);
+            throw new CustomException("Target user not found.", ErrorCode.NOT_FOUND.getCode());
         }
 
-        Expert expert = (Expert) user;
-        List<Category> shouldBeRemoveCategoryList = categoryService.findSubCategoriesByNames(categoryNames);
-        List<Category> categories = expert.getCategories();
+        User targetUser = targetUserOptional.get();
+        if (!(targetUser instanceof Expert)) {
+            log.error("Target user is not an expert. Email: {}", email);
+            throw new CustomException("User is not an expert.", ErrorCode.USER_IS_NOT_EXPERT.getCode());
+        }
 
-        categories.removeAll(shouldBeRemoveCategoryList);
-        expert.setCategories(categories);
+        Expert expert = (Expert) targetUser;
+        List<Category> categoriesToRemove = categoryService.findSubCategoriesByNames(categoryNames);
+        expert.getCategories().removeAll(categoriesToRemove);
+        userRepository.save(expert);
 
-        expert = userRepository.save(expert);
+        log.info("Successfully removed categories for expert with email: {}", email);
         return userEntityToUserResponseDtoConvertor.apply(expert);
     }
 
-    /**
-     * Adds categories to an expert's profile.
-     *
-     * <p>This method checks if the user exists and is an expert. It ensures the user is approved
-     * and does not already have the categories being added. If all validations pass, the new
-     * categories are added to the expert's profile.</p>
-     *
-     * @param email the email of the expert
-     * @param categoryNames a list of category names to add
-     * @return the updated expert as a {@link UserResponseDto}
-     * @throws CustomException if the user is not approved, not found, or if there are duplicate categories
-     */
     @Override
-    public UserResponseDto addExpertToCategories(String email, List<String> categoryNames) {
-        log.info("Adding categories to expert with email: {}", email);
+    public UserResponseDto addExpertToCategories(String token, List<String> categoryNames) {
+        log.info("Validating expert and adding categories.");
 
-        Optional<User> optionalUser = userRepository.findByEmail(email);
-        List<Category> shouldBeAdd = categoryService.findSubCategoriesByNames(categoryNames);
+        // Step 1: Validate user using the token
+        String username = jwtTokenProvider.extractUsername(token);
+        Optional<User> userOptional = userRepository.findByUserName(username);
 
-        if (optionalUser.isEmpty() || !(optionalUser.get() instanceof Expert expert)) {
-            log.error("User not found or is not an expert. Email: {}", email);
-            throw new CustomException("User not found or is not an expert", ErrorCode.NOT_FOUND.getCode());
+        if (userOptional.isEmpty() || !(userOptional.get() instanceof Expert expert)) {
+            log.error("Unauthorized access or user not found. Username: {}", username);
+            throw new CustomException("Access denied or user not found.", ErrorCode.NOT_FOUND.getCode());
         }
 
+        // Step 2: Check expert status
         if (expert.getStatus().equals(UserStatus.NEW)) {
-            log.error("Expert with email {} is not approved", email);
-            throw new CustomException("User should be approved", ErrorCode.USER_STATUS_NOT_APPROVED.getCode());
+            log.error("Expert with username {} is not approved.", username);
+            throw new CustomException("User should be approved.", ErrorCode.USER_STATUS_NOT_APPROVED.getCode());
         }
 
+        // Step 3: Retrieve categories to add
+        List<Category> categoriesToAdd = categoryService.findSubCategoriesByNames(categoryNames);
+
+        // Validate all categories are found in the database
+        List<String> invalidCategories = categoryNames.stream()
+                .filter(name -> categoriesToAdd.stream().noneMatch(category -> category.getName().equals(name)))
+                .toList();
+
+        if (!invalidCategories.isEmpty()) {
+            log.error("Invalid categories detected: {}", invalidCategories);
+            throw new CustomException(
+                    "Invalid categories: " + invalidCategories, ErrorCode.INVALID_CATEGORY.getCode());
+        }
         List<Category> existingCategories = expert.getCategories();
-        List<String> duplicateCategories = shouldBeAdd.stream()
+
+        // Step 4: Check for duplicate categories
+        List<String> duplicateCategories = categoriesToAdd.stream()
                 .map(Category::getName)
                 .filter(existingCategories.stream().map(Category::getName).toList()::contains)
                 .toList();
 
         if (!duplicateCategories.isEmpty()) {
-            log.error("Duplicate categories detected for expert with email {}: {}", email, duplicateCategories);
+            log.error("Duplicate categories detected for expert with username {}: {}", username, duplicateCategories);
             throw new CustomException(
                     "Duplicate categories: " + duplicateCategories, ErrorCode.DUPLICATE_CATEGORY.getCode());
         }
 
-        log.info("Adding new categories to expert with email: {}", email);
-        existingCategories.addAll(shouldBeAdd);
+        // Step 5: Add new categories to the expert
+        log.info("Adding new categories to expert with username: {}", username);
+        existingCategories.addAll(categoriesToAdd);
         expert.setCategories(existingCategories);
+
+        // Step 6: Save the updated expert entity
         Expert updatedExpert = userRepository.save(expert);
-        log.info("Categories successfully added to expert with email: {}", email);
+        log.info("Categories successfully added to expert with username: {}", username);
 
         return userEntityToUserResponseDtoConvertor.apply(updatedExpert);
     }
@@ -350,7 +386,7 @@ public class UserServiceImpl implements UserService {
     /**
      * Updates the password for the authenticated user.
      *
-     * @param email the user's email for authentication
+     * @param email       the user's email for authentication
      * @param oldPassword the user's current password
      * @param newPassword the new password to be set
      * @return a {@link UserMessageDto} confirming the password update
@@ -360,7 +396,8 @@ public class UserServiceImpl implements UserService {
     public UserMessageDto updateUserPassword(String email, String oldPassword, String newPassword) {
         log.info("Updating password for user with email: {}", email);
 
-        Optional<User> optionalUser = userRepository.findByEmailAndPassword(email, oldPassword);
+        String encodeOldPass = passwordEncoder.encode(oldPassword);
+        Optional<User> optionalUser = userRepository.findByEmailAndPassword(email, encodeOldPass);
 
         if (optionalUser.isPresent()) {
             User user = optionalUser.get();
@@ -368,13 +405,25 @@ public class UserServiceImpl implements UserService {
                 log.error("User with email {} not found", email);
                 throw new CustomException("User should be approved", ErrorCode.USER_STATUS_NOT_APPROVED.getCode());
             }
-            user.setPassword(newPassword);
+            user.setPassword(passwordEncoder.encode(newPassword));
             userRepository.save(user);
         } else {
             log.error("User with email {} not found", email);
             throw new CustomException("User not found", ErrorCode.NOT_FOUND.getCode());
         }
         log.info("Password updated successfully for user with email: {}", email);
+        return new UserMessageDto("Password updated successfully");
+    }
+
+    @Override
+    public UserMessageDto updateUserPassword(String token, String newPassword) {
+        String username = jwtTokenProvider.extractUsername(token);
+        Optional<User> userOptional = userRepository.findByUserName(username);
+        userOptional.ifPresent(user -> {
+            user.setPassword(passwordEncoder.encode(newPassword));
+            userRepository.save(user);
+
+        });
         return new UserMessageDto("Password updated successfully");
     }
 
@@ -407,40 +456,46 @@ public class UserServiceImpl implements UserService {
         return new UserMessageDto("User is already approved");
     }
 
-
-    /**
-     * Uploads a profile image for the authenticated expert.
-     *
-     * @param email the expert's email for authentication
-     * @param image the profile image to be uploaded
-     * @return a {@link UserMessageDto} confirming the image upload
-     * @throws CustomException if the image size exceeds the limit or upload fails
-     */
     @Override
-    public UserMessageDto uploadImage(String email, MultipartFile image) {
-        log.info("Uploading profile image for expert with email: {}", email);
+    public UserMessageDto uploadImage(String token, MultipartFile image) {
+        log.info("Uploading profile image for expert with token.");
 
+        // Step 1: Validate image size
         if (image.getSize() > 300 * 1024) {
-            log.error("Image size exceeds limit for email: {}", email);
-            throw new CustomException("Image size must to be less than 300KB", ErrorCode.PHOTO_INVALID.getCode());
+            log.error("Image size exceeds limit for token.");
+            throw new CustomException("Image size must be less than 300KB.", ErrorCode.PHOTO_INVALID.getCode());
         }
-        userRepository.findByEmail(email).ifPresent(user -> {
-            if (user instanceof Expert) {
-                if (user.getStatus().equals(UserStatus.NEW)) {
-                    throw new CustomException("User should be approved", ErrorCode.USER_STATUS_NOT_APPROVED.getCode());
-                }
-                Expert expert = (Expert) user;
-                try {
-                    expert.setPhoto(image.getBytes());
-                    userRepository.save(expert);
-                } catch (IOException e) {
-                    throw new CustomException("Can not upload image", ErrorCode.IMAGE_CAN_NOT_UPLOAD.getCode());
-                }
-            }
-        });
-        log.info("Profile image uploaded successfully for email: {}", email);
-        return new UserMessageDto("Image uploaded successfully");
+
+        // Step 2: Extract username from token and validate user
+        String username = jwtTokenProvider.extractUsername(token);
+        Optional<User> userOptional = userRepository.findByUserName(username);
+
+        if (userOptional.isEmpty() || !(userOptional.get() instanceof Expert)) {
+            log.error("User not found or is not an expert. Username: {}", username);
+            throw new CustomException("User not found or not an expert.", ErrorCode.NOT_FOUND.getCode());
+        }
+
+        Expert expert = (Expert) userOptional.get();
+
+        // Step 3: Validate user's status
+        if (expert.getStatus().equals(UserStatus.NEW)) {
+            log.error("Expert with username {} is not approved.", username);
+            throw new CustomException("User should be approved.", ErrorCode.USER_STATUS_NOT_APPROVED.getCode());
+        }
+
+        // Step 4: Update the profile image
+        try {
+            expert.setPhoto(image.getBytes());
+            userRepository.save(expert);
+            log.info("Profile image uploaded successfully for username: {}", username);
+        } catch (IOException e) {
+            log.error("Failed to upload image for username: {}", username, e);
+            throw new CustomException("Cannot upload image.", ErrorCode.IMAGE_CAN_NOT_UPLOAD.getCode());
+        }
+
+        return new UserMessageDto("Image uploaded successfully.");
     }
+
 
     /**
      * Retrieves a user based on their email and password.
@@ -448,7 +503,7 @@ public class UserServiceImpl implements UserService {
      * <p>Validates the provided email and password and fetches the user from the database.
      * Throws an exception if the user is not found.</p>
      *
-     * @param email the user's email for authentication
+     * @param email    the user's email for authentication
      * @param password the user's password for authentication
      * @return the {@link User} entity matching the provided email and password
      * @throws CustomException if the user is not found with the provided credentials
@@ -500,7 +555,7 @@ public class UserServiceImpl implements UserService {
     /**
      * Adds credit to the specified customer's account.
      *
-     * @param email the customer's email for authentication
+     * @param email  the customer's email for authentication
      * @param amount the credit amount to be added
      * @return the updated customer as a {@link UserResponseDto}
      * @throws CustomException if the amount is invalid or the operation fails
@@ -525,116 +580,101 @@ public class UserServiceImpl implements UserService {
         return userEntityToUserResponseDtoConvertor.apply(user);
     }
 
-    /**
-     * Retrieves the balance of the authenticated user.
-     *
-     * <p>Validates the user's authentication and ensures the user has an approved status
-     * before returning the account balance.</p>
-     *
-     * @param email the user's email for authentication
-     * @param password the user's password for authentication
-     * @return the user's balance wrapped in a {@link CreditResponseDto}
-     * @throws CustomException if the user is not found or is not approved
-     */
     @Override
-    public CreditResponseDto getBalance(String email, String password) {
-        log.info("Retrieving balance for user with email: {}", email);
+    public CreditResponseDto getBalance(String token) {
+        log.info("Retrieving balance for user with token");
 
-        User user = findByEmailAndPassword(email, password);
-        if (user == null) {
-            log.error("User not found with provided email: {}", email);
-            throw new CustomException("User not found with provided email and password",
-                    ErrorCode.NOT_FOUND.getCode());
+        String username = jwtTokenProvider.extractUsername(token);
+        Optional<User> userOptional = userRepository.findByUserName(username);
+
+        if (userOptional.isEmpty()) {
+            log.error("User with token not found.");
+            throw new CustomException("User not found.", ErrorCode.NOT_FOUND.getCode());
         }
+        User user = userOptional.get();
         if (user.getStatus().equals(UserStatus.NEW)) {
-            log.error("User with email {} is not approved", email);
+            log.error("User with username {} is not approved.", username);
             throw new CustomException("User should be approved", ErrorCode.USER_STATUS_NOT_APPROVED.getCode());
         }
         BigDecimal balance = user.getCredit() != null ? user.getCredit() : BigDecimal.ZERO;
-        log.info("Successfully retrieved balance for user with email: {}. Balance: {}", email, balance);
+        log.info("Successfully retrieved balance for user with username: {}. Balance: {}", username, balance);
 
         return new CreditResponseDto(balance);
     }
 
-    /**
-     * Soft deletes the authenticated user after validating associated orders and offers.
-     *
-     * @param email the user's email for authentication
-     * @param password the user's password for authentication
-     * @throws CustomException if the user has non-paid orders or validation fails
-     */
     @Override
-    public void deleteUser(String email, String password) {
-        log.info("Attempting to delete user with email: {}", email);
+    public void deleteUser(String token) {
+        log.info("Attempting to delete user using token.");
 
-        User user = userRepository.findByEmailAndPassword(email, password)
-                .orElseThrow(() -> new CustomException(
-                        "User not found with provided email and password",
-                        ErrorCode.NOT_FOUND.getCode()));
+        // Step 1: Extract username from token and validate user
+        String username = jwtTokenProvider.extractUsername(token);
+        User user = userRepository.findByUserName(username)
+                .orElseThrow(() -> {
+                    log.error("User with username {} not found.", username);
+                    return new CustomException(
+                            "User not found with provided token.", ErrorCode.NOT_FOUND.getCode());
+                });
 
+        // Step 2: Handle specific rules for customers
         if (user instanceof Customer customer) {
             boolean allOrdersPaid = customer.getOrders().stream()
                     .allMatch(order -> OrderStatus.PAID.equals(order.getStatus()));
 
             if (!allOrdersPaid) {
-                throw new CustomException("Cannot delete customer with non-paid orders",
-                        ErrorCode.UNPROCESSABLE_ENTITY.getCode());
+                log.error("Cannot delete customer with username {} due to non-paid orders.", username);
+                throw new CustomException(
+                        "Cannot delete customer with non-paid orders.", ErrorCode.UNPROCESSABLE_ENTITY.getCode());
             }
         }
 
+        // Step 3: Handle specific rules for experts
         if (user instanceof Expert expert) {
             boolean allRelatedOrdersPaid = expert.getOffers().stream()
                     .map(Offer::getOrder)
                     .allMatch(order -> OrderStatus.PAID.equals(order.getStatus()));
 
             if (!allRelatedOrdersPaid) {
-                throw new CustomException("Cannot delete expert with offers linked to non-paid orders",
-                        ErrorCode.UNPROCESSABLE_ENTITY.getCode());
+                log.error("Cannot delete expert with username {} due to linked non-paid orders.", username);
+                throw new CustomException(
+                        "Cannot delete expert with offers linked to non-paid orders.", ErrorCode.UNPROCESSABLE_ENTITY.getCode());
             }
         }
 
+        // Step 4: Soft delete the user by updating their status
         user.setStatus(UserStatus.DELETED);
         userRepository.save(user);
 
-        log.info("Successfully soft-deleted user of type: {} with email: {}",
-                user.getClass().getSimpleName(), email);
+        log.info("Successfully soft-deleted user of type: {} with username: {}",
+                user.getClass().getSimpleName(), username);
     }
 
-    /**
-     * Updates the details of the authenticated user.
-     *
-     * <p>Validates user authentication and updates fields like first name, last name,
-     * address, and username. Ensures the user exists in the system before making changes.</p>
-     *
-     * @param userUpdateRequestDto the updated details to be applied to the user
-     * @param email the user's email for authentication
-     * @param password the user's password for authentication
-     * @return the updated user as a {@link UserResponseDto}
-     * @throws CustomException if the user is not found or validation fails
-     */
     @Override
-    public UserResponseDto updateUser(UserUpdateRequestDto userUpdateRequestDto, String email, String password) {
-        log.info("Attempting to update user details for email: {}", email);
+    public UserResponseDto updateUser(UserUpdateRequestDto userUpdateRequestDto, String token) {
+        log.info("Attempting to update user using token.");
 
-        User user = userRepository.findByEmailAndPassword(email, password)
-                .orElseThrow(() -> new CustomException(
-                        "User not found with provided email and password",
-                        ErrorCode.NOT_FOUND.getCode()));
+        // Step 1: Extract username from token and validate user
+        String username = jwtTokenProvider.extractUsername(token);
+        User user = userRepository.findByUserName(username)
+                .orElseThrow(() -> {
+                    log.error("User with username {} not found.", username);
+                    return new CustomException("User not found.", ErrorCode.NOT_FOUND.getCode());
+                });
 
         if (user.getStatus() == UserStatus.DELETED) {
-            log.error("User with email {} is deleted and cannot be updated", email);
+            log.error("User with token is deleted and cannot be updated");
             throw new CustomException("User is deleted and cannot be updated", ErrorCode.UNAUTHORIZED.getCode());
         }
 
-        log.info("Updating user details for email: {}", email);
+        log.info("Updating details for user with username: {}", username);
         user.setFirstName(userUpdateRequestDto.getFirstName());
         user.setLastName(userUpdateRequestDto.getLastName());
         user.setAddress(userUpdateRequestDto.getAddress());
-        user.setUserName(userUpdateRequestDto.getUserName());
+//        user.setUserName(userUpdateRequestDto.getUserName());
 
-        userRepository.save(user);
-        log.info("User with email {} updated successfully", email);
-        return userEntityToUserResponseDtoConvertor.apply(user);
+        User updatedUser = userRepository.save(user);
+
+        log.info("Successfully updated user with username: {}", username);
+        return userEntityToUserResponseDtoConvertor.apply(updatedUser);
     }
 
     /**
@@ -686,6 +726,15 @@ public class UserServiceImpl implements UserService {
 
         log.info("Fetching and validating subcategories: {}", subCategoryNames);
         List<Category> subCategories = categoryService.findSubCategoriesByNames(subCategoryNames);
+
+        List<String> invalidSubCategories = subCategoryNames.stream()
+                .filter(name -> subCategories.stream().noneMatch(category -> category.getName().equals(name)))
+                .toList();
+
+        if (!invalidSubCategories.isEmpty()) {
+            log.error("Invalid subcategories detected: {}", invalidSubCategories);
+            throw new CustomException("Invalid subcategories: " + invalidSubCategories, ErrorCode.INVALID_CATEGORY.getCode());
+        }
 
         // Check for duplicates
         List<String> existingSubCategories = expert.getCategories().stream()

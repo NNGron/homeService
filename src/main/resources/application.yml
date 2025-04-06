@@ -27,3 +27,6 @@ spring:
     multipart:
       max-file-size: 300KB
       max-request-size: 300KB
+jwt:
+ secret: zrke4wpL1OQYMy32A95eY7FgKoTBYdke7zRrAVOpC3U=
+ expiration: 86400000 # 1 روز (به میلی‌ثانیه)

@@ -12,6 +12,7 @@ import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.domain.Sort;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
 
@@ -27,6 +28,7 @@ public class CategoryController {
     private final CategoryService categoryService;
 
     @PostMapping("/create-main-category")
+    @PreAuthorize("hasRole('ROLE_ADMIN')")
     @Operation(summary = "(Admin only)")
     public ResponseEntity<CategoryResponseDto> saveCategory(
             @Valid @RequestBody MainCategoryRequestDto mainCategoryRequestDto) {
@@ -39,6 +41,7 @@ public class CategoryController {
     }
 
     @PostMapping("/create-sub-category")
+    @PreAuthorize("hasRole('ROLE_ADMIN')")
     @Operation(summary = "(Admin only)")
     public ResponseEntity<CategoryResponseDto> saveSubCategory(
             @Valid @RequestBody SubCategoryRequestDto subCategoryRequestDto) {
@@ -101,6 +104,7 @@ public class CategoryController {
     }
 
     @DeleteMapping("/delete-sub-category")
+    @PreAuthorize("hasRole('ROLE_ADMIN')")
     @Operation(summary = "(Admin only)")
     public ResponseEntity<String> deleteSubCategory(@RequestParam String subCategoryName) {
         log.info("Received request to delete subcategory with name: {}", subCategoryName);
@@ -112,6 +116,7 @@ public class CategoryController {
     }
 
     @DeleteMapping("/delete-main-category")
+    @PreAuthorize("hasRole('ROLE_ADMIN')")
     @Operation(summary = "(Admin only)")
     public ResponseEntity<String> deleteMainCategory(@RequestParam String mainCategoryName) {
         log.info("Received request to delete main category with name: {}", mainCategoryName);

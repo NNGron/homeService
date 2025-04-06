@@ -8,6 +8,7 @@ import org.springframework.web.multipart.MultipartFile;
 
 import java.math.BigDecimal;
 import java.util.List;
+import java.util.Optional;
 
 /**
  * Service interface for managing {@link User} entities and handling user-related operations.
@@ -31,8 +32,9 @@ import java.util.List;
  * @see UserMessageDto
  */
 public interface UserService {
+    Optional<User> findByUserName(String username);
 
-    boolean authenticateUser(String email, String password);
+    LoginResponseDto login(String email, String password);
 
     /**
      * Retrieves all users with pagination support.
@@ -49,7 +51,7 @@ public interface UserService {
      * @param categoryNames the names of the categories to be removed
      * @return the updated user as a {@link UserResponseDto}
      */
-    UserResponseDto deleteCategoryFromUser(String email, List<String> categoryNames);
+    UserResponseDto deleteExpertCategory(String token, String email, List<String> categoryNames);
 
     /**
      * Adds specific categories to an expert's associated categories.
@@ -58,7 +60,7 @@ public interface UserService {
      * @param categoryNames the names of the categories to be added
      * @return the updated user as a {@link UserResponseDto}
      */
-    UserResponseDto addExpertToCategories(String email, List<String> categoryNames);
+    UserResponseDto addExpertToCategories(String token, List<String> categoryNames);
 
     /**
      * Retrieves filtered users based on the provided filter criteria and pagination configuration.
@@ -87,6 +89,7 @@ public interface UserService {
      */
     UserMessageDto updateUserPassword(String email, String oldPassword, String newPassword);
 
+    UserMessageDto updateUserPassword(String token, String newPassword);
     /**
      * Updates the status of the authenticated user.
      *
@@ -102,7 +105,7 @@ public interface UserService {
      * @param image the profile image to be uploaded
      * @return a {@link UserMessageDto} confirming the image upload
      */
-    UserMessageDto uploadImage(String email, MultipartFile image);
+    UserMessageDto uploadImage(String token, MultipartFile image);
 
     /**
      * Retrieves a user based on their email and password.
@@ -145,7 +148,7 @@ public interface UserService {
      * @param password the customer's password for authentication
      * @return the balance details as a {@link CreditResponseDto}
      */
-    CreditResponseDto getBalance(String email, String password);
+    CreditResponseDto getBalance(String token);
 
     /**
      * Deletes the authenticated user from the system.
@@ -153,7 +156,7 @@ public interface UserService {
      * @param email the user's email for authentication
      * @param password the user's password for authentication
      */
-    void deleteUser(String email, String password);
+    void deleteUser(String token);
 
     /**
      * Updates the details of the authenticated user.
@@ -164,8 +167,7 @@ public interface UserService {
      * @return the updated user as a {@link UserResponseDto}
      */
     UserResponseDto updateUser(UserUpdateRequestDto userUpdateRequestDto,
-                               String email,
-                               String password);
+                               String token);
 
     void authenticateAdmin(String email, String password);
 

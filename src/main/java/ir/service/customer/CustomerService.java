@@ -1,7 +1,6 @@
 package ir.service.customer;
 
 import ir.dto.offer.OfferResponseDto;
-import ir.exception.CustomException;
 import org.springframework.data.domain.Pageable;
 
 import java.util.List;
@@ -15,13 +14,11 @@ import java.util.List;
 public interface CustomerService {
 
     /**
-     * Retrieves a paginated list of offers for a given customer based on their email and password.
+     * Fetches all offers for a customer based on JWT token authentication.
      *
-     * @param email    the email of the customer for authentication
-     * @param password the password of the customer for authentication
-     * @param pageable the pagination information including page number, size, and sorting
-     * @return a paginated list of {@link OfferResponseDto} representing the offers associated with the customer
-     * @throws CustomException if authentication fails, the user is not a customer, or the customer has been deleted
+     * @param token JWT token of the customer
+     * @param pageable pagination and sorting information
+     * @return list of offer DTOs for the authenticated customer
      */
-    List<OfferResponseDto> getOffersForCustomer(String email, String password, Pageable pageable);
+    List<OfferResponseDto> getOffersForCustomer(String token, Pageable pageable);
 }

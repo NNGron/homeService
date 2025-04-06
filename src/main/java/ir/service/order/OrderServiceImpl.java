@@ -11,6 +11,7 @@ import ir.entity.enums.UserStatus;
 import ir.exception.CustomException;
 import ir.exception.ErrorCode;
 import ir.repository.OrderRepository;
+import ir.security.JwtTokenProvider;
 import ir.service.category.CategoryService;
 import ir.service.user.UserService;
 import lombok.AllArgsConstructor;
@@ -39,31 +40,55 @@ public class OrderServiceImpl implements OrderService {
     private final OrderRepository orderRepository;
     private final CategoryService categoryService;
     private final UserService userService;
+    private final JwtTokenProvider jwtTokenProvider;
     private final OrderEntityToOrderResponseDtoConvertor orderEntityToOrderResponseDtoConvertor;
     private final CategoryEntityToCategoryResponseDtoConvertor categoryEntityToCategoryResponseDtoConvertor;
 
-
-    /**
-     * Saves a new order for the authenticated customer.
-     *
-     * <p>Validates the customer status and the specified subcategory before saving the order.</p>
-     *
-     * @param orderDto the details of the order to save
-     * @param email    the customer's email for authentication
-     * @param password the customer's password for authentication
-     * @return the saved order as a {@link OrderResponseDto}
-     * @throws CustomException if the user is not found, not approved, deleted, or if the subcategory is invalid
-     */
     @Override
-    public OrderResponseDto saveOrder(OrderRequestDto orderDto, String email, String password) {
-        log.info("Attempting to save order for customer with email: {}", email);
+    public List<OrderResponseDto> getOrder(String token) {
+        log.info("Fetching orders for expert with token");
 
-        User user = userService.findByEmailAndPassword(email, password);
-        if (user instanceof Customer customer) {
-            validateCustomer(user, email);
+        String username = jwtTokenProvider.extractUsername(token);
+        Optional<User> userOptional = userService.findByUserName(username);
+
+        if (userOptional.isEmpty() || !(userOptional.get() instanceof Expert)) {
+            log.error("User with token is not an expert or not found.");
+            throw new CustomException("User not found or not an expert.", ErrorCode.NOT_FOUND.getCode());
+        }
+        Expert expert = (Expert) userOptional.get();
+
+        if (expert.getStatus().equals(UserStatus.NEW)) {
+            log.error("Expert with username {} is not approved to retrieve orders.", username);
+            throw new CustomException("Expert should be approved.", ErrorCode.USER_STATUS_NOT_APPROVED.getCode());
+        }
+
+        log.info("Fetching orders based on expert categories for token.");
+        List<Category> categories = expert.getCategories();
+        if (categories == null || categories.isEmpty()) {
+            log.error("Expert with username {} has no associated categories.", username);
+            throw new CustomException("Expert has no categories.", ErrorCode.NOT_FOUND.getCode());
+        }
+
+        List<Order> ordersByCategories = findOrdersByCategories(categories);
+        if (ordersByCategories.isEmpty()) {
+            log.info("No orders found for expert with categories: {}", categories);
+            return List.of(); // بازگشت لیست خالی در صورت نبود سفارش
+        }
+        log.info("Successfully fetched {} orders for expert with username: {}", ordersByCategories.size(), username);
+        return orderEntityToOrderResponseDtoConvertor.convertList(ordersByCategories);
+    }
+
+
+    @Override
+    public OrderResponseDto saveOrder(OrderRequestDto orderDto, String token) {
+        String username = jwtTokenProvider.extractUsername(token);
+        Optional<User> userOptional = userService.findByUserName(username);
+
+        if (userOptional.isPresent() && userOptional.get() instanceof Customer customer) {
+            validateCustomer(customer, customer.getEmail());
 
             log.info("Checking for duplicate orders...");
-            checkForDuplicateOrders(orderDto, email);
+            checkForDuplicateOrders(orderDto, customer.getEmail());
 
             Order order = new Order();
             order.setCustomer(customer);
@@ -98,7 +123,7 @@ public class OrderServiceImpl implements OrderService {
             CategoryResponseDto subCategoryResponse = categoryEntityToCategoryResponseDtoConvertor.apply(subCategoryOptional.get());
 
             order = orderRepository.save(order);
-            log.info("Order saved successfully for customer with email: {}", email);
+            log.info("Order saved successfully for customer with");
             OrderResponseDto orderResponse = orderEntityToOrderResponseDtoConvertor.apply(order);
             orderResponse.setMainCategory(mainCategoryResponse);
             orderResponse.setSubCategory(subCategoryResponse);
@@ -106,8 +131,8 @@ public class OrderServiceImpl implements OrderService {
             return orderResponse;
         }
 
-        log.error("User not found with email: {}", email);
-        throw new CustomException("User not found with provided email and password", ErrorCode.NOT_FOUND.getCode());
+        log.error("Authentication failed for user with token. User not found.");
+        throw new CustomException("User not found.", ErrorCode.NOT_FOUND.getCode());
     }
 
     private void validateCustomer(User user, String email) {
@@ -143,37 +168,38 @@ public class OrderServiceImpl implements OrderService {
         log.info("No duplicate order found for customer with email: {}", email);
     }
 
-
-    /**
-     * Retrieves a list of orders associated with a customer using their email and password.
-     *
-     * <p>This method authenticates the customer using their email and password. It ensures
-     * that the user is a valid registered customer. After successful authentication, it fetches
-     * all orders linked to the customer's email and converts them into a list of DTOs.</p>
-     *
-     * @param email    the email of the customer for authentication
-     * @param password the password of the customer for authentication
-     * @return a list of {@link OrderResponseDto} representing the customer's orders
-     * @throws CustomException if the user is not a customer, not found, or authentication fails
-     */
     @Override
-    public List<OrderResponseDto> getOrdersByCustomerEmail(String email, String password) {
-        log.info("Fetching orders for customer with email: {}", email);
+    public List<OrderResponseDto> getOrdersByCustomerEmail(String token) {
+        log.info("Fetching orders for customer using token.");
 
-        User user = userService.findByEmailAndPassword(email, password);
+        // Step 1: Extract username from token and validate user
+        String username = jwtTokenProvider.extractUsername(token);
+        User user = userService.findByUserName(username)
+                .orElseThrow(() -> {
+                    log.error("User with username {} not found.", username);
+                    return new CustomException("User not found.", ErrorCode.NOT_FOUND.getCode());
+                });
+
+        // Step 2: Validate user type
         if (!(user instanceof Customer)) {
-            log.error("User is not a customer or not found. Email: {}", email);
-            throw new CustomException("User not found or is not a customer", ErrorCode.NOT_FOUND.getCode());
+            log.error("Unauthorized attempt to fetch orders by user with username: {}", username);
+            throw new CustomException("Only customers can fetch their orders.", ErrorCode.UNAUTHORIZED.getCode());
         }
 
-        List<Order> orders = orderRepository.findAllByCustomerEmail(email);
-        log.info("Successfully fetched {} orders for customer with email: {}", orders.size(), email);
+        // Step 3: Fetch orders for the customer
+        log.info("Fetching orders for customer with username: {}", username);
+        List<Order> orders = orderRepository.findByCustomer_UserName(username);
 
-        List<OrderResponseDto> responseDtos = orderEntityToOrderResponseDtoConvertor.convertList(orders);
-        log.info("Successfully converted {} orders to DTO format for customer with email: {}",
-                responseDtos.size(), email);
+        if (orders.isEmpty()) {
+            log.warn("No orders found for customer with username: {}", username);
+            throw new CustomException("No orders found for the provided username.", ErrorCode.NOT_FOUND.getCode());
+        }
 
-        return responseDtos;
+        // Step 4: Convert orders to DTO
+        log.info("Successfully fetched {} orders for customer with username: {}", orders.size(), username);
+        return orders.stream()
+                .map(orderEntityToOrderResponseDtoConvertor)
+                .toList();
     }
 
     /**
@@ -187,41 +213,6 @@ public class OrderServiceImpl implements OrderService {
         log.info("Fetching orders for the specified categories.");
         Optional<List<Order>> optionalOrderList = orderRepository.findAllByCategoryIn(categories);
         return optionalOrderList.orElse(new ArrayList<>());
-    }
-
-    /**
-     * Retrieves orders for the authenticated expert.
-     *
-     * <p>Filters orders based on the categories the expert is associated with.</p>
-     *
-     * @param email the expert's email for authentication
-     * @param password the expert's password for authentication
-     * @return a list of {@link OrderResponseDto} representing the matching orders
-     * @throws CustomException if the user is not found or not approved
-     */
-    @Override
-    public List<OrderResponseDto> getOrder(String email, String password) {
-        log.info("Fetching orders for expert with email: {}", email);
-
-        User user = userService.findByEmailAndPassword(email, password);
-        if (user != null) {
-            Expert expert = (Expert) user;
-
-            if (user.getStatus().equals(UserStatus.NEW)) {
-                log.error("Expert with email {} is not approved to retrieve orders.", email);
-                throw new CustomException("User should be approved", ErrorCode.USER_STATUS_NOT_APPROVED.getCode());
-            }
-
-            log.info("Fetching orders based on expert categories for email: {}", email);
-            List<Category> categories = expert.getCategories();
-            List<Order> ordersByCategories = findOrdersByCategories(categories);
-
-            log.info("Successfully fetched {} orders for expert with email: {}", ordersByCategories.size(), email);
-            return orderEntityToOrderResponseDtoConvertor.convertList(ordersByCategories);
-        }
-        log.error("User not found with email: {}", email);
-        throw new CustomException("User not found with provided email and password",
-                ErrorCode.NOT_FOUND.getCode());
     }
 
     /**
@@ -253,84 +244,76 @@ public class OrderServiceImpl implements OrderService {
         return orderRepository.save(order);
     }
 
-    /**
-     * Updates the status of a specified order and validates associated data.
-     *
-     * @param email the user's email for authentication
-     * @param password the user's password for authentication
-     * @param orderStatus the new status to set for the order
-     * @param orderNumber the unique number of the order to update
-     * @param offerNumber the unique number of the offer linked to the order
-     * @return the updated order as a {@link OrderResponseDto}
-     * @throws CustomException if validation fails or data is not found
-     */
     @Override
-    public OrderResponseDto updateOrderStatus(String email, String password,
+    public OrderResponseDto updateOrderStatus(String token,
                                               OrderStatus orderStatus,
                                               Long orderNumber, Long offerNumber) {
+        log.info("Starting updateOrderStatus for token: {}, orderNumber: {}, offerNumber: {}", token, orderNumber, offerNumber);
 
-        log.info("Starting updateOrderStatus for email: {}, orderNumber: {}, offerNumber: {}",
-                email, orderNumber, offerNumber);
+        String username = jwtTokenProvider.extractUsername(token);
+        Optional<User> userOptional = userService.findByUserName(username);
+
+        if (userOptional.isEmpty()) {
+            log.error("User with token not found.");
+            throw new CustomException("User not found.", ErrorCode.NOT_FOUND.getCode());
+        }
+
+        User user = userOptional.get();
+        if (user.getStatus().equals(UserStatus.NEW)) {
+            log.error("User with username {} is not approved.", username);
+            throw new CustomException("User should be approved.", ErrorCode.USER_STATUS_NOT_APPROVED.getCode());
+        }
 
         if (orderStatus == null) {
-            log.error("Order status is null");
-            throw new CustomException("Order status must not be null", ErrorCode.INVALID_DATA.getCode());
+            log.error("Order status is null.");
+            throw new CustomException("Order status must not be null.", ErrorCode.INVALID_DATA.getCode());
         }
 
         if (OrderStatus.PAID.equals(orderStatus)) {
-            log.error("Invalid order status: PAID is not allowed");
-            throw new CustomException("Order status should not be 'PAID'",
-                    ErrorCode.ORDER_STATUS_SHOULD_NOT_BE_PAID.getCode());
-        }
-
-        log.info("Validating user with email: {}", email);
-        User user = userService.findByEmailAndPassword(email, password);
-        if (user == null) {
-            log.error("User not found for email: {}", email);
-            throw new CustomException("User not found with provided email and password",
-                    ErrorCode.NOT_FOUND.getCode());
+            log.error("Invalid order status: PAID is not allowed.");
+            throw new CustomException("Order status should not be 'PAID'.", ErrorCode.ORDER_STATUS_SHOULD_NOT_BE_PAID.getCode());
         }
 
         log.info("Validating order with orderNumber: {}", orderNumber);
+
         Order order = findById(orderNumber);
         if (order == null) {
             log.error("Order not found with orderNumber: {}", orderNumber);
-            throw new CustomException("Order not found with provided order number",
-                    ErrorCode.NOT_FOUND.getCode());
+            throw new CustomException("Order not found with provided order number.", ErrorCode.NOT_FOUND.getCode());
         }
 
         if (OrderStatus.WAITING_FOR_EXPERT_ARRIVAL.equals(order.getStatus()) &&
                 OrderStatus.WAITING_FOR_EXPERT_ARRIVAL.equals(orderStatus)) {
-            log.error("Order with orderNumber: {} is already 'WAITING_FOR_EXPERT_ARRIVAL'", orderNumber);
-            throw new CustomException("Order is already 'WAITING_FOR_EXPERT_ARRIVAL'",
-                    ErrorCode.ORDER_ALREADY_WAITING_FOR_EXPERT_ARRIVAL.getCode());
+            log.error("Order with orderNumber: {} is already 'WAITING_FOR_EXPERT_ARRIVAL'.", orderNumber);
+            throw new CustomException("Order is already 'WAITING_FOR_EXPERT_ARRIVAL'.", ErrorCode.ORDER_ALREADY_WAITING_FOR_EXPERT_ARRIVAL.getCode());
         }
 
-        if (OrderStatus.STARTED.equals(order.getStatus()) && OrderStatus.STARTED.equals(orderStatus)) {
-            log.error("Order with orderNumber: {} is already 'STARTED'", orderNumber);
-            throw new CustomException("Order is already 'STARTED'", ErrorCode.ORDER_ALREADY_STARTED.getCode());
+        if (OrderStatus.STARTED.equals(order.getStatus()) &&
+                OrderStatus.STARTED.equals(orderStatus)) {
+            log.error("Order with orderNumber: {} is already 'STARTED'.", orderNumber);
+            throw new CustomException("Order is already 'STARTED'.", ErrorCode.ORDER_ALREADY_STARTED.getCode());
         }
 
-        if (OrderStatus.COMPLETED.equals(order.getStatus()) && OrderStatus.COMPLETED.equals(orderStatus)) {
-            log.error("Order with orderNumber: {} is already completed", orderNumber);
-            throw new CustomException("Order is already completed", ErrorCode.ORDER_ALREADY_COMPLETE.getCode());
+        if (OrderStatus.COMPLETED.equals(order.getStatus()) &&
+                OrderStatus.COMPLETED.equals(orderStatus)) {
+            log.error("Order with orderNumber: {} is already completed.", orderNumber);
+            throw new CustomException("Order is already completed.", ErrorCode.ORDER_ALREADY_COMPLETE.getCode());
         }
-
         log.info("Validating offer with offerNumber: {}", offerNumber);
+
         Optional<Offer> offerOptional = order.getOffers().stream()
                 .filter(offer -> offer.getId().equals(offerNumber))
                 .findFirst();
         if (offerOptional.isEmpty()) {
             log.error("Offer not found for offerNumber: {}", offerNumber);
-            throw new CustomException("Offer not found with provided offer number",
-                    ErrorCode.NOT_FOUND.getCode());
+            throw new CustomException("Offer not found with provided offer number.", ErrorCode.NOT_FOUND.getCode());
         }
         Offer offer = offerOptional.get();
 
         if (OrderStatus.WAITING_FOR_EXPERT_ARRIVAL.equals(orderStatus)) {
             BigDecimal proposedPrice = offer.getProposedPrice();
             log.info("Proposed price for the offer: {}", proposedPrice);
-            order.setFinalPrice((proposedPrice));
+            order.setFinalPrice(proposedPrice);
         }
 
         log.info("Updating order status to: {}", orderStatus);
@@ -343,101 +326,105 @@ public class OrderServiceImpl implements OrderService {
         return orderEntityToOrderResponseDtoConvertor.apply(order);
     }
 
-    /**
-     * Marks a specified order as paid and updates user credits.
-     *
-     * @param email the customer's email for authentication
-     * @param password the customer's password for authentication
-     * @param orderNumber the unique number of the order to mark as paid
-     * @param offerNumber the unique number of the offer linked to the order
-     * @return the updated order as a {@link OrderResponseDto}
-     * @throws CustomException if validation fails or credits are insufficient
-     */
+
     @Override
-    public OrderResponseDto paid(String email,
-                                 String password,
+    public OrderResponseDto paid(String token,
                                  Long orderNumber,
                                  Long offerNumber) {
-        log.info("Processing payment for orderNumber: {}, offerNumber: {}, email: {}", orderNumber, offerNumber, email);
-        User user = userService.findByEmailAndPassword(email, password);
-        if (!(user instanceof Customer)) {
-            log.error("User authentication failed for email: {}", email);
-            throw new CustomException("User not found with provided email and password", ErrorCode.NOT_FOUND.getCode());
+        log.info("Processing payment for orderNumber: {}, offerNumber: {}, token", orderNumber, offerNumber);
+
+        String username = jwtTokenProvider.extractUsername(token);
+        Optional<User> userOptional = userService.findByUserName(username);
+
+        if (userOptional.isEmpty() || !(userOptional.get() instanceof Customer)) {
+            log.error("User with token is not a customer or not found.");
+            throw new CustomException("User not found or not a customer.", ErrorCode.NOT_FOUND.getCode());
         }
+
+        Customer customer = (Customer) userOptional.get();
+
         Order order = findById(orderNumber);
         if (order == null) {
-            log.error("Offer not found for offerNumber: {}", offerNumber);
-            throw new CustomException("Order not found with provided order number", ErrorCode.NOT_FOUND.getCode());
+            log.error("Order not found with orderNumber: {}", orderNumber);
+            throw new CustomException("Order not found with provided order number.", ErrorCode.NOT_FOUND.getCode());
         }
+
         Optional<Offer> offerOptional =
                 order.getOffers().stream().filter(offer -> offer.getId().equals(offerNumber)).findFirst();
-        if (offerOptional.isPresent()) {
-            Offer offer = offerOptional.get();
-            Expert expert = offer.getExpert();
-            BigDecimal finalPrice = order.getFinalPrice();
-            Customer customer = (Customer) user;
-            if (customer.getCredit() == null || customer.getCredit().compareTo(finalPrice) < 0) {
-                log.error("Insufficient credit for customer with email: {}", email);
-                throw new CustomException("Credit is not enough", ErrorCode.CREDIT_NOT_ENOUGH.getCode());
-            }
-            BigDecimal expertCredit = expert.getCredit() != null ? expert.getCredit() : BigDecimal.ZERO;
-            customer.setCredit(customer.getCredit().subtract(finalPrice));
-            expert.setCredit(expertCredit.add(finalPrice));
-            userService.saveUser(customer);
-            userService.saveUser(expert);
+        if (offerOptional.isEmpty()) {
+            log.error("Offer not found for offerNumber: {}", offerNumber);
+            throw new CustomException("Offer not found with provided offer number.", ErrorCode.NOT_FOUND.getCode());
         }
+
+        Offer offer = offerOptional.get();
+        Expert expert = offer.getExpert();
+        BigDecimal finalPrice = order.getFinalPrice();
+
+        if (customer.getCredit() == null || customer.getCredit().compareTo(finalPrice) < 0) {
+            log.error("Insufficient credit for customer with token.");
+            throw new CustomException("Credit is not enough.", ErrorCode.CREDIT_NOT_ENOUGH.getCode());
+        }
+
+        BigDecimal expertCredit = expert.getCredit() != null ? expert.getCredit() : BigDecimal.ZERO;
+        customer.setCredit(customer.getCredit().subtract(finalPrice));
+        expert.setCredit(expertCredit.add(finalPrice));
+        userService.saveUser(customer);
+        userService.saveUser(expert);
+
         order.setStatus(OrderStatus.PAID);
         orderRepository.save(order);
         log.info("Order marked as paid successfully. orderNumber: {}", orderNumber);
+
         return orderEntityToOrderResponseDtoConvertor.apply(order);
     }
 
-    /**
-     * Updates the details of a specified order for the authenticated customer.
-     *
-     * <p>Validates customer authentication and ensures the order status allows updates.
-     * Also checks that the order belongs to the authenticated customer.</p>
-     *
-     * @param orderId the ID of the order to update
-     * @param orderDto the updated details for the order
-     * @param email the customer's email for authentication
-     * @param password the customer's password for authentication
-     * @return the updated order as a {@link OrderResponseDto}
-     * @throws CustomException if validation fails or the order cannot be updated
-     */
     @Override
     public OrderResponseDto updateOrder(Long orderId,
                                         OrderRequestDto orderDto,
-                                        String email,
-                                        String password) {
-        log.info("Attempting to update order with ID: {} for customer with email: {}", orderId, email);
+                                        String token) {
+        log.info("Attempting to update order with ID: {} for customer with token", orderId);
 
-        User user = userService.findByEmailAndPassword(email, password);
+        // Step 1: Extract username from token and validate customer
+        String username = jwtTokenProvider.extractUsername(token);
+        User user = userService.findByUserName(username)
+                .orElseThrow(() -> {
+                    log.error("User with username {} not found.", username);
+                    return new CustomException("User not found.", ErrorCode.NOT_FOUND.getCode());
+                });
+
         if (!(user instanceof Customer customer)) {
-            log.error("Unauthorized update attempt by user with email: {}", email);
-            throw new CustomException("Only customers can update orders", ErrorCode.UNAUTHORIZED.getCode());
+            log.error("Unauthorized update attempt by user with username: {}", username);
+            throw new CustomException("Only customers can update orders.", ErrorCode.UNAUTHORIZED.getCode());
         }
 
-        if (user.getStatus().equals(UserStatus.NEW)) {
-            log.error("User with email {} is not approved to update orders", email);
-            throw new CustomException("User should be approved", ErrorCode.USER_STATUS_NOT_APPROVED.getCode());
+        // Step 2: Check customer status
+        if (customer.getStatus().equals(UserStatus.NEW)) {
+            log.error("Customer with username {} is not approved to update orders.", username);
+            throw new CustomException("User should be approved.", ErrorCode.USER_STATUS_NOT_APPROVED.getCode());
         }
+
+        // Step 3: Retrieve the order and validate its existence
         log.info("Validating order with ID: {}", orderId);
         Order order = orderRepository.findById(orderId)
-                .orElseThrow(() -> new CustomException(
-                        "Order not found with order number: " + orderId, ErrorCode.NOT_FOUND.getCode()));
+                .orElseThrow(() -> {
+                    log.error("Order with ID {} not found.", orderId);
+                    return new CustomException("Order not found with order ID: " + orderId, ErrorCode.NOT_FOUND.getCode());
+                });
 
-        if (order != null && order.getStatus() != WAITING_FOR_EXPERT_PROPOSALS) {
-            log.error("Order with ID: {} cannot be updated because its status is not valid for updates", orderId);
+        // Step 4: Ensure the order's status is valid for updates
+        if (order.getStatus() != OrderStatus.WAITING_FOR_EXPERT_PROPOSALS) {
+            log.error("Order with ID: {} cannot be updated because its status is not valid for updates.", orderId);
             throw new CustomException("You cannot update this order because it has already been used.",
                     ErrorCode.UNPROCESSABLE_ENTITY.getCode());
         }
 
-        assert order != null;
+        // Step 5: Ensure the order belongs to the customer
         if (!order.getCustomer().equals(customer)) {
-            log.error("Unauthorized attempt to update order with ID: {} by customer with email: {}", orderId, email);
-            throw new CustomException("This order does not belong to the customer", ErrorCode.UNAUTHORIZED.getCode());
+            log.error("Unauthorized attempt to update order with ID: {} by customer with username: {}", orderId, username);
+            throw new CustomException("This order does not belong to the customer.", ErrorCode.UNAUTHORIZED.getCode());
         }
+
+        // Step 6: Update order details
         log.info("Updating order details for order with ID: {}", orderId);
         order.setOrderDescription(orderDto.getOrderDescription());
         order.setOrderDate(orderDto.getOrderDate());
@@ -446,59 +433,60 @@ public class OrderServiceImpl implements OrderService {
         order.setExecutionDate(orderDto.getExecutionDate());
         order.setOfferCustomerPrice(orderDto.getOfferCustomerPrice());
 
+        // Step 7: Save the updated order
         orderRepository.save(order);
         log.info("Order with ID: {} updated successfully", orderId);
+
         return orderEntityToOrderResponseDtoConvertor.apply(order);
     }
 
-    /**
-     * Deletes a specified order for the authenticated customer.
-     *
-     * <p>Validates customer authentication and ensures the order status allows deletion.
-     * Also checks that the order belongs to the authenticated customer.</p>
-     *
-     * @param orderId the ID of the order to delete
-     * @param email the customer's email for authentication
-     * @param password the customer's password for authentication
-     * @throws CustomException if validation fails or the order cannot be deleted
-     */
     @Override
-    public void deleteOrder(Long orderId, String email, String password) {
-        log.info("Attempting to delete order with ID: {} for customer with email: {}", orderId, email);
+    public void deleteOrder(Long orderId, String token) {
+        log.info("Attempting to delete order with ID: {} for customer with token", orderId);
 
-        User user = userService.findByEmailAndPassword(email, password);
-        if (user == null) {
-            log.error("User not found with email: {}", email);
-            throw new CustomException("User not found with provided email and password", ErrorCode.NOT_FOUND.getCode());
-        }
+        // Step 1: Extract username from token and validate the customer
+        String username = jwtTokenProvider.extractUsername(token);
+        User user = userService.findByUserName(username)
+                .orElseThrow(() -> {
+                    log.error("User with username {} not found.", username);
+                    return new CustomException("User not found.", ErrorCode.NOT_FOUND.getCode());
+                });
 
         if (!(user instanceof Customer customer)) {
-            log.error("Unauthorized delete attempt by user with email: {}", email);
-            throw new CustomException("Only customers can delete orders", ErrorCode.UNAUTHORIZED.getCode());
+            log.error("Unauthorized delete attempt by user with username: {}", username);
+            throw new CustomException("Only customers can delete orders.", ErrorCode.UNAUTHORIZED.getCode());
         }
 
-        if (user.getStatus().equals(UserStatus.NEW)) {
-            log.error("User with email {} is not approved to delete orders", email);
-            throw new CustomException("User should be approved", ErrorCode.USER_STATUS_NOT_APPROVED.getCode());
+        // Step 2: Check customer status
+        if (customer.getStatus().equals(UserStatus.NEW)) {
+            log.error("Customer with username {} is not approved to delete orders.", username);
+            throw new CustomException("User should be approved.", ErrorCode.USER_STATUS_NOT_APPROVED.getCode());
         }
 
+        // Step 3: Validate the order existence
         log.info("Validating order with ID: {}", orderId);
         Order order = orderRepository.findById(orderId)
-                .orElseThrow(() -> new CustomException(
-                        "Order not found with order ID: " + orderId, ErrorCode.NOT_FOUND.getCode()));
+                .orElseThrow(() -> {
+                    log.error("Order with ID {} not found.", orderId);
+                    return new CustomException("Order not found with order ID: " + orderId, ErrorCode.NOT_FOUND.getCode());
+                });
 
-        if (order != null && order.getStatus() != WAITING_FOR_EXPERT_PROPOSALS) {
-            log.error("Order with ID: {} cannot be deleted because its status is not valid for deletion", orderId);
+        // Step 4: Check the order's status
+        if (order.getStatus() != OrderStatus.WAITING_FOR_EXPERT_PROPOSALS) {
+            log.error("Order with ID: {} cannot be deleted because its status is not valid for deletion.", orderId);
             throw new CustomException("You cannot delete this order because it has already been used.",
                     ErrorCode.UNPROCESSABLE_ENTITY.getCode());
         }
 
-        if (order == null || !order.getCustomer().equals(customer)) {
-            log.error("Unauthorized attempt to delete order with ID: {} by customer with email: {}", orderId, email);
-            throw new CustomException("This order does not belong to the customer", ErrorCode.UNAUTHORIZED.getCode());
+        // Step 5: Ensure the order belongs to the customer
+        if (!order.getCustomer().equals(customer)) {
+            log.error("Unauthorized attempt to delete order with ID: {} by customer with username: {}", orderId, username);
+            throw new CustomException("This order does not belong to the customer.", ErrorCode.UNAUTHORIZED.getCode());
         }
+
+        // Step 6: Delete the order
         log.info("Deleting order with ID: {}", orderId);
         orderRepository.delete(order);
-        log.info("Order with ID: {} deleted successfully", orderId);
+        log.info("Order with ID: {} deleted successfully.", orderId);
     }
 }

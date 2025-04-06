@@ -7,6 +7,7 @@ import ir.service.user.UserService;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.*;
 
 import java.math.BigDecimal;
@@ -20,6 +21,7 @@ public class CreditController {
     private final UserService userService;
 
     @PutMapping("/add-balance")
+    @PreAuthorize("hasRole('ROLE_ADMIN')")
     @Operation(summary = "(Admin only)")
     public ResponseEntity<UserResponseDto> addBalance(@RequestParam String email,
                                                       @RequestParam BigDecimal balance) {
@@ -33,13 +35,12 @@ public class CreditController {
 
     @GetMapping("/show-credit")
     @Operation(summary = "(Customer & Expert only)")
-    public ResponseEntity<CreditResponseDto> showCredit(@RequestParam String email,
-                                                        @RequestParam String password) {
-        log.info("Received request to show credit for user with email: {}", email);
+    public ResponseEntity<CreditResponseDto> showCredit(@RequestHeader("Authorization") String token) {
+        log.info("Received request to show credit for user with token");
         log.debug("Authenticating user with provided email and password.");
-        CreditResponseDto creditResponseDto = userService.getBalance(email, password);
+        CreditResponseDto creditResponseDto = userService.getBalance(token);
 
-        log.info("Successfully retrieved credit for user with email: {}", email);
+        log.info("Successfully retrieved credit for user with token");
         return ResponseEntity.ok(creditResponseDto);
     }
 }

@@ -6,6 +6,7 @@ import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
 
@@ -20,28 +21,16 @@ public class AdminController {
 
     private final UserService userService;
 
-    /**
-     * Adds subcategories to an expert's profile.
-     *
-     * @param adminEmail       the admin's email for authentication
-     * @param adminPassword    the admin's password for authentication
-     * @param expertEmail      the email of the expert to whom the subcategories will be added
-     * @param subCategoryNames the list of subcategories to add
-     * @return a message confirming the operation or an error if it fails
-     */
     @PostMapping("/add-expert-subcategories")
+    @PreAuthorize("hasRole('ROLE_ADMIN')")
     @Operation(summary = "(Admin only)")
-    public ResponseEntity<String> addSubcategoriesToExpert(@RequestParam String adminEmail,
-                                                           @RequestParam String adminPassword,
-                                                           @RequestParam String expertEmail,
+    public ResponseEntity<String> addSubcategoriesToExpert(@RequestParam String expertEmail,
                                                            @Valid @RequestBody List<String> subCategoryNames) {
-        log.info("Admin with email {} is attempting to add subcategories to expert with email {}",
-                adminEmail, expertEmail);
+        log.info("Admin is attempting to add subcategories to expert with email: {}", expertEmail);
 
-        userService.authenticateAdmin(adminEmail, adminPassword);
         userService.addExpertToCategoriesByAdmin(expertEmail, subCategoryNames);
 
-        log.info("Successfully added subcategories {} to expert with email {}", subCategoryNames, expertEmail);
+        log.info("Successfully added subcategories to expert with email: {}", expertEmail);
         return ResponseEntity.ok("Subcategories added successfully to expert.");
     }
 }

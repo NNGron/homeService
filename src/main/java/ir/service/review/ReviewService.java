@@ -23,7 +23,7 @@ public interface ReviewService {
      * @param reviewRequestDto the details of the review to be added
      * @return the added review as a {@link ReviewResponseDto}
      */
-    ReviewResponseDto addReview(String email, String password, ReviewRequestDto reviewRequestDto);
+    ReviewResponseDto addReview(String token, ReviewRequestDto reviewRequestDto);
 
     /**
      * Finds all reviews for a specific expert based on their ID.
@@ -39,5 +39,5 @@ public interface ReviewService {
      * @param email    the expert's email for authentication
      * @param password the expert's password for authentication
      */
-    public List<ExpertReviewResponseDto> getReviewsForExpert(String email, String password);
+    public List<ExpertReviewResponseDto> getReviewsForExpert(String token);
 }

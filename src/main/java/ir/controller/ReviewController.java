@@ -22,27 +22,25 @@ public class ReviewController {
 
     @PostMapping("/comment")
     @Operation(summary = "(Customer only)")
-    public ResponseEntity<ReviewResponseDto> saveComment(@RequestParam String email,
-                                                         @RequestParam String password,
+    public ResponseEntity<ReviewResponseDto> saveComment(@RequestHeader("Authorization") String token,
                                                          @RequestBody ReviewRequestDto reviewRequestDto) {
-        log.info("Received request to submit a comment for customer with email: {}", email);
+        log.info("Received request to submit a comment for customer with token");
         log.debug("Review details provided by customer: {}", reviewRequestDto);
 
-        ReviewResponseDto reviewResponseDto = reviewService.addReview(email, password, reviewRequestDto);
+        ReviewResponseDto reviewResponseDto = reviewService.addReview(token, reviewRequestDto);
 
-        log.info("Successfully saved comment for customer with email: {}", email);
+        log.info("Successfully saved comment for customer with token");
         return ResponseEntity.ok(reviewResponseDto);
     }
 
     @GetMapping("/expert-comments")
     @Operation(summary = "(Expert only)")
-    public ResponseEntity<List<ExpertReviewResponseDto>> getReviewsForExpert(@RequestParam String email,
-                                                                             @RequestParam String password) {
-        log.info("Received request to fetch reviews for expert with email: {}", email);
+    public ResponseEntity<List<ExpertReviewResponseDto>> getReviewsForExpert(@RequestHeader("Authorization") String token) {
+        log.info("Received request to fetch reviews for expert with token");
 
-        List<ExpertReviewResponseDto> reviews = reviewService.getReviewsForExpert(email, password);
+        List<ExpertReviewResponseDto> reviews = reviewService.getReviewsForExpert(token);
 
-        log.info("Successfully fetched {} reviews for expert with email: {}", reviews.size(), email);
+        log.info("Successfully fetched {} reviews for expert with token", reviews.size());
         return ResponseEntity.ok(reviews);
     }
 }
