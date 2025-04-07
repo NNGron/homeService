@@ -104,9 +104,7 @@ public class OrderController {
         if (!captchaService.verifyCaptcha(captchaId, captchaCode)) {
             return ResponseEntity.status(HttpStatus.BAD_REQUEST).body("Invalid or expired captcha");
         }
-        if (!captchaService.verifyCaptcha(captchaId, captchaCode)) {
-            return ResponseEntity.status(HttpStatus.BAD_REQUEST).body("Invalid or expired captcha");
-        }
+
         String message = orderService.payOnlineByCard(token, bankCardInfoDto, orderNumber, offerNumber);
 
         return ResponseEntity.ok(message);

@@ -31,7 +31,6 @@ public class UserController {
     private final CardService cardService;
 
     @PostMapping("/signup")
-    @Operation(summary = "(Customer & Expert)")
     public ResponseEntity<UserResponseDto> saveUser(@Valid @RequestBody UserRequestDto requestDto) {
         log.info("Received request to sign up a new user: {}", requestDto.getEmail());
         log.debug("User details for signup: {}", requestDto);
@@ -178,7 +177,7 @@ public class UserController {
         return ResponseEntity.ok(responseDto);
     }
 
-    @PostMapping("/add-bank-card")
+    @PostMapping("/add/bank-card")
     @Operation(summary = "(Customer & Expert)")
     public ResponseEntity<BankCardResponseDto> saveCardBank(@RequestHeader("Authorization") String token,
                                                             @Valid @RequestBody BankCardRequestDto bankCardRequestDto) {

@@ -53,13 +53,6 @@ public interface UserService {
      */
     UserResponseDto deleteExpertCategory(String token, String email, List<String> categoryNames);
 
-    /**
-     * Adds specific categories to an expert's associated categories.
-     *
-     * @param email         the expert's email for identification
-     * @param categoryNames the names of the categories to be added
-     * @return the updated user as a {@link UserResponseDto}
-     */
     UserResponseDto addExpertToCategories(String token, List<String> categoryNames);
 
     /**
@@ -98,13 +91,6 @@ public interface UserService {
      */
     UserMessageDto updateStatusUser(String email);
 
-    /**
-     * Uploads a profile image for the authenticated user.
-     *
-     * @param email the user's email for authentication
-     * @param image the profile image to be uploaded
-     * @return a {@link UserMessageDto} confirming the image upload
-     */
     UserMessageDto uploadImage(String token, MultipartFile image);
 
     /**
@@ -141,31 +127,10 @@ public interface UserService {
      */
     UserResponseDto addCreditToCustomer(String email, BigDecimal amount);
 
-    /**
-     * Retrieves the balance of the authenticated customer.
-     *
-     * @param email the customer's email for authentication
-     * @param password the customer's password for authentication
-     * @return the balance details as a {@link CreditResponseDto}
-     */
     CreditResponseDto getBalance(String token);
 
-    /**
-     * Deletes the authenticated user from the system.
-     *
-     * @param email the user's email for authentication
-     * @param password the user's password for authentication
-     */
     void deleteUser(String token);
 
-    /**
-     * Updates the details of the authenticated user.
-     *
-     * @param userUpdateRequestDto the new details to be updated for the user
-     * @param email                the user's email for authentication
-     * @param password             the user's password for authentication
-     * @return the updated user as a {@link UserResponseDto}
-     */
     UserResponseDto updateUser(UserUpdateRequestDto userUpdateRequestDto,
                                String token);
 

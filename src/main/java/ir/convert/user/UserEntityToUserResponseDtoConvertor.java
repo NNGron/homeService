@@ -32,7 +32,10 @@ public class UserEntityToUserResponseDtoConvertor implements Function<User, User
 
         List<CategoryResponseDto> categoryResponseDtos = null;
         Double averageRate = null;
-        BigDecimal balance = user.getWallet().getCredit() == null ? BigDecimal.ZERO : user.getWallet().getCredit();
+
+        BigDecimal balance = (user.getWallet() == null || user.getWallet().getCredit() == null)
+                ? BigDecimal.ZERO : user.getWallet().getCredit();
+        // BigDecimal balance = user.getWallet().getCredit() == null ? BigDecimal.ZERO : user.getWallet().getCredit();
 
         if (user instanceof Expert expert) {
             log.debug("User is an Expert with username: {}", expert.getUserName());

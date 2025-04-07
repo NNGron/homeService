@@ -20,7 +20,7 @@ public class BankCardResponseDto {
 
     private LocalDate expiryDate;
 
-    private Integer cvv;
+    private Integer cvv2;
 
     private BigDecimal balance ;
 }

@@ -5,11 +5,9 @@ import ir.dto.order.OrderRequestDto;
 import ir.dto.order.OrderResponseDto;
 import ir.entity.Category;
 import ir.entity.Order;
-import ir.entity.User;
 import ir.entity.enums.OrderStatus;
 
 import java.util.List;
-import java.util.Optional;
 
 /**
  * Service interface for managing orders.
@@ -23,72 +21,20 @@ public interface OrderService {
     OrderResponseDto saveOrder(OrderRequestDto orderDto,
                                String token);
 
-    /**
-     * Retrieves a list of orders for a customer using their email and password.
-     *
-     * <p>This method authenticates the customer based on their email and password,
-     * and fetches all orders associated with the customer's email. It ensures
-     * that the user is valid and is a registered customer before proceeding.</p>
-     *
-     * @param email    the customer's email for authentication
-     * @param password the customer's password for authentication
-     * @return a list of {@link OrderResponseDto} representing the customer's orders
-     */
     List<OrderResponseDto> getOrdersByCustomerEmail(String token);
 
-    /**
-     * Finds orders based on the given categories.
-     *
-     * @param categories the list of categories to filter orders by
-     * @return a list of {@link Order} entities matching the categories
-     */
     List<Order> findOrdersByCategories(List<Category> categories);
 
-    /**
-     * Retrieves all orders for the authenticated user.
-     *
-     * @param email the user's email for authentication
-     * @param password the user's password for authentication
-     * @return a list of {@link OrderResponseDto} representing the user's orders
-     */
     List<OrderResponseDto> getOrder(String token);
 
-    /**
-     * Retrieves an order by its unique ID.
-     *
-     * @param id the unique ID of the order to retrieve
-     * @return the {@link Order} entity matching the given ID
-     */
     Order findById(Long id);
 
-    /**
-     * Saves the provided order.
-     *
-     * @param order the {@link Order} entity to be saved
-     * @return the saved {@link Order} entity
-     */
     Order save(Order order);
 
-    /**
-     * Updates the status of a specified order.
-     *
-     * @param email the user's email for authentication
-     * @param password the user's password for authentication
-     * @param orderStatus the new status to set for the order
-     * @param orderNumber the number of the order to update
-     * @param offerNumber the number of the offer linked to the order
-     * @return the updated order as a {@link OrderResponseDto}
-     */
     OrderResponseDto updateOrderStatus(String token,
                                        OrderStatus orderStatus,
                                        Long orderNumber, Long offerNumber);
 
-    /**
-     * Marks a specified order as paid.
-     * @param orderNumber the number of the order to update
-     * @param offerNumber the number of the offer linked to the order
-     * @return the updated order as a {@link OrderResponseDto}
-     */
     OrderResponseDto paid(String token,
                           Long orderNumber,
                           Long offerNumber);
@@ -97,13 +43,6 @@ public interface OrderService {
                                  OrderRequestDto orderDto,
                                  String token);
 
-    /**
-     * Deletes a specified order for the authenticated user.
-     *
-     * @param orderId the ID of the order to delete
-     * @param email the user's email for authentication
-     * @param password the user's password for authentication
-     */
     void deleteOrder(Long orderId, String token);
 
     String payOnlineByCard(String token, BankCardInfoDto bankCardInfoDto, Long orderNumber, Long offerNumber);

@@ -288,19 +288,19 @@ public class UserServiceImpl implements UserService, UserDetailsService {
         }
 
         // Step 2: Proceed to delete categories for the expert
-        Optional<User> targetUserOptional = userRepository.findByEmail(email);
-        if (targetUserOptional.isEmpty()) {
-            log.error("Target user with email {} not found.", email);
-            throw new CustomException("Target user not found.", ErrorCode.NOT_FOUND.getCode());
+        Optional<User> expertOptional = userRepository.findByEmail(email);
+        if (expertOptional.isEmpty()) {
+            log.error("Expert with email {} not found.", email);
+            throw new CustomException("Expert not found.", ErrorCode.NOT_FOUND.getCode());
         }
 
-        User targetUser = targetUserOptional.get();
-        if (!(targetUser instanceof Expert)) {
-            log.error("Target user is not an expert. Email: {}", email);
+        User expertUser = expertOptional.get();
+        if (!(expertUser instanceof Expert)) {
+            log.error("User is not an expert. Email: {}", email);
             throw new CustomException("User is not an expert.", ErrorCode.USER_IS_NOT_EXPERT.getCode());
         }
 
-        Expert expert = (Expert) targetUser;
+        Expert expert = (Expert) expertUser;
         List<Category> categoriesToRemove = categoryService.findSubCategoriesByNames(categoryNames);
         expert.getCategories().removeAll(categoriesToRemove);
         userRepository.save(expert);

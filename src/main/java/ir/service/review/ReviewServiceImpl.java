@@ -16,7 +16,6 @@ import lombok.extern.log4j.Log4j2;
 import org.springframework.dao.DataIntegrityViolationException;
 import org.springframework.stereotype.Service;
 
-import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
 import java.util.stream.Collectors;
@@ -37,26 +36,6 @@ public class ReviewServiceImpl implements ReviewService {
     private final JwtTokenProvider jwtTokenProvider;
     private final ReviewEntityToReviewResponseDtoConvertor reviewEntityToReviewResponseDtoConvertor;
 
-//    @Override
-//    public ReviewResponseDto addReview(String token, ReviewRequestDto reviewRequestDto) {
-//        log.info("Starting to add review for customer with token");
-//
-//        Optional<User> optionalUser = Optional.ofNullable(userService.findByEmailAndPassword(email, password));
-//        return optionalUser
-//                .filter(user -> user instanceof Customer)
-//                .map(user -> (Customer) user)
-//                .flatMap(customer -> customer.getOrders().stream()
-//                        .filter(order -> order.getId().equals(reviewRequestDto.orderNumber()))
-//                        .findFirst()
-//                        .flatMap(order -> order.getOffers().stream()
-//                                .filter(offer -> offer.getId().equals(reviewRequestDto.offerNumber()))
-//                                .findFirst()
-//                                .map(offer -> createAndSaveReview(customer, offer, order, reviewRequestDto))))
-//                .map(reviewEntityToReviewResponseDtoConvertor::apply)
-//                .orElseThrow(() -> new CustomException(
-//                        "User not found or is not a customer/ order-number or offer-number not found",
-//                        ErrorCode.NOT_FOUND.getCode()));
-//    }
 @Override
 public ReviewResponseDto addReview(String token, ReviewRequestDto reviewRequestDto) {
     log.info("Adding review for customer with token.");

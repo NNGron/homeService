@@ -78,6 +78,8 @@ public enum ErrorCode {
     USER_IS_NOT_CUSTOMER(55),
     USER_IS_NOT_EXPERT(66),
     INVALID_CATEGORY(67),
+    DUPLICATE_CARD_NUMBER(68),
+    CARD_LIMIT_EXCEEDED(69),
 
     // 5xx: Server Errors
     INTERNAL_SERVER_ERROR(500),

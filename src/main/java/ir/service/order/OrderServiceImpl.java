@@ -20,6 +20,7 @@ import lombok.AllArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
 import java.math.BigDecimal;
 import java.util.ArrayList;
@@ -493,6 +494,7 @@ public class OrderServiceImpl implements OrderService {
         log.info("Order with ID: {} deleted successfully.", orderId);
     }
 
+    @Transactional
     @Override
     public String payOnlineByCard(String token, BankCardInfoDto bankCardInfoDto, Long orderNumber, Long offerNumber) {
         String username = jwtTokenProvider.extractUsername(token);
@@ -514,13 +516,12 @@ public class OrderServiceImpl implements OrderService {
         }
 
         String password = bankCardInfoDto.getPassword();
-        if (!bankCard.getPassword().equals(passwordEncoder.encode(password))) {
+        if (!passwordEncoder.matches(password, bankCard.getPassword())) {
             throw new CustomException("Bank card password is invalid.", ErrorCode.BAD_REQUEST.getCode());
         }
-
-        Integer cvv = bankCardInfoDto.getCvv();
-        if (!bankCard.getCvv().equals(cvv)) {
-            throw new CustomException("Bank card cvv is invalid.", ErrorCode.BAD_REQUEST.getCode());
+        Integer cvv2 = bankCardInfoDto.getCvv2();
+        if (!bankCard.getCvv2().equals(cvv2)) {
+            throw new CustomException("Bank card cvv2 is invalid.", ErrorCode.BAD_REQUEST.getCode());
         }
 
         Order order = findById(orderNumber);
