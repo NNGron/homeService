@@ -9,9 +9,6 @@ import lombok.Setter;
 @Getter
 public class UserUpdateRequestDto {
 
-//    @NotBlank(message = "Username must not be blank")
-//    private String userName;
-
     @NotBlank(message = "First name must not be blank")
     private String firstName;
 

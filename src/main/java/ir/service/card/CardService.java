@@ -1,6 +1,5 @@
 package ir.service.card;
 
-
 import ir.dto.bankcard.BankCardRequestDto;
 import ir.dto.bankcard.BankCardResponseDto;
 import ir.entity.BankCard;
@@ -32,38 +31,6 @@ public class CardService {
         return cardRepository.findByOwner(user);
     }
 
-    public Optional<BankCard> findByCardNumberAndCvv2AndPassword(String cardNumber, Integer cvv2, String password) {
-        return cardRepository.findByCardNumberAndCvv2AndPassword(cardNumber, cvv2, password);
-    }
-
-    public Optional<BankCard> findByCardHolderName(String cardHolderName) {
-        return cardRepository.findByCardHolderName(cardHolderName);
-    }
-
-    //    public BankCardResponseDto add(String token, BankCardRequestDto bankCardRequestDto) {
-//
-//        String username = jwtTokenProvider.extractUsername(token);
-//        User user = userService.findByUserName(username)
-//                .orElseThrow(() -> new RuntimeException("User not found"));
-//
-//        BankCard bankCard = new BankCard();
-//        bankCard.setOwner(user);
-//        bankCard.setCardNumber(bankCardRequestDto.getCardNumber());
-//        bankCard.setCardHolderName(bankCardRequestDto.getCardHolderName());
-//        bankCard.setCvv2(bankCardRequestDto.getCvv2());
-//        bankCard.setPassword(passwordEncoder.encode(bankCardRequestDto.getPassword()));
-//        bankCard.setExpiryDate(bankCardRequestDto.getExpiryDate());
-//
-//        bankCard = cardRepository.save(bankCard);
-//
-//        BankCardResponseDto bankCardResponseDto = new BankCardResponseDto();
-//        bankCardResponseDto.setCardNumber(bankCard.getCardNumber());
-//        bankCardResponseDto.setCardHolderName(bankCard.getCardHolderName());
-//        bankCardResponseDto.setBalance(bankCard.getBalance());
-//        bankCardResponseDto.setExpiryDate(bankCard.getExpiryDate());
-//
-//        return bankCardResponseDto;
-//    }
     public BankCardResponseDto add(String token, BankCardRequestDto bankCardRequestDto) {
         log.info("Starting the process of adding a bank card for user.");
 
@@ -127,4 +94,13 @@ public class CardService {
     public void save(BankCard bankCard) {
         cardRepository.save(bankCard);
     }
+
+    public Optional<BankCard> findByCardNumberAndCvv2AndPassword(String cardNumber, Integer cvv2, String password) {
+        return cardRepository.findByCardNumberAndCvv2AndPassword(cardNumber, cvv2, password);
+    }
+
+    public Optional<BankCard> findByCardHolderName(String cardHolderName) {
+        return cardRepository.findByCardHolderName(cardHolderName);
+    }
 }
+

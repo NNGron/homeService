@@ -2,6 +2,9 @@ package ir.controller;
 
 import io.swagger.v3.oas.annotations.Operation;
 import ir.dto.bankcard.BankCardInfoDto;
+import ir.dto.filter.ComprehensiveFilterDto;
+import ir.dto.filter.ComprehensiveResponseDto;
+import ir.dto.order.OrderFilterDto;
 import ir.dto.order.OrderRequestDto;
 import ir.dto.order.OrderResponseDto;
 import ir.entity.enums.OrderStatus;
@@ -10,8 +13,12 @@ import ir.service.order.OrderService;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.data.domain.PageRequest;
+import org.springframework.data.domain.Pageable;
+import org.springframework.data.domain.Sort;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
 
@@ -134,5 +141,26 @@ public class OrderController {
 
         log.info("Order with number: {} successfully deleted by customer with token", orderNumber);
         return ResponseEntity.ok("Order with number " + orderNumber + " has been successfully deleted.");
+    }
+
+    @PostMapping("/filter-comprehensive-orders")
+    @PreAuthorize("hasRole('ROLE_ADMIN')")
+    @Operation(summary = "(Admin only)")
+    public ResponseEntity<List<ComprehensiveResponseDto>> filterComprehensiveOrders(
+            @Valid @RequestBody ComprehensiveFilterDto filterDto,
+            @RequestParam(defaultValue = "0") int pageNumber,
+            @RequestParam(defaultValue = "10") int size,
+            @RequestParam(defaultValue = "createdAt") String sortBy,
+            @RequestParam(defaultValue = "asc") String sortDir) {
+
+        log.info("Filtering comprehensive orders with criteria: {}", filterDto);
+
+        Sort.Direction direction = sortDir.equalsIgnoreCase("desc") ? Sort.Direction.DESC : Sort.Direction.ASC;
+        Pageable pageable = PageRequest.of(pageNumber, size, Sort.by(direction, sortBy));
+
+        List<ComprehensiveResponseDto> comprehensiveResponseDtos = orderService.filterComprehensiveOrders(filterDto, pageable);
+
+        log.info("Successfully filtered {} comprehensive orders.", comprehensiveResponseDtos.size());
+        return ResponseEntity.ok(comprehensiveResponseDtos);
     }
 }

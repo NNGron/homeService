@@ -3,8 +3,11 @@ package ir.controller;
 import io.swagger.v3.oas.annotations.Operation;
 import ir.dto.bankcard.BankCardRequestDto;
 import ir.dto.bankcard.BankCardResponseDto;
+import ir.dto.filter.ComprehensiveFilterDto;
+import ir.dto.filter.ComprehensiveResponseDto;
 import ir.dto.user.*;
 import ir.service.card.CardService;
+import ir.service.order.OrderServiceImpl;
 import ir.service.user.UserService;
 import jakarta.validation.Valid;
 import lombok.AllArgsConstructor;
@@ -124,11 +127,11 @@ public class UserController {
     @PostMapping("/filter-users")
     @PreAuthorize("hasRole('ROLE_ADMIN')")
     @Operation(summary = "(Admin only)")
-    public ResponseEntity<List<UserResponseDto>> getAllCategories(@Valid @RequestBody UserFilterDto filterDto,
-                                                                  @RequestParam(defaultValue = "0") int pageNumber,
-                                                                  @RequestParam(defaultValue = "10") int size,
-                                                                  @RequestParam(defaultValue = "firstName") String sortBy,
-                                                                  @RequestParam(defaultValue = "asc") String sortDir) {
+    public ResponseEntity<List<UserResponseDto>> filterUsers(@Valid @RequestBody UserFilterDto filterDto,
+                                                             @RequestParam(defaultValue = "0") int pageNumber,
+                                                             @RequestParam(defaultValue = "10") int size,
+                                                             @RequestParam(defaultValue = "firstName") String sortBy,
+                                                             @RequestParam(defaultValue = "asc") String sortDir) {
         log.info("Filtering users with criteria: {}", filterDto);
 
         Sort.Direction direction =

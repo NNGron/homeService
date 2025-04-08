@@ -6,7 +6,7 @@ import ir.entity.User;
 import ir.entity.enums.UserStatus;
 import ir.exception.CustomException;
 import ir.exception.ErrorCode;
-import ir.repository.user.UserRepository;
+import ir.repository.UserRepository;
 import ir.security.JwtTokenProvider;
 import ir.service.offer.OfferService;
 import lombok.AllArgsConstructor;

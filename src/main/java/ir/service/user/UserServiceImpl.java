@@ -10,8 +10,8 @@ import ir.entity.enums.UserStatus;
 import ir.entity.enums.UserType;
 import ir.exception.CustomException;
 import ir.exception.ErrorCode;
-import ir.repository.user.UserRepository;
-import ir.repository.user.UserSpecification;
+import ir.repository.UserRepository;
+import ir.repository.filter.UserSpecification;
 import ir.security.JwtTokenProvider;
 import ir.service.category.CategoryService;
 import lombok.AllArgsConstructor;
@@ -55,6 +55,7 @@ public class UserServiceImpl implements UserService, UserDetailsService {
 
     @Override
     public UserDetails loadUserByUsername(String username) throws UsernameNotFoundException {
+        log.info("Attempting to load user by username: {}", username);
         return userRepository.findByUserName(username)
                 .map(user -> new org.springframework.security.core.userdetails.User(
                         user.getUserName(),

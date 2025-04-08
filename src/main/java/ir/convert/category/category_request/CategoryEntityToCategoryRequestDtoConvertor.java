@@ -18,7 +18,6 @@ import java.util.function.Function;
 @Component
 public class CategoryEntityToCategoryRequestDtoConvertor implements Function<Category, MainCategoryRequestDto> {
 
-
     @Override
     public MainCategoryRequestDto apply(Category category) {
         log.debug("Starting conversion of Category entity to MainCategoryRequestDto");

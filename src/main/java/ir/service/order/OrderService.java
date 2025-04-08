@@ -1,11 +1,15 @@
 package ir.service.order;
 
 import ir.dto.bankcard.BankCardInfoDto;
+import ir.dto.filter.ComprehensiveFilterDto;
+import ir.dto.filter.ComprehensiveResponseDto;
+import ir.dto.order.OrderFilterDto;
 import ir.dto.order.OrderRequestDto;
 import ir.dto.order.OrderResponseDto;
 import ir.entity.Category;
 import ir.entity.Order;
 import ir.entity.enums.OrderStatus;
+import org.springframework.data.domain.Pageable;
 
 import java.util.List;
 
@@ -46,6 +50,10 @@ public interface OrderService {
     void deleteOrder(Long orderId, String token);
 
     String payOnlineByCard(String token, BankCardInfoDto bankCardInfoDto, Long orderNumber, Long offerNumber);
+
+//    List<ComprehensiveResponseDto> filterHistory(ComprehensiveFilterDto filterDto, Pageable pageable);
+
+    List<ComprehensiveResponseDto> filterComprehensiveOrders(ComprehensiveFilterDto filterDto, Pageable pageable);
 
     // Optional<User> findByUserName(String username);
 

@@ -6,7 +6,7 @@ import ir.dto.user.UserResponseDto;
 import ir.entity.Customer;
 import ir.entity.User;
 import ir.entity.enums.UserType;
-import ir.repository.user.UserRepository;
+import ir.repository.UserRepository;
 import ir.service.category.CategoryService;
 import ir.service.user.UserServiceImpl;
 import org.junit.jupiter.api.BeforeEach;

@@ -76,11 +76,15 @@ public ReviewResponseDto addReview(String token, ReviewRequestDto reviewRequestD
     // Step 4: Create and save the review
     Review review = createAndSaveReview(customer, offer, order, reviewRequestDto);
 
-    log.info("Review successfully added for orderNumber {} and offerNumber {}.", reviewRequestDto.orderNumber(), reviewRequestDto.offerNumber());
+    log.info("Review successfully added for orderNumber {} and offerNumber {}.",
+            reviewRequestDto.orderNumber(), reviewRequestDto.offerNumber());
     return reviewEntityToReviewResponseDtoConvertor.apply(review);
 }
 
-    private Review createAndSaveReview(Customer customer, Offer offer, Order order, ReviewRequestDto reviewRequestDto) {
+    private Review createAndSaveReview(Customer customer,
+                                       Offer offer,
+                                       Order order,
+                                       ReviewRequestDto reviewRequestDto) {
         Expert expert = offer.getExpert();
 
         // Prepare review entity

@@ -1,9 +1,14 @@
 package ir.service.order;
 
 import ir.convert.category.category_response.CategoryEntityToCategoryResponseDtoConvertor;
+import ir.convert.filter.ComprehensiveEntityToResponseDtoConvertor;
 import ir.convert.order.order_response.OrderEntityToOrderResponseDtoConvertor;
 import ir.dto.bankcard.BankCardInfoDto;
 import ir.dto.category.CategoryResponseDto;
+import ir.dto.filter.ComprehensiveFilterDto;
+import ir.dto.filter.ComprehensiveResponseDto;
+import ir.entity.enums.UserType;
+import ir.repository.filter.ComprehensiveSpecification;
 import ir.dto.order.OrderRequestDto;
 import ir.dto.order.OrderResponseDto;
 import ir.entity.*;
@@ -18,11 +23,16 @@ import ir.service.category.CategoryService;
 import ir.service.user.UserService;
 import lombok.AllArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.data.domain.Page;
+import org.springframework.data.jpa.domain.Specification;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
+import org.springframework.data.domain.Pageable;
+
 
 import java.math.BigDecimal;
+import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
@@ -45,6 +55,7 @@ public class OrderServiceImpl implements OrderService {
     private final JwtTokenProvider jwtTokenProvider;
     private final OrderEntityToOrderResponseDtoConvertor orderEntityToOrderResponseDtoConvertor;
     private final CategoryEntityToCategoryResponseDtoConvertor categoryEntityToCategoryResponseDtoConvertor;
+    private final ComprehensiveEntityToResponseDtoConvertor comprehensiveEntityToResponseDtoConvertor;
     private final CardService cardService;
     private final PasswordEncoder passwordEncoder;
 
@@ -252,8 +263,10 @@ public class OrderServiceImpl implements OrderService {
     public OrderResponseDto updateOrderStatus(String token,
                                               OrderStatus orderStatus,
                                               Long orderNumber, Long offerNumber) {
-        log.info("Starting updateOrderStatus for token: {}, orderNumber: {}, offerNumber: {}", token, orderNumber, offerNumber);
+        log.info("Starting updateOrderStatus for token: {}, orderNumber: {}, offerNumber: {}",
+                token, orderNumber, offerNumber);
 
+        // Step 1: Validate user token and extract username
         String username = jwtTokenProvider.extractUsername(token);
         Optional<User> userOptional = userService.findByUserName(username);
 
@@ -273,38 +286,24 @@ public class OrderServiceImpl implements OrderService {
             throw new CustomException("Order status must not be null.", ErrorCode.INVALID_DATA.getCode());
         }
 
-        if (OrderStatus.PAID.equals(orderStatus)) {
-            log.error("Invalid order status: PAID is not allowed.");
-            throw new CustomException("Order status should not be 'PAID'.", ErrorCode.ORDER_STATUS_SHOULD_NOT_BE_PAID.getCode());
-        }
-
         log.info("Validating order with orderNumber: {}", orderNumber);
 
+        // Step 2: Find order by ID
         Order order = findById(orderNumber);
         if (order == null) {
             log.error("Order not found with orderNumber: {}", orderNumber);
             throw new CustomException("Order not found with provided order number.", ErrorCode.NOT_FOUND.getCode());
         }
 
-        if (OrderStatus.WAITING_FOR_EXPERT_ARRIVAL.equals(order.getStatus()) &&
-                OrderStatus.WAITING_FOR_EXPERT_ARRIVAL.equals(orderStatus)) {
-            log.error("Order with orderNumber: {} is already 'WAITING_FOR_EXPERT_ARRIVAL'.", orderNumber);
-            throw new CustomException("Order is already 'WAITING_FOR_EXPERT_ARRIVAL'.", ErrorCode.ORDER_ALREADY_WAITING_FOR_EXPERT_ARRIVAL.getCode());
+        // Step 3: Prevent duplicate status updates
+        if (order.getStatus().equals(orderStatus)) {
+            log.error("Order with orderNumber: {} is already '{}'.", orderNumber, orderStatus);
+            throw new CustomException("Order is already in the specified status.", ErrorCode.ORDER_ALREADY_IN_STATUS.getCode());
         }
 
-        if (OrderStatus.STARTED.equals(order.getStatus()) &&
-                OrderStatus.STARTED.equals(orderStatus)) {
-            log.error("Order with orderNumber: {} is already 'STARTED'.", orderNumber);
-            throw new CustomException("Order is already 'STARTED'.", ErrorCode.ORDER_ALREADY_STARTED.getCode());
-        }
-
-        if (OrderStatus.COMPLETED.equals(order.getStatus()) &&
-                OrderStatus.COMPLETED.equals(orderStatus)) {
-            log.error("Order with orderNumber: {} is already completed.", orderNumber);
-            throw new CustomException("Order is already completed.", ErrorCode.ORDER_ALREADY_COMPLETE.getCode());
-        }
         log.info("Validating offer with offerNumber: {}", offerNumber);
 
+        // Step 4: Validate the offer
         Optional<Offer> offerOptional = order.getOffers().stream()
                 .filter(offer -> offer.getId().equals(offerNumber))
                 .findFirst();
@@ -314,6 +313,7 @@ public class OrderServiceImpl implements OrderService {
         }
         Offer offer = offerOptional.get();
 
+        // Step 5: Handle status-specific updates
         if (OrderStatus.WAITING_FOR_EXPERT_ARRIVAL.equals(orderStatus)) {
             BigDecimal proposedPrice = offer.getProposedPrice();
             log.info("Proposed price for the offer: {}", proposedPrice);
@@ -326,6 +326,7 @@ public class OrderServiceImpl implements OrderService {
         log.info("Saving updated order with orderNumber: {}", orderNumber);
         orderRepository.save(order);
 
+        // Step 7: Convert updated order to OrderResponseDto
         log.info("Converting updated order to OrderResponseDto");
         return orderEntityToOrderResponseDtoConvertor.apply(order);
     }
@@ -558,5 +559,34 @@ public class OrderServiceImpl implements OrderService {
         log.info("Order marked as paid successfully. orderNumber: {}", orderNumber);
 
         return "Paid successfully. orderNumber: " + orderNumber;
+    }
+//
+//    @Override
+//    public List<ComprehensiveResponseDto> filterHistory(ComprehensiveFilterDto filterDto, Pageable pageable) {
+//        Specification<Order> spec = ComprehensiveSpecification.filterComprehensive(filterDto);
+//        Page<Order> orderPage = orderRepository.findAll(spec, pageable);
+//
+//        return orderPage.getContent().stream()
+//                .map(comprehensiveEntityToResponseDtoConvertor)
+//                .toList();
+//    }
+
+    @Override
+    public List<ComprehensiveResponseDto> filterComprehensiveOrders(ComprehensiveFilterDto filterDto, Pageable pageable) {
+        log.info("Fetching filtered comprehensive orders with criteria: {}", filterDto);
+//        if (filterDto.getUserType() != null) {
+//            try {
+//                filterDto.setUserType(UserType.valueOf(filterDto.getUserType().toString().toUpperCase()));
+//            } catch (IllegalArgumentException e) {
+//                log.error("Invalid user type provided: {}", filterDto.getUserType()); // لاگ کردن مقدار نامعتبر
+//                throw new CustomException("Invalid user type provided.", ErrorCode.INVALID_USER_TYPE.getCode());
+//            }
+//        }
+        Specification<Order> spec = ComprehensiveSpecification.filterComprehensive(filterDto);
+        Page<Order> orderPage = orderRepository.findAll(spec, pageable);
+        List<Order> orderList = orderPage.getContent();
+
+        log.info("Successfully retrieved {} comprehensive orders.", orderList.size());
+        return comprehensiveEntityToResponseDtoConvertor.convertList(orderList);
     }
 }

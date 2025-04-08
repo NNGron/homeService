@@ -4,7 +4,7 @@ package ir.unit.user;
 import ir.entity.Customer;
 import ir.entity.User;
 import ir.entity.enums.UserStatus;
-import ir.repository.user.UserRepository;
+import ir.repository.UserRepository;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.BeforeEach;
 import org.springframework.beans.factory.annotation.Autowired;

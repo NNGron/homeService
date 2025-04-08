@@ -2,13 +2,10 @@ package ir.dto.order;
 
 import com.fasterxml.jackson.annotation.JsonInclude;
 import ir.dto.category.CategoryResponseDto;
-import ir.entity.Offer;
+import ir.dto.offer.OfferResponseDto;
 import ir.entity.Review;
 import ir.entity.enums.OrderStatus;
-import lombok.AllArgsConstructor;
-import lombok.Getter;
-import lombok.NoArgsConstructor;
-import lombok.Setter;
+import lombok.*;
 
 import java.math.BigDecimal;
 import java.time.LocalDate;
@@ -17,6 +14,7 @@ import java.util.List;
 
 @Getter
 @Setter
+@Builder
 @AllArgsConstructor
 @NoArgsConstructor
 @JsonInclude(JsonInclude.Include.NON_NULL)
@@ -32,7 +30,7 @@ public class OrderResponseDto {
     private CategoryResponseDto mainCategory; // اضافه کردن Main Category
     private CategoryResponseDto subCategory; // اضافه کردن Sub Category
     private OrderStatus status;
-    private List<Offer> offers;
+    private List<OfferResponseDto> offers;
     private Review review;
     private BigDecimal offerCustomerPrice;
     private LocalDateTime createdAt;

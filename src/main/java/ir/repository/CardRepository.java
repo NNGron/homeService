@@ -11,7 +11,6 @@ import java.util.Optional;
 @Repository
 public interface CardRepository extends JpaRepository<BankCard, Long>, JpaSpecificationExecutor<BankCard> {
     Optional<BankCard> findByOwner(User user);
-
     Optional<BankCard> findByCardNumberAndCvv2AndPassword(String cardNumber, Integer cvv2, String password);
     Optional<BankCard> findByCardHolderName(String cardHolderName);
 }

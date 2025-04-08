@@ -232,7 +232,24 @@ public class CategoryServiceImpl implements CategoryService {
         if (subCategory.isEmpty()) {
             log.warn("Sub-category '{}' not found in the database.", subCategoryName);
             throw new CustomException(
-                    "Sub-category '" + subCategoryName + "' does not exist.", ErrorCode.NOT_FOUND.getCode());
+                    "Sub-category'" + subCategoryName + "' does not exist.", ErrorCode.NOT_FOUND.getCode());
+        }
+        Category category = subCategory.get();
+
+        // بررسی ارتباطات با جدول Orders
+        if (category.getOrders() != null && !category.getOrders().isEmpty()) {
+            log.warn("Sub-category '{}' is still being used in Orders.", subCategoryName);
+            throw new CustomException(
+                    "Sub-category '" + subCategoryName + "' is associated with existing Orders and cannot be deleted.",
+                    ErrorCode.CONFLICT.getCode());
+        }
+
+        // بررسی ارتباطات با جدول Experts
+        if (category.getExperts() != null && !category.getExperts().isEmpty()) {
+            log.warn("Sub-category '{}' is still being used by Experts.", subCategoryName);
+            throw new CustomException(
+                    "Sub-category '" + subCategoryName + "' is associated with existing Experts and cannot be deleted.",
+                    ErrorCode.CONFLICT.getCode());
         }
 
         categoryRepository.delete(subCategory.get());
