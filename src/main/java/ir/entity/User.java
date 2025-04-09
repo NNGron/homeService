@@ -30,8 +30,6 @@ public abstract class User extends BaseEntity {
 
     @NotBlank(message = "Password must not be blank")
     @Size(min = 8, message = "Password must have at least 8 characters")
-//    @Pattern(regexp = "^(?=.*[A-Za-z])(?=.*\\d)[A-Za-z\\d]{8,}$",
-//            message = "Password must contain at least one letter and one number")
     @Column(name = "password", nullable = false)
     private String password;
 

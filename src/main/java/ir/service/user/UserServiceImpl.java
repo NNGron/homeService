@@ -202,13 +202,6 @@ public class UserServiceImpl implements UserService, UserDetailsService {
             throw new CustomException("Email and Password must not be empty", ErrorCode.INVALID_EMAIL_OR_PASSWORD.getCode());
         }
 
-        if (!userRequestDto.getPassword().matches("^(?=.*[A-Za-z])(?=.*\\d)[A-Za-z\\d]{8,}$")) {
-            log.error("Validation failed: Password must contain at least one letter and one number. Email: {}",
-                    userRequestDto.getEmail());
-            throw new CustomException("Password must contain at least one letter and one number",
-                    ErrorCode.INVALID_EMAIL_OR_PASSWORD.getCode());
-        }
-
         Optional<User> optionalUser = userRepository.findByEmailAndPassword(
                 userRequestDto.getEmail(), userRequestDto.getPassword());
 
