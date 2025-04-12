@@ -46,6 +46,7 @@ public class SecurityConfig {
                                 "/static/**",
                                 "/style.css",
                                 "/v1/users/verify",
+                                "/v1/users/resend-verification",
                                 "*.html"
                         ).permitAll()
                         .anyRequest().authenticated()

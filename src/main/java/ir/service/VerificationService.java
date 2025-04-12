@@ -5,6 +5,8 @@ import ir.entity.Expert;
 import ir.entity.User;
 import ir.entity.VerificationToken;
 import ir.entity.enums.UserStatus;
+import ir.exception.CustomException;
+import ir.exception.ErrorCode;
 import ir.repository.UserRepository;
 import ir.repository.VerificationTokenRepository;
 import lombok.RequiredArgsConstructor;
@@ -23,15 +25,9 @@ public class VerificationService {
     private final UserRepository userRepository;
     private final EmailService emailService;
 
-//    @Value("${app.verification.enabled:true}")
-//    private boolean verificationEnabled;
 
     public void createVerificationTokenAndSendEmail(User user) {
-//        if (!verificationEnabled) {
-//            log.info("Email verification disabled. Auto-activating user: {}", user.getEmail());
-//            activateUser(user);
-//            return;
-//        }
+
 
         String token = UUID.randomUUID().toString();
         VerificationToken verificationToken = new VerificationToken(user, token);
@@ -92,5 +88,13 @@ public class VerificationService {
             log.info("Customer status set to ACTIVE: {}", user.getEmail());
         }
         userRepository.save(user);
+    }
+
+    @Transactional
+    public void resendVerificationToken(String email) {
+        User user = userRepository.findByEmail(email)
+                .orElseThrow(() -> new CustomException("Invalid email", ErrorCode.NOT_FOUND.getCode()));
+        tokenRepository.deleteByUser_Id(user.getId());
+        createVerificationTokenAndSendEmail(user);
     }
 }

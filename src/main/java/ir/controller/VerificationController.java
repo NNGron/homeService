@@ -36,7 +36,7 @@ public class VerificationController {
 
     @PostMapping("/resend-verification")
     public ResponseEntity<String> resendVerificationEmail(@RequestParam("email") String email) {
-        // Implementation for resending verification email if needed
+   //     verificationService.resendVerificationToken(email);
         return ResponseEntity.ok("Verification email has been resent if the email is registered.");
     }
 }
