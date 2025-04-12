@@ -45,6 +45,7 @@ public class SecurityConfig {
                                 "/v1/captcha/verify",
                                 "/static/**",
                                 "/style.css",
+                                "/v1/users/verify",
                                 "*.html"
                         ).permitAll()
                         .anyRequest().authenticated()

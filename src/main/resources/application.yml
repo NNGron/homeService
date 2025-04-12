@@ -3,6 +3,18 @@ server:
   port: 8080
 
 spring:
+  mail:
+    host: smtp.gmail.com
+    port: 587
+    username: spring.home.service.2025@gmail.com
+    password: oipsjqyygvedocua
+    properties:
+      mail:
+        smtp:
+          auth: true
+          starttls:
+            enable: true
+
   application:
     name: core banking
 

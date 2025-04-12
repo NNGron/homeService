@@ -3,11 +3,8 @@ package ir.controller;
 import io.swagger.v3.oas.annotations.Operation;
 import ir.dto.bankcard.BankCardRequestDto;
 import ir.dto.bankcard.BankCardResponseDto;
-import ir.dto.filter.ComprehensiveFilterDto;
-import ir.dto.filter.ComprehensiveResponseDto;
 import ir.dto.user.*;
 import ir.service.card.CardService;
-import ir.service.order.OrderServiceImpl;
 import ir.service.user.UserService;
 import jakarta.validation.Valid;
 import lombok.AllArgsConstructor;
@@ -54,7 +51,6 @@ public class UserController {
                 userService.login(loginRequestDto.getEmail(), loginRequestDto.getPassword());
         return ResponseEntity.ok(loginResponseDto);
     }
-
 
     @GetMapping("/all-user")
     @PreAuthorize("hasRole('ROLE_ADMIN')")

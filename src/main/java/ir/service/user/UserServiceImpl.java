@@ -13,6 +13,7 @@ import ir.exception.ErrorCode;
 import ir.repository.UserRepository;
 import ir.repository.filter.UserSpecification;
 import ir.security.JwtTokenProvider;
+import ir.service.VerificationService;
 import ir.service.category.CategoryService;
 import lombok.AllArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
@@ -52,6 +53,7 @@ public class UserServiceImpl implements UserService, UserDetailsService {
     private final PasswordEncoder passwordEncoder;
     private final JwtTokenProvider jwtTokenProvider;
     private final UserEntityToUserResponseDtoConvertor userEntityToUserResponseDtoConvertor;
+    private final VerificationService verificationService;
 
     @Override
     public UserDetails loadUserByUsername(String username) throws UsernameNotFoundException {
@@ -78,7 +80,6 @@ public class UserServiceImpl implements UserService, UserDetailsService {
     @Override
     public UserResponseDto saveUser(UserRequestDto userRequestDto) {
         log.info("Starting user registration: {}", userRequestDto);
-
         log.info("Validating user data for email: {}", userRequestDto.getEmail());
         checkValidation(userRequestDto);
 
@@ -94,6 +95,12 @@ public class UserServiceImpl implements UserService, UserDetailsService {
         }
         if (userType != null && userType.equals(UserType.ADMIN)) {
             user = createAdmin(userRequestDto);
+        }
+
+        if (!(user instanceof Admin)) {
+            verificationService.createVerificationTokenAndSendEmail(user);
+        } else {
+            user = userRepository.save(user);
         }
 
         UserResponseDto responseDto = userEntityToUserResponseDtoConvertor.apply(user);
@@ -237,11 +244,35 @@ public class UserServiceImpl implements UserService, UserDetailsService {
                     "Invalid password for email: " + email, ErrorCode.INVALID_EMAIL_OR_PASSWORD.getCode());
         }
 
-            UserDetails userDetails = loadUserByUsername(user.getUserName());
+        Role role = user.getRole();
+        UserStatus userStatus = user.getStatus();
+
+        // ADMIN
+        if (role.equals(Role.ADMIN)) {
+            if (userStatus.equals(UserStatus.DELETED)) {
+                throw new CustomException("Admin account is deleted and cannot log in.", ErrorCode.USER_DELETED.getCode());
+            }
+        }
+
+        // USER
+        else if (role.equals(Role.USER)) {
+            if (!userStatus.equals(UserStatus.APPROVED)) {
+                throw new CustomException("Your account is not approved and you cannot log in.", ErrorCode.USER_NOT_APPROVED.getCode());
+            }
+        } else {
+            throw new CustomException("Unsupported role.", ErrorCode.INVALID_USER_ROLE.getCode());
+        }
+
+        // تولید توکن JWT برای کاربر
+        UserDetails userDetails = loadUserByUsername(user.getUserName());
         String token = jwtTokenProvider.generateToken(userDetails.getUsername());
 
+        log.info("User {} successfully logged in.", email);
+
+        // بازگشت پاسخ ورود
         return new LoginResponseDto("Logged in successfully", userDetails.getUsername(), token);
     }
+
 
 
     /**
@@ -452,16 +483,16 @@ public class UserServiceImpl implements UserService, UserDetailsService {
         log.debug("Fetched user: {}", user);
 
         // Update status logic
-        if (user.getStatus() == UserStatus.NEW) {
+        if (user.getStatus() == UserStatus.PENDING_APPROVAL) {
             user.setStatus(UserStatus.APPROVED);
             userRepository.save(user);
             log.info("Updated status to APPROVED for user: {}", user.getEmail());
             return new UserMessageDto("User approved successfully");
         } else {
-            log.warn("User status is not NEW. Current status: {}", user.getStatus());
+            log.warn("User status is not PENDING_APPROVAL. Current status: {}", user.getStatus());
+            throw new CustomException("User should be in pending approval step.", ErrorCode.INVALID_DATA.getCode());
         }
-        log.warn("User status is already approved. Current status: {}", user.getStatus());
-        return new UserMessageDto("User is already approved");
+
     }
 
     @Override
