@@ -131,9 +131,12 @@ public class ComprehensiveSpecification {
             if (filterDto.getEstimatedTime() != null) {
                 predicates.add(criteriaBuilder.equal(offerJoin.get("estimatedTime"), filterDto.getEstimatedTime()));
             }
+            //  if (filterDto.getStartTime() != null) {
+            //                predicates.add(criteriaBuilder.like(criteriaBuilder.lower(offerJoin.get("startTime")),
+            //                        "%" + filterDto.getStartTime().toLowerCase() + "%"));
+            //            }
             if (filterDto.getStartTime() != null) {
-                predicates.add(criteriaBuilder.like(criteriaBuilder.lower(offerJoin.get("startTime")),
-                        "%" + filterDto.getStartTime().toLowerCase() + "%"));
+                predicates.add(criteriaBuilder.greaterThanOrEqualTo(offerJoin.get("startTime"), filterDto.getStartTime()));
             }
 
             // Expert filters (Average)

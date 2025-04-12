@@ -4,7 +4,6 @@ import io.swagger.v3.oas.annotations.Operation;
 import ir.dto.bankcard.BankCardInfoDto;
 import ir.dto.filter.ComprehensiveFilterDto;
 import ir.dto.filter.ComprehensiveResponseDto;
-import ir.dto.order.OrderFilterDto;
 import ir.dto.order.OrderRequestDto;
 import ir.dto.order.OrderResponseDto;
 import ir.entity.enums.OrderStatus;
@@ -62,15 +61,12 @@ public class OrderController {
                                                          @RequestParam OrderStatus status,
                                                          @RequestParam Long orderNumber,
                                                          @RequestParam Long offerNumber) {
-        log.info("Received request to update order status for customer with token");
-        log.debug("Status: {}, OrderNumber: {}, OfferNumber: {}", status, orderNumber, offerNumber);
+        log.info("Received request to update order status for customer.");
 
-        OrderResponseDto orderResponseDto =
-                orderService.updateOrderStatus(token, status, orderNumber, offerNumber);
+        OrderResponseDto responseDto = orderService.updateOrderStatus(token, status, orderNumber, offerNumber);
 
-        log.info("Order status successfully updated for order number: {} by customer with token",
-                orderNumber);
-        return ResponseEntity.ok(orderResponseDto);
+        log.info("Order status successfully updated for order number: {}", orderNumber);
+        return ResponseEntity.ok(responseDto);
     }
 
     @GetMapping("/orders_history")

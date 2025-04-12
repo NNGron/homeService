@@ -17,9 +17,10 @@ import java.util.List;
 @Entity
 public class Expert extends User {
 
+    //average rate
     @DecimalMin(value = "0.0", inclusive = true, message = "Rating must be non-negative")
     @DecimalMax(value = "5.0", inclusive = true, message = "Rating cannot exceed 5.0")
-    private Double rating;
+    private Double rating = 0.0;
 
     @Lob
     @Convert(converter = ByteArrayBlobConverter.class)

@@ -59,19 +59,17 @@
             },
             body: JSON.stringify(loginData)
         })
-            .then(response => {
-                if (!response.ok) {
-                    throw new Error('Login failed. Please check your email and password.');
-                }
-                return response.json();
-            })
             .then(data => {
-                document.getElementById('status-message').innerHTML = `<div class="alert alert-success">Welcome back.</div>`;
+                const token = data.token;
+                localStorage.setItem("jwtToken", token);
+                document.getElementById('status-message').className = 'status-message status-success';
+                document.getElementById('status-message').innerHTML = `<div class="alert alert-success">Welcome back!</div>`;
                 setTimeout(() => {
-                    window.location.href = "/expert-dashboard.html"; // انتقال به داشبورد
-                }, 2000); // 2-second delay
+                    window.location.href = "/expert-dashboard.html";
+                }, 3000); // 2-second delay
             })
             .catch(error => {
+                document.getElementById('status-message').className = 'status-message status-error';
                 document.getElementById('status-message').innerHTML = `<div class="alert alert-danger">Error: ${error.message}</div>`;
             });
     });

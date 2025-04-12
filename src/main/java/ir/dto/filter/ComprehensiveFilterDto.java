@@ -44,7 +44,7 @@ public class ComprehensiveFilterDto {
     // Offer filters
     private BigDecimal proposedPrice;
     private Integer estimatedTime;
-    private String startTime;
+    private LocalDateTime startTime;
 
     // Expert filters
     private Double expertRating;

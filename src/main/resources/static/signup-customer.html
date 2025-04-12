@@ -25,6 +25,12 @@
     function navigateBack() {
         window.history.back(); // بازگشت به صفحه قبلی
     }
+
+    function showMessage(message, isSuccess = true) {
+        const statusMessage = document.getElementById('status-message');
+        statusMessage.className = isSuccess ? 'status-success status-message' : 'status-error status-message';
+        statusMessage.innerHTML = message;
+    }
 </script>
 
 <!-- Title and Form -->
@@ -64,20 +70,13 @@
 
 <script>
     document.getElementById('signup-btn').addEventListener('click', () => {
-        const userName = document.getElementById('userName').value;
-        const password = document.getElementById('password').value;
-        const firstName = document.getElementById('firstName').value;
-        const lastName = document.getElementById('lastName').value;
-        const email = document.getElementById('email').value;
-        const address = document.getElementById('address').value;
-
         const customerData = {
-            userName,
-            password,
-            firstName,
-            lastName,
-            email,
-            address,
+            userName: document.getElementById('userName').value,
+            password: document.getElementById('password').value,
+            firstName: document.getElementById('firstName').value,
+            lastName: document.getElementById('lastName').value,
+            email: document.getElementById('email').value,
+            address: document.getElementById('address').value,
             userType: "CUSTOMER"
         };
 
@@ -91,18 +90,20 @@
         })
             .then(response => {
                 if (!response.ok) {
-                    throw new Error('Failed to sign up');
+                    return response.json().then(errorData => {
+                        throw new Error(errorData.errorMessage || 'An error occurred during signup.');
+                    });
                 }
                 return response.json();
             })
             .then(data => {
-                document.getElementById('status-message').innerHTML = `<div class="alert alert-success">Welcome, Customer ${data.firstName}! Your account has been successfully created.</div>`;
+                showMessage(`${data.message || 'Your account has been successfully created.'}`, true);
                 setTimeout(() => {
-                    window.location.href = "/login-customer.html"; // Redirect to Sign-In page
-                }, 3000); // 3-second delay
+                    window.location.href = "/login-customer.html"; // انتقال به صفحه ورود
+                }, 3000);
             })
             .catch(error => {
-                document.getElementById('status-message').innerHTML = `<div class="alert alert-danger">Error: ${error.message}</div>`;
+                showMessage(`${error.message}`, false);
             });
     });
 </script>

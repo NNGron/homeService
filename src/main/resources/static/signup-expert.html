@@ -13,10 +13,10 @@
     <a href="/index.html">Home</a>
     <a href="/role-selection.html">Role Selection</a>
     <a href="/expert-actions.html">Expert Actions</a>
-    <a class="current-page" href="/signup-expert.html">Sign Up</a>
+    <a class="current-page" href="/signup-expert.html">Sign Up Expert</a>
 </div>
 
-<!-- Buttons: Back -->
+<!-- Back Button -->
 <div class="navigation-buttons">
     <button class="back-btn" onclick="navigateBack()">Back</button>
 </div>
@@ -24,6 +24,12 @@
 <script>
     function navigateBack() {
         window.history.back(); // بازگشت به صفحه قبلی
+    }
+
+    function showMessage(message, isSuccess = true) {
+        const statusMessage = document.getElementById('status-message');
+        statusMessage.className = isSuccess ? 'status-success status-message' : 'status-error status-message';
+        statusMessage.innerHTML = message;
     }
 </script>
 
@@ -37,7 +43,8 @@
         </div>
         <div class="mb-3">
             <label class="form-label" for="password">Password:</label>
-            <input class="form-control" id="password" placeholder="At least 8 characters, one letter, and one number"
+            <input class="form-control" id="password"
+                   placeholder="At least 8 characters, one uppercase, one lowercase, and one special character"
                    required type="password">
         </div>
         <div class="mb-3">
@@ -58,8 +65,8 @@
             <input class="form-control" id="address" placeholder="Enter address (required)" required type="text">
         </div>
         <div class="mb-3">
-            <label class="form-label" for="subCategoryNames">Subcategories:</label>
-            <input class="form-control" id="subCategoryNames" placeholder="Enter subcategories, comma-separated (e.g., Designer)"
+            <label class="form-label" for="subCategoryNames">SubCategories:</label>
+            <input class="form-control" id="subCategoryNames" placeholder="Enter SubCategories (comma-separated)"
                    required type="text">
         </div>
         <button class="btn btn-lg btn-main" id="signup-btn" type="button">Sign Up</button>
@@ -68,49 +75,62 @@
 </div>
 
 <script>
-    document.getElementById('signup-btn').addEventListener('click', () => {
-        const userName = document.getElementById('userName').value;
-        const password = document.getElementById('password').value;
-        const firstName = document.getElementById('firstName').value;
-        const lastName = document.getElementById('lastName').value;
-        const email = document.getElementById('email').value;
-        const address = document.getElementById('address').value;
-        const subCategoryNames = document.getElementById('subCategoryNames').value.split(',').map(item => item.trim());
-
+    document.getElementById('signup-btn').addEventListener('click', async () => {
+        // Collect input data
         const expertData = {
-            userName,
-            password,
-            firstName,
-            lastName,
-            email,
-            address,
-            subCategoryNames,
+            userName: document.getElementById('userName').value.trim(),
+            password: document.getElementById('password').value.trim(),
+            firstName: document.getElementById('firstName').value.trim(),
+            lastName: document.getElementById('lastName').value.trim(),
+            email: document.getElementById('email').value.trim(),
+            address: document.getElementById('address').value.trim(),
+            subCategoryNames: document.getElementById('subCategoryNames').value.split(',').map(sub => sub.trim()),
             userType: "EXPERT"
         };
 
-        fetch('http://localhost:8080/v1/users/signup', {
-            method: 'POST',
-            headers: {
-                'Accept': '*/*',
-                'Content-Type': 'application/json'
-            },
-            body: JSON.stringify(expertData)
-        })
-            .then(response => {
-                if (!response.ok) {
-                    throw new Error('Failed to sign up');
-                }
-                return response.json();
-            })
-            .then(data => {
-                document.getElementById('status-message').innerHTML = `<div class="alert alert-success">Welcome, Expert ${data.firstName}! Your account has been successfully created.</div>`;
-                setTimeout(() => {
-                    window.location.href = "/login-expert.html"; // Redirect to Sign-In page
-                }, 3000); // 3-second delay
-            })
-            .catch(error => {
-                document.getElementById('status-message').innerHTML = `<div class="alert alert-danger">Error: ${error.message}</div>`;
+        // Validation: Password
+        const passwordRegex = /^(?=.*[A-Z])(?=.*[a-z])(?=.*\d)(?=.*[@#$%^&+=])[A-Za-z\d@#$%^&+=]{8,}$/;
+        if (!passwordRegex.test(expertData.password)) {
+            showMessage('Password must be at least 8 characters long, include uppercase, lowercase, number, and special character.', false);
+            return;
+        }
+
+        // Validation: Email
+        const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+        if (!emailRegex.test(expertData.email)) {
+            showMessage('Please enter a valid email address.', false);
+            return;
+        }
+
+        // Authorization token
+        const token = localStorage.getItem('jwtToken');
+
+        try {
+            const response = await fetch('http://localhost:8080/v1/users/signup', {
+                method: 'POST',
+                headers: {
+                    'Accept': '*/*',
+                    'Content-Type': 'application/json',
+                    'Authorization': `Bearer ${token}`
+                },
+                body: JSON.stringify(expertData)
             });
+
+            if (!response.ok) {
+                const errorData = await response.json();
+                throw new Error(errorData.errorMessage || 'An error occurred during signup.');
+            }
+
+            const data = await response.json();
+            showMessage(`Expert "${data.userName}" signed up successfully!`, true);
+
+            // Redirect after success
+            setTimeout(() => {
+                window.location.href = "/expert-actions.html";
+            }, 3000);
+        } catch (error) {
+            showMessage(`${error.message}`, false);
+        }
     });
 </script>
 </body>

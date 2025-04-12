@@ -22,7 +22,7 @@ public class OfferResponseDto {
     private String expertEmail;
     private BigDecimal proposedPrice;
     private Integer estimatedTime;
-    private String startTime;
+    private String availableTime;
     private Double expertRating;
     private LocalDateTime createdAt;
     private LocalDateTime updatedAt;

@@ -7,8 +7,6 @@ import ir.dto.bankcard.BankCardInfoDto;
 import ir.dto.category.CategoryResponseDto;
 import ir.dto.filter.ComprehensiveFilterDto;
 import ir.dto.filter.ComprehensiveResponseDto;
-import ir.entity.enums.UserType;
-import ir.repository.filter.ComprehensiveSpecification;
 import ir.dto.order.OrderRequestDto;
 import ir.dto.order.OrderResponseDto;
 import ir.entity.*;
@@ -17,6 +15,7 @@ import ir.entity.enums.UserStatus;
 import ir.exception.CustomException;
 import ir.exception.ErrorCode;
 import ir.repository.OrderRepository;
+import ir.repository.filter.ComprehensiveSpecification;
 import ir.security.JwtTokenProvider;
 import ir.service.card.CardService;
 import ir.service.category.CategoryService;
@@ -24,15 +23,15 @@ import ir.service.user.UserService;
 import lombok.AllArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
 import org.springframework.data.jpa.domain.Specification;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
-import org.springframework.data.domain.Pageable;
-
 
 import java.math.BigDecimal;
 import java.time.LocalDateTime;
+import java.time.temporal.ChronoUnit;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
@@ -262,75 +261,81 @@ public class OrderServiceImpl implements OrderService {
     @Override
     public OrderResponseDto updateOrderStatus(String token,
                                               OrderStatus orderStatus,
-                                              Long orderNumber, Long offerNumber) {
+                                              Long orderNumber,
+                                              Long offerNumber) {
         log.info("Starting updateOrderStatus for token: {}, orderNumber: {}, offerNumber: {}",
                 token, orderNumber, offerNumber);
 
-        // Step 1: Validate user token and extract username
+        // Step 1: Validate token and extract username
         String username = jwtTokenProvider.extractUsername(token);
         Optional<User> userOptional = userService.findByUserName(username);
 
         if (userOptional.isEmpty()) {
-            log.error("User with token not found.");
             throw new CustomException("User not found.", ErrorCode.NOT_FOUND.getCode());
         }
 
         User user = userOptional.get();
         if (user.getStatus().equals(UserStatus.NEW)) {
-            log.error("User with username {} is not approved.", username);
             throw new CustomException("User should be approved.", ErrorCode.USER_STATUS_NOT_APPROVED.getCode());
         }
 
-        if (orderStatus == null) {
-            log.error("Order status is null.");
-            throw new CustomException("Order status must not be null.", ErrorCode.INVALID_DATA.getCode());
-        }
-
-        log.info("Validating order with orderNumber: {}", orderNumber);
-
-        // Step 2: Find order by ID
+        // Step 2: Validate order
         Order order = findById(orderNumber);
         if (order == null) {
-            log.error("Order not found with orderNumber: {}", orderNumber);
             throw new CustomException("Order not found with provided order number.", ErrorCode.NOT_FOUND.getCode());
         }
 
-        // Step 3: Prevent duplicate status updates
         if (order.getStatus().equals(orderStatus)) {
-            log.error("Order with orderNumber: {} is already '{}'.", orderNumber, orderStatus);
             throw new CustomException("Order is already in the specified status.", ErrorCode.ORDER_ALREADY_IN_STATUS.getCode());
         }
 
-        log.info("Validating offer with offerNumber: {}", offerNumber);
+        // Step 3: Validate offer
+        Offer offer = order.getOffers().stream()
+                .filter(o -> o.getId().equals(offerNumber))
+                .findFirst()
+                .orElseThrow(() -> new CustomException("Offer not found", ErrorCode.NOT_FOUND.getCode()));
 
-        // Step 4: Validate the offer
-        Optional<Offer> offerOptional = order.getOffers().stream()
-                .filter(offer -> offer.getId().equals(offerNumber))
-                .findFirst();
-        if (offerOptional.isEmpty()) {
-            log.error("Offer not found for offerNumber: {}", offerNumber);
-            throw new CustomException("Offer not found with provided offer number.", ErrorCode.NOT_FOUND.getCode());
+        // Step 4: Handle status-specific updates
+        switch (orderStatus) {
+            case WAITING_FOR_EXPERT_ARRIVAL:
+                BigDecimal proposedPrice = offer.getProposedPrice();
+                order.setFinalPrice(proposedPrice);
+                break;
+
+            case STARTED:
+                order.setStartWorkingTime(LocalDateTime.now());
+                break;
+
+            case COMPLETED:
+                order.setEndWorkingTime(LocalDateTime.now());
+
+                //  long actualDuration = ChronoUnit.HOURS.between(order.getStartWorkingTime(), order.getEndWorkingTime());
+                long actualDuration = ChronoUnit.SECONDS.between(order.getStartWorkingTime(), order.getEndWorkingTime());
+                Expert expert = offer.getExpert();
+                if (actualDuration > offer.getEstimatedTime() && expert.getRating() != 0) {
+                    int delayHours = (int) (actualDuration - offer.getEstimatedTime());
+                    double penalty = delayHours * 0.05;
+
+                    expert.setRating(expert.getRating() - penalty);
+                    userService.saveUser(expert);
+
+                    // No direct call to expertService.save, manage through cascading
+                    offer.setExpert(expert); // Update the offer's expert directly
+                }
+                break;
+
+            default:
+                throw new CustomException("Unsupported order status.", ErrorCode.INVALID_DATA.getCode());
         }
-        Offer offer = offerOptional.get();
 
-        // Step 5: Handle status-specific updates
-        if (OrderStatus.WAITING_FOR_EXPERT_ARRIVAL.equals(orderStatus)) {
-            BigDecimal proposedPrice = offer.getProposedPrice();
-            log.info("Proposed price for the offer: {}", proposedPrice);
-            order.setFinalPrice(proposedPrice);
-        }
-
-        log.info("Updating order status to: {}", orderStatus);
+        // Step 5: Update order status and save
         order.setStatus(orderStatus);
+        orderRepository.save(order); // Cascade ensures changes to expert are saved
+        log.info("Order status updated and saved for order number: {}", orderNumber);
 
-        log.info("Saving updated order with orderNumber: {}", orderNumber);
-        orderRepository.save(order);
-
-        // Step 7: Convert updated order to OrderResponseDto
-        log.info("Converting updated order to OrderResponseDto");
+        // Step 6: Convert order to response DTO
         return orderEntityToOrderResponseDtoConvertor.apply(order);
     }
-
 
     @Override
     public OrderResponseDto paid(String token,

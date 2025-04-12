@@ -30,7 +30,7 @@ public class ComprehensiveEntityToResponseDtoConvertor implements Function<Order
                         .expertEmail(offer.getExpert().getEmail())
                         .proposedPrice(offer.getProposedPrice())
                         .estimatedTime(offer.getEstimatedTime())
-                        .startTime(offer.getStartTime())
+                        .availableTime(offer.getAvailableTime())
                         .expertRating(offer.getExpert().getRating())
                         .createdAt(offer.getCreatedAt())
                         .updatedAt(offer.getUpdatedAt())

@@ -34,6 +34,7 @@ public class SecurityConfig {
                 .csrf(csrf -> csrf.disable())
                 .sessionManagement(sess -> sess.sessionCreationPolicy(SessionCreationPolicy.STATELESS))
                 .authorizeHttpRequests(auth -> auth
+                        // اجازه دسترسی به فایل‌های عمومی
                         .requestMatchers(
                                 "/v1/users/login",
                                 "/v1/users/signup",
@@ -41,7 +42,11 @@ public class SecurityConfig {
                                 "/v3/api-docs/**",
                                 "/swagger-ui/**",
                                 "/v1/captcha/generate",
-                                "/v1/captcha/verify").permitAll()
+                                "/v1/captcha/verify",
+                                "/static/**",
+                                "/style.css",
+                                "*.html"
+                        ).permitAll()
                         .anyRequest().authenticated()
                 )
                 .exceptionHandling(ex -> ex
@@ -51,6 +56,7 @@ public class SecurityConfig {
                 .addFilterBefore(jwtAuthFilter, UsernamePasswordAuthenticationFilter.class)
                 .build();
     }
+
 
     @Bean
     public PasswordEncoder passwordEncoder() {

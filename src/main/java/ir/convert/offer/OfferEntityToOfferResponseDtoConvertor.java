@@ -38,7 +38,7 @@ public class OfferEntityToOfferResponseDtoConvertor implements Function<Offer, O
         offerResponseDto.setExpertName(user.getFirstName());
         offerResponseDto.setExpertEmail(user.getEmail());
         offerResponseDto.setEstimatedTime(offer.getEstimatedTime());
-        offerResponseDto.setStartTime(offer.getStartTime());
+        offerResponseDto.setAvailableTime(offer.getAvailableTime());
         offerResponseDto.setProposedPrice(offer.getProposedPrice());
         offerResponseDto.setExpertRating(user.getRating());
         offerResponseDto.setCreatedAt(offer.getCreatedAt());

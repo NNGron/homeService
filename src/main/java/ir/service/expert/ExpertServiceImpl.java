@@ -4,8 +4,10 @@ import ir.convert.offer.OfferEntityToOfferResponseDtoConvertor;
 import ir.convert.order.order_response.OrderEntityToOrderResponseDtoConvertor;
 import ir.dto.offer.OfferRequestDto;
 import ir.dto.offer.OfferResponseDto;
-import ir.dto.order.OrderResponseDto;
-import ir.entity.*;
+import ir.entity.Expert;
+import ir.entity.Offer;
+import ir.entity.Order;
+import ir.entity.User;
 import ir.entity.enums.OrderStatus;
 import ir.entity.enums.UserStatus;
 import ir.exception.CustomException;
@@ -18,8 +20,6 @@ import lombok.AllArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
 
-import java.util.ArrayList;
-import java.util.List;
 import java.util.Optional;
 
 import static ir.entity.enums.OrderStatus.WAITING_FOR_EXPERT_SELECTION_BY_CUSTOMER;
@@ -74,7 +74,7 @@ public class ExpertServiceImpl implements ExpertService {
             offer.setExpert(expert);
             offer.setProposedPrice(offerRequestDto.getProposedPrice());
             offer.setEstimatedTime(offerRequestDto.getEstimatedTime());
-            offer.setStartTime(offerRequestDto.getStartTime());
+            offer.setAvailableTime(offerRequestDto.getAvailableTime());
             order.setStatus(WAITING_FOR_EXPERT_SELECTION_BY_CUSTOMER);
 
             order = orderService.save(order);
@@ -137,7 +137,7 @@ public class ExpertServiceImpl implements ExpertService {
         log.info("Updating offer with ID: {}", offerNumber);
         offer.setProposedPrice(offerRequestDto.getProposedPrice());
         offer.setEstimatedTime(offerRequestDto.getEstimatedTime());
-        offer.setStartTime(offerRequestDto.getStartTime());
+        offer.setAvailableTime(offerRequestDto.getAvailableTime());
 
         // Update order status
         order.setStatus(OrderStatus.WAITING_FOR_EXPERT_SELECTION_BY_CUSTOMER);

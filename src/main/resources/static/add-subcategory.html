@@ -5,9 +5,9 @@
     <meta content="width=device-width, initial-scale=1.0" name="viewport">
     <title>Add SubCategory</title>
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0-alpha3/dist/css/bootstrap.min.css" rel="stylesheet">
-    <link href="/style.css" rel="stylesheet">
+    <link href="/style.css" rel="stylesheet"> <!-- لینک فایل استایل -->
 </head>
-<body class="bg-spring">
+<body class="bg-spring"> <!-- استفاده از پس‌زمینه بهاری -->
 <!-- Navigator -->
 <div class="navigator">
     <a href="/index.html">Home</a>
@@ -17,145 +17,198 @@
 </div>
 
 <!-- Back Button -->
-<div class="navigation-buttons">
-    <button class="back-btn" onclick="navigateBack()">Back</button>
-</div>
+<button class="back-btn" onclick="navigateBack()">Back</button>
 <script>
     function navigateBack() {
-        window.history.back();
+        window.location.href = "/category-management.html"; // بازگشت به صفحه مدیریت دسته‌بندی‌ها
+    }
+
+    function displayMessage(message, type) {
+        const statusMessage = document.getElementById("statusMessage");
+        statusMessage.className = `status-message ${type === "success" ? "status-success" : "status-error"}`;
+        statusMessage.textContent = message;
+
+        // حذف پیام به‌صورت خودکار بعد از 3 ثانیه
+        setTimeout(() => {
+            statusMessage.className = "status-message d-none";
+            statusMessage.textContent = "";
+        }, 3000);
     }
 </script>
 
-<!-- Title and Form -->
+<!-- Title -->
 <div class="container mt-5 text-center">
-    <h1 class="title">Add SubCategory</h1>
-    <form class="mt-4 mx-auto" id="add-sub-category-form" style="width: 50%;">
-        <div class="form-group mt-3">
-            <label for="main-category">Select Main Category:</label>
-            <select class="form-control spring-dropdown" id="main-category">
-                <option disabled selected value="">Select a Main Category</option>
-            </select>
-        </div>
+    <h1 class="title">SubCategories</h1>
+    <p class="mt-3">List of all subcategories and add new ones:</p>
 
-        <div class="form-group mt-3">
-            <label for="sub-category-name">SubCategory Name:</label>
-            <input class="form-control" id="sub-category-name" maxlength="100" placeholder="Enter SubCategory Name"
-                   required type="text">
-        </div>
+    <!-- Categories Table -->
+    <div class="table-container half-width"> <!-- نصف عرض صفحه -->
+        <table class="table table-striped">
+            <thead>
+            <tr>
+                <th>Name</th>
+                <th>Description</th>
+                <th>Main Category</th>
+                <th>Base Price</th>
+            </tr>
+            </thead>
+            <tbody id="subCategoriesTableBody">
+            <!-- اطلاعات ساب‌کتگوری‌ها به صورت داینامیک اینجا اضافه می‌شود -->
+            </tbody>
+        </table>
+    </div>
 
-        <div class="form-group mt-3">
-            <label for="sub-category-description">Description:</label>
-            <textarea class="form-control" id="sub-category-description" maxlength="255" placeholder="Enter Description"
-                      required></textarea>
-        </div>
+    <!-- Form for SubCategory -->
+    <div class="container mt-5">
+        <h3 class="text-center">Add New SubCategory</h3>
+        <form class="half-width" id="addSubCategoryForm">
+            <div class="form-group mt-3">
+                <label for="mainCategory">Select Main Category:</label>
+                <select class="form-control" id="mainCategory" required>
+                    <option disabled selected value="">Select a Main Category</option>
+                </select>
+            </div>
 
-        <div class="form-group mt-3">
-            <label for="base-price">Base Price:</label>
-            <input class="form-control" id="base-price" min="0" placeholder="Enter Base Price" required step="0.01"
-                   type="number">
-        </div>
+            <div class="form-group mt-3">
+                <label for="subCategoryName">SubCategory Name:</label>
+                <input class="form-control" id="subCategoryName" placeholder="Enter SubCategory Name" required
+                       type="text">
+            </div>
 
-        <button class="btn btn-lg btn-main mt-3" type="submit">Add SubCategory</button>
-    </form>
+            <div class="form-group mt-3">
+                <label for="subCategoryDescription">Description:</label>
+                <textarea class="form-control" id="subCategoryDescription" maxlength="255"
+                          placeholder="Enter Description" required></textarea>
+            </div>
+
+            <div class="form-group mt-3">
+                <label for="basePrice">Base Price:</label>
+                <input class="form-control" id="basePrice" min="0" placeholder="Enter Base Price" required
+                       step="0.01" type="number">
+            </div>
+
+            <button class="btn btn-lg btn-main mt-3" type="submit">Add SubCategory</button>
+        </form>
+    </div>
 
     <!-- Status Message -->
-    <div class="mt-4 status-container">
-        <div class="status-message" id="status-message"></div>
-    </div>
+    <div class="status-message d-none mt-4" id="statusMessage"></div>
 </div>
 
 <script>
-    document.addEventListener("DOMContentLoaded", () => {
-        const mainCategoryDropdown = document.getElementById("main-category");
+    document.addEventListener("DOMContentLoaded", async () => {
+        const mainCategoryDropdown = document.getElementById("mainCategory");
+        const subCategoriesTableBody = document.getElementById("subCategoriesTableBody");
         let existingSubCategories = [];
 
-        // Fetch existing subcategories to prevent duplicates
-        fetch('/v1/categories/sub-categories')
-            .then(response => {
-                if (!response.ok) {
-                    throw new Error("Failed to fetch subcategories");
-                }
-                return response.json();
-            })
-            .then(data => {
-                existingSubCategories = data.map(subCategory => subCategory.name);
-            })
-            .catch(error => {
-                console.error("Error fetching subcategories:", error);
-            });
-
         // Fetch main categories from the backend
-        fetch('/v1/categories/main-categories')
-            .then(response => {
-                if (!response.ok) {
-                    throw new Error("Failed to fetch main categories");
+        try {
+            const mainCategoryResponse = await fetch('/v1/categories/main-categories', {
+                method: 'GET',
+                headers: {
+                    'Accept': '*/*',
+                    'Authorization': `Bearer ${localStorage.getItem("jwtToken")}`
                 }
-                return response.json();
-            })
-            .then(data => {
-                if (data.length === 0) {
-                    mainCategoryDropdown.innerHTML = `<option value="" disabled>No categories available</option>`;
-                } else {
-                    data.forEach(category => {
-                        const option = document.createElement("option");
-                        option.value = category.name;
-                        option.textContent = category.name;
-                        mainCategoryDropdown.appendChild(option);
-                    });
-                }
-            })
-            .catch(error => {
-                displayMessage(`Error loading categories: ${error.message}`, 'error');
             });
 
-        const form = document.getElementById("add-sub-category-form");
-        form.addEventListener("submit", (e) => {
-            e.preventDefault();
-            const subCategoryName = document.getElementById("sub-category-name").value.trim();
+            if (!mainCategoryResponse.ok) throw new Error("Failed to fetch main categories.");
 
+            const mainCategories = await mainCategoryResponse.json();
+            if (mainCategories.length === 0) {
+                mainCategoryDropdown.innerHTML = `<option value="" disabled>No Main Categories Available</option>`;
+            } else {
+                mainCategories.forEach(category => {
+                    const option = document.createElement("option");
+                    option.value = category.name;
+                    option.textContent = category.name;
+                    mainCategoryDropdown.appendChild(option);
+                });
+            }
+        } catch (error) {
+            displayMessage(`Error loading main categories: ${error.message}`, "error");
+        }
+
+        // Fetch existing subcategories
+        try {
+            const token = localStorage.getItem("jwtToken");
+            const mainCategoryResponse = await fetch('/v1/categories/main-categories', {
+                method: 'GET',
+                headers: {
+                    'Accept': '*/*',
+                    'Authorization': `Bearer ${token}`
+                }
+            });
+            if (!subCategoryResponse.ok) throw new Error("Failed to fetch subcategories.");
+
+            const subCategories = await subCategoryResponse.json();
+            existingSubCategories = subCategories.map(subCategory => subCategory.name);
+
+            subCategoriesTableBody.innerHTML = ""; // Clear table
+            subCategories.forEach(subCategory => {
+                const row = `
+                    <tr>
+                        <td>${subCategory.name}</td>
+                        <td>${subCategory.description}</td>
+                         <td>${newSubCategory.parentCategory?.name || "N/A"}</td>
+                        <td>${subCategory.basePrice}</td>
+                    </tr>
+                `;
+                subCategoriesTableBody.innerHTML += row;
+            });
+        } catch (error) {
+            displayMessage(`Error fetching subcategories: ${error.message}`, "error");
+        }
+
+        // Add SubCategory
+        document.getElementById("addSubCategoryForm").addEventListener("submit", async (e) => {
+            e.preventDefault();
+
+            const subCategoryName = document.getElementById("subCategoryName").value.trim();
+            const subCategoryDescription = document.getElementById("subCategoryDescription").value.trim();
+            const basePrice = document.getElementById("basePrice").value.trim();
+            const mainCategoryName = mainCategoryDropdown.value;
+
+            // Prevent duplicate subcategories
             if (existingSubCategories.includes(subCategoryName)) {
-                displayMessage(`Duplicate error: SubCategory "${subCategoryName}" already exists!`, 'error');
+                displayMessage(`The SubCategory "${subCategoryName}" already exists!`, "error");
                 return;
             }
 
             const subCategoryData = {
                 name: subCategoryName,
-                description: document.getElementById("sub-category-description").value,
-                basePrice: document.getElementById("base-price").value,
-                parentName: mainCategoryDropdown.options[mainCategoryDropdown.selectedIndex]?.text
+                description: subCategoryDescription,
+                basePrice,
+                parentName: mainCategoryName
             };
 
-            fetch('/v1/categories/create-sub-category', {
-                method: 'POST',
-                headers: {'Content-Type': 'application/json'},
-                body: JSON.stringify(subCategoryData)
-            })
-                .then(response => {
-                    if (!response.ok) {
-                        throw new Error('Failed to add SubCategory');
-                    }
-                    return response.json();
-                })
-                .then(data => {
-                    displayMessage(`SubCategory "${data.name}" added successfully!`, 'success');
-                    existingSubCategories.push(data.name); // Add new subcategory to the list
-                })
-                .catch(error => {
-                    displayMessage(`Error adding SubCategory: ${error.message}`, 'error');
+            try {
+                const token = localStorage.getItem("jwtToken");
+                const response = await fetch('/v1/categories/create-sub-category', {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json',
+                        'Authorization': `Bearer ${token}`
+                    },
+                    body: JSON.stringify(subCategoryData)
                 });
+                if (!response.ok) throw new Error("Failed to create subcategory.");
+
+                const newSubCategory = await response.json();
+                const row = `
+                    <tr>
+                        <td>${newSubCategory.name}</td>
+                        <td>${newSubCategory.description}</td>
+                         <td>${newSubCategory.parentCategory?.name || "N/A"}</td>
+                        <td>${newSubCategory.basePrice}</td>
+                    </tr>
+                `;
+                subCategoriesTableBody.innerHTML += row;
+                existingSubCategories.push(newSubCategory.name);
+                displayMessage(`SubCategory "${newSubCategory.name}" added successfully!`, "success");
+            } catch (error) {
+                displayMessage(`Error creating subcategory: ${error.message}`, "error");
+            }
         });
-
-        function displayMessage(message, type) {
-            const statusMessage = document.getElementById("status-message");
-            statusMessage.className = `status-message ${type === 'success' ? 'status-success' : 'status-error'}`;
-            statusMessage.innerHTML = message;
-
-            // Automatically remove the message after 2 seconds
-            setTimeout(() => {
-                statusMessage.className = '';
-                statusMessage.innerHTML = '';
-            }, 2000);
-        }
     });
 </script>
 </body>

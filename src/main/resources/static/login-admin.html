@@ -64,14 +64,19 @@
         })
             .then(response => {
                 if (response.ok) {
-                    document.getElementById('status-message').className = 'status-message status-success';
-                    document.getElementById('status-message').textContent = 'Welcome back, Admin!';
-                    setTimeout(() => {
-                        window.location.href = "/admin-dashboard.html"; // انتقال به داشبورد
-                    }, 3000);
+                    return response.json();
                 } else {
                     throw new Error('Login failed. Please check your email and password.');
                 }
+            })
+            .then(data => {
+                const token = data.token;
+                localStorage.setItem("jwtToken", token); // ذخیره توکن در localStorage
+                document.getElementById('status-message').className = 'status-message status-success';
+                document.getElementById('status-message').textContent = 'Welcome back, Admin!';
+                setTimeout(() => {
+                    window.location.href = "/admin-dashboard.html"; // انتقال به داشبورد
+                }, 3000);
             })
             .catch(error => {
                 document.getElementById('status-message').className = 'status-message status-error';

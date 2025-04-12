@@ -100,9 +100,11 @@
             }
 
             // ارسال درخواست به سرور
+            const token = localStorage.getItem("jwtToken");
             fetch(`http://localhost:8080/v1/customers/order-offers?email=customer1%40yahoo.com&password=customer1`, {
                 method: "GET",
                 headers: {
+                    'Authorization': `Bearer ${token}`,
                     "Accept": "*/*"
                 }
             })

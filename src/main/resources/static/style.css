@@ -401,3 +401,45 @@ body.bg-spring {
     margin-bottom: 10px;
 }
 
+/* استایل پیام‌های موفقیت و خطا */
+.status-message {
+    display: inline-block;
+    margin-top: 20px;
+    padding: 10px 20px;
+    border-radius: 10px;
+    font-size: 16px;
+    font-weight: bold;
+    text-align: center;
+    box-shadow: 2px 2px 8px rgba(0, 0, 0, 0.1); /* سایه ملایم */
+}
+
+/* پیام موفقیت */
+.status-success {
+    background-color: #d4edda; /* سبز ملایم */
+    color: #155724; /* متن سبز تیره */
+    border: 1px solid #c3e6cb; /* حاشیه سبز */
+    border-radius: 10px;
+    padding: 10px 15px; /* فاصله متن از کادر */
+    margin-top: 20px;
+    display: inline-block; /* اندازه کادر به اندازه متن */
+    font-size: 16px;
+    font-weight: bold;
+    text-align: center;
+    white-space: nowrap; /* جلوگیری از شکست متن در چند خط */
+}
+
+/* پیام خطا */
+.status-error {
+    background-color: #f8d7da; /* قرمز ملایم */
+    color: #721c24; /* متن قرمز تیره */
+    border: 1px solid #f5c6cb; /* حاشیه قرمز */
+    border-radius: 10px;
+    padding: 10px 15px; /* فاصله متن از کادر */
+    margin-top: 20px;
+    display: inline-block; /* اندازه کادر به اندازه متن */
+    font-size: 16px;
+    font-weight: bold;
+    text-align: center;
+    white-space: nowrap; /* جلوگیری از شکست متن در چند خط */
+}
+

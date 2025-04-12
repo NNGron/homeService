@@ -22,6 +22,5 @@ public class OfferRequestDto {
     private Integer estimatedTime;
 
     @NotBlank(message = "Start time must not be blank")
-    @Pattern(regexp = "^([01]\\d|2[0-3]):([0-5]\\d)$", message = "Start time must be in the format HH:mm")
-    private String startTime;
+    private String availableTime;
 }

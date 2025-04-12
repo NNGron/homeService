@@ -38,6 +38,6 @@ public class Offer extends BaseEntity {
     private Integer estimatedTime;
 
     @NotBlank(message = "Start time must not be blank")
-    @Column(name = "start_time", length = 50, nullable = false)
-    private String startTime;
+    @Column(name = "available_time", length = 50, nullable = false)
+    private String availableTime;
 }

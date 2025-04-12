@@ -86,10 +86,12 @@
 
         try {
             // Fetching main categories from the backend
+            const token = localStorage.getItem("jwtToken");
             const response = await fetch('http://localhost:8080/v1/categories/main-categories', {
                 method: 'GET',
                 headers: {
-                    'Accept': '*/*'
+                    'Accept': '*/*',
+                    'Authorization': `Bearer ${token}`
                 }
             });
 

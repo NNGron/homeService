@@ -82,6 +82,7 @@ public enum ErrorCode {
     CARD_LIMIT_EXCEEDED(69),
     ORDER_ALREADY_IN_STATUS(70),
     INVALID_USER_TYPE(71),
+    PASSWORD_INVALID(72),
 
     // 5xx: Server Errors
     INTERNAL_SERVER_ERROR(500),

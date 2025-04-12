@@ -89,10 +89,12 @@
 
         try {
             // Fetching subcategories from the backend
+            const token = localStorage.getItem("jwtToken"); // دریافت توکن از localStorage
             const response = await fetch('http://localhost:8080/v1/categories/sub-categories', {
                 method: 'GET',
                 headers: {
-                    'Accept': '*/*'
+                    'Accept': '*/*',
+                    'Authorization': `Bearer ${token}` // اضافه کردن توکن به هدر درخواست
                 }
             });
 

@@ -109,20 +109,27 @@ public class UserServiceImpl implements UserService, UserDetailsService {
      * @throws CustomException if category validation fails or the expert could not be saved
      */
     private User createExpert(UserRequestDto userRequestDto) {
-
         log.info("User type EXPERT detected. Creating an Expert entity.");
         Expert expert = new Expert();
+
         expert.setFirstName(userRequestDto.getFirstName());
         expert.setLastName(userRequestDto.getLastName());
         expert.setUserName(userRequestDto.getUserName());
+        if (!userRequestDto.getPassword().matches("^(?=.*[A-Z])(?=.*[a-z])(?=.*\\d)(?=.*[@#$%^&+=])[A-Za-z\\d@#$%^&+=]{8,}$")) {
+            throw new CustomException("Password is invalid", ErrorCode.PASSWORD_INVALID.getCode());
+        }
         expert.setPassword(passwordEncoder.encode(userRequestDto.getPassword()));
         expert.setEmail(userRequestDto.getEmail());
         expert.setAddress(userRequestDto.getAddress());
 
         log.info("Fetching sub-categories for Expert: {}", userRequestDto.getSubCategoryNames());
         List<String> subCategoryNames = userRequestDto.getSubCategoryNames();
-        List<Category> categoryList = categoryService.findSubCategoriesByNames(subCategoryNames);
 
+        if (subCategoryNames == null || subCategoryNames.isEmpty()) {
+            throw new CustomException("Subcategories must not be empty", ErrorCode.CATEGORY_INVALID.getCode());
+        }
+
+        List<Category> categoryList = categoryService.findSubCategoriesByNames(subCategoryNames);
         if (categoryList == null || categoryList.isEmpty()) {
             log.error("Category validation failed. Could not find sub-categories by names: {}", subCategoryNames);
             throw new CustomException("Category is invalid", ErrorCode.CATEGORY_INVALID.getCode());

@@ -8,6 +8,7 @@ import lombok.*;
 
 import java.math.BigDecimal;
 import java.time.LocalDate;
+import java.time.LocalDateTime;
 import java.util.List;
 
 @Getter
@@ -64,4 +65,8 @@ public class Order extends BaseEntity {
     @PositiveOrZero(message = "Offer Customer Price must be a positive value or zero")
     @Column(name = "offer_customer_price")
     private BigDecimal offerCustomerPrice;
+
+    private LocalDateTime startWorkingTime;
+
+    private LocalDateTime endWorkingTime;
 }
