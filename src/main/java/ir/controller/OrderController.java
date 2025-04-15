@@ -4,6 +4,7 @@ import io.swagger.v3.oas.annotations.Operation;
 import ir.dto.bankcard.BankCardInfoDto;
 import ir.dto.filter.ComprehensiveFilterDto;
 import ir.dto.filter.ComprehensiveResponseDto;
+import ir.dto.filter.FilterOrderByWorkingDateDto;
 import ir.dto.order.OrderRequestDto;
 import ir.dto.order.OrderResponseDto;
 import ir.entity.enums.OrderStatus;
@@ -22,6 +23,7 @@ import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
+import java.util.Map;
 
 @Slf4j
 @RestController
@@ -139,6 +141,14 @@ public class OrderController {
         return ResponseEntity.ok("Order with number " + orderNumber + " has been successfully deleted.");
     }
 
+    @GetMapping("/orders-status")
+    @PreAuthorize("hasRole('ROLE_ADMIN')")
+    @Operation(summary = "(Admin only)")
+    public ResponseEntity<Map<String, Long>> getOrderReport() {
+        Map<String, Long> report = orderService.getOrderReport();
+        return ResponseEntity.ok(report);
+    }
+
     @PostMapping("/filter-comprehensive-orders")
     @PreAuthorize("hasRole('ROLE_ADMIN')")
     @Operation(summary = "(Admin only)")
@@ -158,5 +168,14 @@ public class OrderController {
 
         log.info("Successfully filtered {} comprehensive orders.", comprehensiveResponseDtos.size());
         return ResponseEntity.ok(comprehensiveResponseDtos);
+    }
+
+    @PostMapping("/orders/working-date")
+    @PreAuthorize("hasRole('ROLE_ADMIN')")
+    @Operation(summary = "(Admin only)")
+    public ResponseEntity<List<OrderResponseDto>> getOrdersByWorkingDate(
+            @RequestBody FilterOrderByWorkingDateDto filterOrderByWorkingDateDto) {
+        List<OrderResponseDto> orders = orderService.getOrdersByWorkingDate(filterOrderByWorkingDateDto);
+        return ResponseEntity.ok(orders);
     }
 }

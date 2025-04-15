@@ -3,6 +3,7 @@ package ir.service.card;
 import ir.dto.bankcard.BankCardRequestDto;
 import ir.dto.bankcard.BankCardResponseDto;
 import ir.entity.BankCard;
+import ir.entity.Customer;
 import ir.entity.User;
 import ir.exception.CustomException;
 import ir.exception.ErrorCode;
@@ -52,14 +53,20 @@ public class CardService {
 
         log.debug("User {} successfully authenticated.", username);
 
-        // Step 3: Check if user already has a card
+        // Step 3: Check if the user is a Customer
+        if (!(user instanceof Customer)) {
+            log.error("User {} is not authorized to add a bank card.", user.getUserName());
+            throw new CustomException("Only Customers can add bank cards.", ErrorCode.UNAUTHORIZED.getCode());
+        }
+
+        // Step 4: Check if user already has a card
         if (cardRepository.findByOwner(user).isPresent()) {
             log.error("User {} already has a registered bank card.", user.getUserName());
             throw new CustomException("You already have a registered bank card. Only one card is allowed.",
                     ErrorCode.CARD_LIMIT_EXCEEDED.getCode());
         }
 
-        // Step 4: Map BankCardRequestDto to BankCard entity
+        // Step 5: Map BankCardRequestDto to BankCard entity
         BankCard bankCard = new BankCard();
         bankCard.setOwner(user);
         bankCard.setCardNumber(bankCardRequestDto.getCardNumber());
@@ -69,7 +76,7 @@ public class CardService {
         bankCard.setPassword(passwordEncoder.encode(bankCardRequestDto.getPassword()));
         bankCard.setBalance(bankCardRequestDto.getBalance() == null ? BigDecimal.ZERO : bankCardRequestDto.getBalance());
 
-        // Step 5: Save BankCard entity to the database
+        // Step 6: Save BankCard entity to the database
         try {
             cardRepository.save(bankCard);
             log.info("Bank card successfully registered for user {}.", user.getUserName());
@@ -78,7 +85,7 @@ public class CardService {
             throw new CustomException("Card number is already registered.", ErrorCode.DUPLICATE_CARD_NUMBER.getCode());
         }
 
-        // Step 6: Map BankCard entity to response DTO
+        // Step 7: Map BankCard entity to response DTO
         BankCardResponseDto responseDto = new BankCardResponseDto();
         responseDto.setCardNumber(bankCard.getCardNumber());
         responseDto.setCardHolderName(bankCard.getCardHolderName());

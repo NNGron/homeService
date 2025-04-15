@@ -80,4 +80,9 @@ public class OfferServiceImpl implements OfferService {
         List<Offer> offers = offerRepository.findAll(spec, pageable).getContent();
         return offerEntityToOfferResponseDtoConvertor.convertList(offers);
     }
+
+    @Override
+    public long countOffersByExpertEmail(String email) {
+        return offerRepository.countOffersByExpertEmail(email);
+    }
 }

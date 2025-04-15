@@ -15,6 +15,7 @@ import ir.repository.filter.UserSpecification;
 import ir.security.JwtTokenProvider;
 import ir.service.VerificationService;
 import ir.service.category.CategoryService;
+import ir.service.offer.OfferService;
 import lombok.AllArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.lang3.StringUtils;
@@ -32,7 +33,10 @@ import org.springframework.web.multipart.MultipartFile;
 
 import java.io.IOException;
 import java.math.BigDecimal;
+import java.time.LocalDateTime;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 import java.util.Optional;
 
 /**
@@ -51,6 +55,7 @@ public class UserServiceImpl implements UserService, UserDetailsService {
     private final UserRepository userRepository;
     private final CategoryService categoryService;
     private final PasswordEncoder passwordEncoder;
+    private final OfferService offerService;
     private final JwtTokenProvider jwtTokenProvider;
     private final UserEntityToUserResponseDtoConvertor userEntityToUserResponseDtoConvertor;
     private final VerificationService verificationService;
@@ -62,8 +67,7 @@ public class UserServiceImpl implements UserService, UserDetailsService {
                 .map(user -> new org.springframework.security.core.userdetails.User(
                         user.getUserName(),
                         user.getPassword(),
-                        List.of(new SimpleGrantedAuthority("ROLE_" + user.getRole().name()))
-                ))
+                        List.of(new SimpleGrantedAuthority("ROLE_" + user.getRole().name()))))
                 .orElseThrow(() -> new CustomException("User not found", ErrorCode.NOT_FOUND.getCode()));
     }
 
@@ -250,14 +254,16 @@ public class UserServiceImpl implements UserService, UserDetailsService {
         // ADMIN
         if (role.equals(Role.ADMIN)) {
             if (userStatus.equals(UserStatus.DELETED)) {
-                throw new CustomException("Admin account is deleted and cannot log in.", ErrorCode.USER_DELETED.getCode());
+                throw new CustomException(
+                        "Admin account is deleted and cannot log in.", ErrorCode.USER_DELETED.getCode());
             }
         }
 
         // USER
         else if (role.equals(Role.USER)) {
             if (!userStatus.equals(UserStatus.APPROVED)) {
-                throw new CustomException("Your account is not approved and you cannot log in.", ErrorCode.USER_NOT_APPROVED.getCode());
+                throw new CustomException(
+                        "Your account is not approved and you cannot log in.", ErrorCode.USER_NOT_APPROVED.getCode());
             }
         } else {
             throw new CustomException("Unsupported role.", ErrorCode.INVALID_USER_ROLE.getCode());
@@ -272,8 +278,6 @@ public class UserServiceImpl implements UserService, UserDetailsService {
         // بازگشت پاسخ ورود
         return new LoginResponseDto("Logged in successfully", userDetails.getUsername(), token);
     }
-
-
 
     /**
      * Retrieves a paginated list of users, excluding those with the ADMIN role.
@@ -365,8 +369,8 @@ public class UserServiceImpl implements UserService, UserDetailsService {
 
         // Validate all categories are found in the database
         List<String> invalidCategories = categoryNames.stream()
-                .filter(name -> categoriesToAdd.stream().noneMatch(category -> category.getName().equals(name)))
-                .toList();
+                .filter(name -> categoriesToAdd.stream()
+                        .noneMatch(category -> category.getName().equals(name))).toList();
 
         if (!invalidCategories.isEmpty()) {
             log.error("Invalid categories detected: {}", invalidCategories);
@@ -647,12 +651,10 @@ public class UserServiceImpl implements UserService, UserDetailsService {
 
         // Step 1: Extract username from token and validate user
         String username = jwtTokenProvider.extractUsername(token);
-        User user = userRepository.findByUserName(username)
-                .orElseThrow(() -> {
-                    log.error("User with username {} not found.", username);
-                    return new CustomException(
-                            "User not found with provided token.", ErrorCode.NOT_FOUND.getCode());
-                });
+        User user = userRepository.findByUserName(username).orElseThrow(() -> {
+            log.error("User with username {} not found.", username);
+            return new CustomException("User not found with provided token.", ErrorCode.NOT_FOUND.getCode());
+        });
 
         // Step 2: Handle specific rules for customers
         if (user instanceof Customer customer) {
@@ -669,8 +671,7 @@ public class UserServiceImpl implements UserService, UserDetailsService {
         // Step 3: Handle specific rules for experts
         if (user instanceof Expert expert) {
             boolean allRelatedOrdersPaid = expert.getOffers().stream()
-                    .map(Offer::getOrder)
-                    .allMatch(order -> OrderStatus.PAID.equals(order.getStatus()));
+                    .map(Offer::getOrder).allMatch(order -> OrderStatus.PAID.equals(order.getStatus()));
 
             if (!allRelatedOrdersPaid) {
                 log.error("Cannot delete expert with username {} due to linked non-paid orders.", username);
@@ -776,12 +777,8 @@ public class UserServiceImpl implements UserService, UserDetailsService {
         }
 
         // Check for duplicates
-        List<String> existingSubCategories = expert.getCategories().stream()
-                .map(Category::getName)
-                .toList();
-        List<String> duplicates = subCategoryNames.stream()
-                .filter(existingSubCategories::contains)
-                .toList();
+        List<String> existingSubCategories = expert.getCategories().stream().map(Category::getName).toList();
+        List<String> duplicates = subCategoryNames.stream().filter(existingSubCategories::contains).toList();
 
         if (!duplicates.isEmpty()) {
             log.error("Duplicate subcategories detected for expert with email {}: {}", expertEmail, duplicates);
@@ -794,5 +791,70 @@ public class UserServiceImpl implements UserService, UserDetailsService {
         userRepository.save(expert);
 
         log.info("Successfully added subcategories {} to expert with email {}", subCategoryNames, expertEmail);
+    }
+
+    @Override
+    public Map<String, Long> getRegistrationReport(LocalDateTime startDate, LocalDateTime endDate) {
+        Map<String, Long> report = new HashMap<>();
+
+        long customerRegistrations = userRepository.countCustomersByRegistrationDateBetween(startDate, endDate);
+        long expertRegistrations = userRepository.countExpertsByRegistrationDateBetween(startDate, endDate);
+
+        report.put("CustomerRegistrations", customerRegistrations);
+        report.put("ExpertRegistrations", expertRegistrations);
+
+        return report;
+    }
+
+    @Override
+    public Map<String, Object> getExpertAndCustomerReport(LocalDateTime startDate, LocalDateTime endDate) {
+        Map<String, Object> report = new HashMap<>();
+
+        long customerRegistrations = userRepository.countCustomersByRegistrationDateBetween(startDate, endDate);
+
+        long expertRegistrations = userRepository.countExpertsByRegistrationDateBetween(startDate, endDate);
+
+        long customerOrders = userRepository.countOrdersByCustomers();
+
+        long completedOrdersByExperts = userRepository.countCompletedOrdersByExperts();
+
+        report.put("CustomerRegistrations", customerRegistrations);
+        report.put("ExpertRegistrations", expertRegistrations);
+        report.put("CustomerOrders", customerOrders);
+        report.put("CompletedOrdersByExperts", completedOrdersByExperts);
+
+        return report;
+    }
+
+    @Override
+    public Map<String, Object> getExpertAndCustomerReportByEmail(String email,
+                                                                 LocalDateTime registrationStartDate,
+                                                                 LocalDateTime registrationEndDate) {
+        Map<String, Object> report = new HashMap<>();
+        Optional<User> optionalUser = userRepository.findByEmail(email);
+
+        if (optionalUser.isPresent()) {
+            User user = optionalUser.get();
+
+            if (user instanceof Customer) {
+                long requests = userRepository.countRequestsByEmailAndRegistrationDate(
+                        email, registrationStartDate, registrationEndDate);
+                report.put("Requests", requests);
+
+            } else if (user instanceof Expert) {
+                long completedOrders = userRepository.countCompletedOrdersByEmailAndRegistrationDate(
+                        email, registrationStartDate, registrationEndDate);
+                report.put("CompletedOrders", completedOrders);
+
+                long expertOffers = offerService.countOffersByExpertEmail(email);
+                report.put("ExpertOffers", expertOffers);
+
+            } else {
+                report.put("Message", "The email does not belong to a valid customer or expert.");
+            }
+        } else {
+            report.put("Message", "User not found with email: " + email);
+        }
+        return report;
     }
 }

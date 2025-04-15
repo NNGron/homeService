@@ -22,6 +22,10 @@ public class OrderEntityToOrderResponseDtoConvertor implements Function<Order, O
 
         OrderResponseDto orderResponseDto = new OrderResponseDto();
         orderResponseDto.setOrderNumber(order.getId());
+        orderResponseDto.setStartWorkingDate(order.getStartWorkingDate());
+        orderResponseDto.setEndWorkingDate(order.getEndWorkingDate());
+        orderResponseDto.setStartWorkingTime(order.getStartWorkingTime());
+        orderResponseDto.setEndWorkingTime(order.getEndWorkingTime());
         orderResponseDto.setOrderDescription(order.getOrderDescription());
         orderResponseDto.setOrderName(order.getCategory().getName());
         orderResponseDto.setOrderAddress(order.getOrderAddress());

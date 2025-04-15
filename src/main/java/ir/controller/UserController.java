@@ -12,6 +12,7 @@ import lombok.extern.slf4j.Slf4j;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.domain.Sort;
+import org.springframework.format.annotation.DateTimeFormat;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.access.prepost.PreAuthorize;
@@ -19,7 +20,9 @@ import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
 
+import java.time.LocalDateTime;
 import java.util.List;
+import java.util.Map;
 
 @Slf4j
 @RestController
@@ -184,4 +187,41 @@ public class UserController {
 
         return ResponseEntity.ok(bankCardResponseDto);
     }
+
+    @GetMapping("/registrations")
+    @PreAuthorize("hasRole('ROLE_ADMIN')")
+    @Operation(summary = "(Admin only)")
+    public ResponseEntity<Map<String, Long>> getRegistrationReport(
+            @RequestParam("startDate") @DateTimeFormat(iso = DateTimeFormat.ISO.DATE_TIME) LocalDateTime startDate,
+            @RequestParam("endDate") @DateTimeFormat(iso = DateTimeFormat.ISO.DATE_TIME) LocalDateTime endDate) {
+        Map<String, Long> report = userService.getRegistrationReport(startDate, endDate);
+        return ResponseEntity.ok(report);
+    }
+
+    @GetMapping("/users-summary")
+    @PreAuthorize("hasRole('ROLE_ADMIN')")
+    @Operation(summary = "(Admin only)")
+    public ResponseEntity<Map<String, Object>> getExpertAndCustomerReport(
+            @RequestParam("registrationStartDate") @DateTimeFormat(iso = DateTimeFormat.ISO.DATE_TIME) LocalDateTime registrationStartDate,
+            @RequestParam("registrationEndDate") @DateTimeFormat(iso = DateTimeFormat.ISO.DATE_TIME) LocalDateTime registrationEndDate) {
+
+        Map<String, Object> report = userService.getExpertAndCustomerReport(registrationStartDate, registrationEndDate);
+
+        return ResponseEntity.ok(report);
+    }
+
+    @GetMapping("/users-summary-by-email")
+    @PreAuthorize("hasRole('ROLE_ADMIN')")
+    @Operation(summary = "Get user reports by email and registration date (Admin only)")
+    public ResponseEntity<Map<String, Object>> getExpertAndCustomerReportByEmail(
+            @RequestParam("email") String email, // ایمیل برای فیلتر کاربر
+            @RequestParam("registrationStartDate") @DateTimeFormat(iso = DateTimeFormat.ISO.DATE_TIME) LocalDateTime registrationStartDate,
+            @RequestParam("registrationEndDate") @DateTimeFormat(iso = DateTimeFormat.ISO.DATE_TIME) LocalDateTime registrationEndDate) {
+
+        // فراخوانی سرویس با ایمیل و بازه زمانی
+        Map<String, Object> report = userService.getExpertAndCustomerReportByEmail(email, registrationStartDate, registrationEndDate);
+
+        return ResponseEntity.ok(report);
+    }
+
 }

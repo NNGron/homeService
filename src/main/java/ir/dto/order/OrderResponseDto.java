@@ -21,6 +21,8 @@ import java.util.List;
 public class OrderResponseDto {
 
     private Long orderNumber;
+    private LocalDateTime startWorkingTime;
+    private LocalDateTime endWorkingTime;
     private BigDecimal finalPrice;
     private LocalDate orderDate;
     private String orderDescription;
@@ -33,6 +35,10 @@ public class OrderResponseDto {
     private List<OfferResponseDto> offers;
     private Review review;
     private BigDecimal offerCustomerPrice;
+
     private LocalDateTime createdAt;
     private LocalDateTime updatedAt;
+
+    private LocalDate startWorkingDate;
+    private LocalDate endWorkingDate;
 }

@@ -2,6 +2,7 @@ package ir.repository;
 
 import ir.entity.Category;
 import ir.entity.Order;
+import ir.entity.enums.OrderStatus;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.JpaSpecificationExecutor;
 import org.springframework.stereotype.Repository;
@@ -14,4 +15,5 @@ public interface OrderRepository extends JpaRepository<Order, Long>, JpaSpecific
     Optional<List<Order>> findAllByCategoryIn(List<Category> categories);
     List<Order> findAllByCustomerEmail(String customerEmail);
     List<Order> findByCustomer_UserName(String username);
+    long countByStatus(OrderStatus status);
 }

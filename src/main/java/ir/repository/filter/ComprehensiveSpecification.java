@@ -109,6 +109,18 @@ public class ComprehensiveSpecification {
             if (filterDto.getOrderStartDate() != null) {
                 predicates.add(criteriaBuilder.equal(root.get("orderDate"), filterDto.getOrderStartDate()));
             }
+            if (filterDto.getStartWorkingTime() != null) {
+                predicates.add(criteriaBuilder.equal(root.get("startWorkingTime"), filterDto.getStartWorkingTime()));
+            }
+            if (filterDto.getEndWorkingTime() != null) {
+                predicates.add(criteriaBuilder.equal(root.get("endWorkingTime"), filterDto.getEndWorkingTime()));
+            }
+            if (filterDto.getStartWorkingDate() != null) {
+                predicates.add(criteriaBuilder.equal(root.get("startWorkingDate"), filterDto.getStartWorkingDate()));
+            }
+            if (filterDto.getEndWorkingDate() != null) {
+                predicates.add(criteriaBuilder.equal(root.get("endWorkingDate"), filterDto.getEndWorkingDate()));
+            }
             if (filterDto.getExecutionDate() != null) {
                 predicates.add(criteriaBuilder.equal(root.get("executionDate"), filterDto.getExecutionDate()));
             }

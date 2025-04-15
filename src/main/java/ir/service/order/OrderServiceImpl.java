@@ -2,11 +2,13 @@ package ir.service.order;
 
 import ir.convert.category.category_response.CategoryEntityToCategoryResponseDtoConvertor;
 import ir.convert.filter.ComprehensiveEntityToResponseDtoConvertor;
+import ir.convert.filter.FilteredOrderToOrderResponseDtoConverter;
 import ir.convert.order.order_response.OrderEntityToOrderResponseDtoConvertor;
 import ir.dto.bankcard.BankCardInfoDto;
 import ir.dto.category.CategoryResponseDto;
 import ir.dto.filter.ComprehensiveFilterDto;
 import ir.dto.filter.ComprehensiveResponseDto;
+import ir.dto.filter.FilterOrderByWorkingDateDto;
 import ir.dto.order.OrderRequestDto;
 import ir.dto.order.OrderResponseDto;
 import ir.entity.*;
@@ -16,6 +18,8 @@ import ir.exception.CustomException;
 import ir.exception.ErrorCode;
 import ir.repository.OrderRepository;
 import ir.repository.filter.ComprehensiveSpecification;
+import ir.repository.filter.OrderSpecifications;
+import ir.repository.filter.WorkingDateAndTimeSpecification;
 import ir.security.JwtTokenProvider;
 import ir.service.card.CardService;
 import ir.service.category.CategoryService;
@@ -30,11 +34,10 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.math.BigDecimal;
+import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.time.temporal.ChronoUnit;
-import java.util.ArrayList;
-import java.util.List;
-import java.util.Optional;
+import java.util.*;
 
 /**
  * Service implementation for managing orders.
@@ -57,6 +60,9 @@ public class OrderServiceImpl implements OrderService {
     private final ComprehensiveEntityToResponseDtoConvertor comprehensiveEntityToResponseDtoConvertor;
     private final CardService cardService;
     private final PasswordEncoder passwordEncoder;
+    private final WorkingDateAndTimeSpecification workingDateAndTimeSpecification;
+    private final FilteredOrderToOrderResponseDtoConverter orderResponseDtoConverter;
+    private final OrderSpecifications orderSpecifications;
 
     @Override
     public List<OrderResponseDto> getOrder(String token) {
@@ -91,7 +97,6 @@ public class OrderServiceImpl implements OrderService {
         log.info("Successfully fetched {} orders for expert with username: {}", ordersByCategories.size(), username);
         return orderEntityToOrderResponseDtoConvertor.convertList(ordersByCategories);
     }
-
 
     @Override
     public OrderResponseDto saveOrder(OrderRequestDto orderDto, String token) {
@@ -304,10 +309,12 @@ public class OrderServiceImpl implements OrderService {
 
             case STARTED:
                 order.setStartWorkingTime(LocalDateTime.now());
+                order.setStartWorkingDate(LocalDate.now());
                 break;
 
             case COMPLETED:
                 order.setEndWorkingTime(LocalDateTime.now());
+                order.setEndWorkingDate(LocalDate.now());
 
                 //  long actualDuration = ChronoUnit.HOURS.between(order.getStartWorkingTime(), order.getEndWorkingTime());
                 long actualDuration = ChronoUnit.SECONDS.between(order.getStartWorkingTime(), order.getEndWorkingTime());
@@ -565,28 +572,27 @@ public class OrderServiceImpl implements OrderService {
 
         return "Paid successfully. orderNumber: " + orderNumber;
     }
-//
-//    @Override
-//    public List<ComprehensiveResponseDto> filterHistory(ComprehensiveFilterDto filterDto, Pageable pageable) {
-//        Specification<Order> spec = ComprehensiveSpecification.filterComprehensive(filterDto);
-//        Page<Order> orderPage = orderRepository.findAll(spec, pageable);
-//
-//        return orderPage.getContent().stream()
-//                .map(comprehensiveEntityToResponseDtoConvertor)
-//                .toList();
-//    }
+
+    @Override
+    public Map<String, Long> getOrderReport() {
+        Map<String, Long> report = new HashMap<>();
+
+        // تعداد سفارش‌های با وضعیت WAITING_FOR_EXPERT_PROPOSALS
+        long waitingForProposalsCount = orderRepository.countByStatus(OrderStatus.WAITING_FOR_EXPERT_PROPOSALS);
+
+        // تعداد سفارش‌های با وضعیت COMPLETED
+        long completedCount = orderRepository.countByStatus(OrderStatus.COMPLETED);
+
+        // افزودن داده‌ها به گزارش
+        report.put("Number of requests submitted", waitingForProposalsCount);
+        report.put("Number of orders completed", completedCount);
+
+        return report;
+    }
 
     @Override
     public List<ComprehensiveResponseDto> filterComprehensiveOrders(ComprehensiveFilterDto filterDto, Pageable pageable) {
         log.info("Fetching filtered comprehensive orders with criteria: {}", filterDto);
-//        if (filterDto.getUserType() != null) {
-//            try {
-//                filterDto.setUserType(UserType.valueOf(filterDto.getUserType().toString().toUpperCase()));
-//            } catch (IllegalArgumentException e) {
-//                log.error("Invalid user type provided: {}", filterDto.getUserType()); // لاگ کردن مقدار نامعتبر
-//                throw new CustomException("Invalid user type provided.", ErrorCode.INVALID_USER_TYPE.getCode());
-//            }
-//        }
         Specification<Order> spec = ComprehensiveSpecification.filterComprehensive(filterDto);
         Page<Order> orderPage = orderRepository.findAll(spec, pageable);
         List<Order> orderList = orderPage.getContent();
@@ -594,4 +600,12 @@ public class OrderServiceImpl implements OrderService {
         log.info("Successfully retrieved {} comprehensive orders.", orderList.size());
         return comprehensiveEntityToResponseDtoConvertor.convertList(orderList);
     }
+
+    @Override
+    public List<OrderResponseDto> getOrdersByWorkingDate(FilterOrderByWorkingDateDto filterOrderByWorkingDateDto) {
+        Specification<Order> specification = orderSpecifications.filterOrdersWithOffersAndExpertsByWorkingDate(filterOrderByWorkingDateDto);
+        List<Order> orders = orderRepository.findAll(specification);
+        return orderResponseDtoConverter.convertList(orders);
+    }
+
 }

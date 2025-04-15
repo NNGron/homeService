@@ -41,6 +41,12 @@ public class ComprehensiveFilterDto {
     private OrderStatus orderStatus;
     private BigDecimal offerCustomerPrice;
 
+    private LocalDateTime startWorkingTime;
+    private LocalDateTime endWorkingTime;
+
+    private LocalDate startWorkingDate;
+    private LocalDate endWorkingDate;
+
     // Offer filters
     private BigDecimal proposedPrice;
     private Integer estimatedTime;

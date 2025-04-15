@@ -70,6 +70,10 @@ public class ComprehensiveEntityToResponseDtoConvertor implements Function<Order
                 .userType(UserType.valueOf(order.getCustomer().getClass().getSimpleName().toUpperCase())) // CUSTOMER یا EXPERT
 
                 // اطلاعات سفارش
+                .startWorkingTime(order.getStartWorkingTime())
+                .endWorkingTime(order.getEndWorkingTime())
+                .startWorkingDate(order.getStartWorkingDate())
+                .endWorkingDate(order.getEndWorkingDate())
                 .finalPrice(order.getFinalPrice())
                 .orderDate(order.getOrderDate())
                 .executionDate(order.getExecutionDate())

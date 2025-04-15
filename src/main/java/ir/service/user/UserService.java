@@ -7,7 +7,9 @@ import org.springframework.data.domain.Pageable;
 import org.springframework.web.multipart.MultipartFile;
 
 import java.math.BigDecimal;
+import java.time.LocalDateTime;
 import java.util.List;
+import java.util.Map;
 import java.util.Optional;
 
 /**
@@ -137,4 +139,10 @@ public interface UserService {
     void authenticateAdmin(String email, String password);
 
     void addExpertToCategoriesByAdmin(String expertEmail, List<String> subCategoryNames);
+
+    Map<String, Long> getRegistrationReport(LocalDateTime startDate, LocalDateTime endDate);
+
+    Map<String, Object> getExpertAndCustomerReport(LocalDateTime startDate, LocalDateTime endDate);
+
+    Map<String, Object> getExpertAndCustomerReportByEmail(String email, LocalDateTime registrationStartDate, LocalDateTime registrationEndDate);
 }

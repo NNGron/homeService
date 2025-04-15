@@ -44,4 +44,6 @@ public interface OfferService {
      * @return a list of {@link OfferResponseDto} representing the paginated and sorted offers related to the customer
      */
     List<OfferResponseDto> findAllOffers(Long customerId, Pageable pageable);
+
+    long countOffersByExpertEmail(String email);
 }

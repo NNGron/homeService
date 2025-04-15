@@ -42,6 +42,10 @@ public class ComprehensiveResponseDto {
     private String orderDescription;
     private OrderStatus orderStatus;
     private BigDecimal offerCustomerPrice;
+    private LocalDateTime startWorkingTime;
+    private LocalDateTime endWorkingTime;
+    private LocalDate startWorkingDate;
+    private LocalDate endWorkingDate;
 
     // Offers
     private List<OfferResponseDto> offers;

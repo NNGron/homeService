@@ -66,7 +66,10 @@ public class Order extends BaseEntity {
     @Column(name = "offer_customer_price")
     private BigDecimal offerCustomerPrice;
 
+    //LocalTime or LocalDateTime
     private LocalDateTime startWorkingTime;
-
     private LocalDateTime endWorkingTime;
+
+    private LocalDate startWorkingDate;
+    private LocalDate endWorkingDate;
 }
