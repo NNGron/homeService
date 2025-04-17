@@ -72,7 +72,6 @@
     <div class="status-message d-none" id="statusMessage"></div>
 
     <!-- Result -->
-    <!-- Result -->
     <div class="result-container d-none" id="resultContainer">
         <h3>Updated Expert Information</h3>
         <table class="table table-bordered">
@@ -135,7 +134,16 @@
         const deleteCategoryForm = document.getElementById("deleteCategoryForm");
         const statusMessage = document.getElementById("statusMessage");
         const resultContainer = document.getElementById("resultContainer");
-        const resultData = document.getElementById("resultData");
+
+        // Retrieve token from localStorage
+        function getToken() {
+            const token = localStorage.getItem("jwtToken");
+            if (!token) {
+                alert("Authentication token is missing. Please log in again.");
+                throw new Error("Token is missing");
+            }
+            return token;
+        }
 
         deleteCategoryForm.addEventListener("submit", async (event) => {
             event.preventDefault();
@@ -149,16 +157,19 @@
             }
 
             try {
+                const token = getToken(); // Retrieve token
+
                 const response = await fetch(`http://localhost:8080/v1/users/expert-category?email=${encodeURIComponent(expertEmail)}&categoryNames=${encodeURIComponent(categoryNames.join(","))}`, {
                     method: 'DELETE',
                     headers: {
+                        'Authorization': `Bearer ${token}`, // Send token in Authorization header
                         'Accept': '*/*'
                     }
                 });
 
                 if (!response.ok) {
-                    const errorResponse = await response.json();
-                    throw new Error(errorResponse.message || "Failed to delete categories.Email or categories not found.");
+                    const errorData = await response.json();
+                    throw new Error(errorData.message || "Failed to delete categories. Email or categories not found.");
                 }
 
                 const updatedExpert = await response.json();

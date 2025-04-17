@@ -1,0 +1,412 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Comprehensive Filter Orders</title>
+    <link href="/style.css" rel="stylesheet">
+    <style>
+        /* Grid layout برای فیلتر‌ها (سه ستون) */
+        .grid-container {
+            display: grid;
+            grid-template-columns: repeat(3, 1fr);
+            gap: 20px;
+            width: 100%;
+            margin: 20px auto;
+            padding: 20px;
+        }
+        .grid-item {
+            background-color: #fff;
+            padding: 15px;
+            border: 1px solid #ddd;
+            border-radius: 10px;
+            box-shadow: 2px 2px 5px rgba(0, 0, 0, 0.1);
+            text-align: left;
+        }
+        /* سبک جدول */
+        table {
+            width: 100%;
+            border-collapse: collapse;
+            margin-bottom: 40px;
+        }
+        th, td {
+            border: 1px solid #ccc;
+            padding: 10px;
+            text-align: center;
+        }
+        th {
+            background-color: #f2f2f2;
+        }
+        /* استایل مدال */
+        .modal {
+            display: none;
+            position: fixed;
+            z-index: 999;
+            left: 0;
+            top: 0;
+            width: 100%;
+            height: 100%;
+            overflow: auto;
+            background-color: rgba(0,0,0,0.5);
+        }
+        .modal-content {
+            background-color: #fff;
+            margin: 10% auto;
+            padding: 20px;
+            border: 1px solid #888;
+            width: 80%;
+            border-radius: 10px;
+            text-align: left;
+            white-space: pre-wrap;
+            font-family: monospace;
+        }
+        .close-modal {
+            color: #aaa;
+            float: right;
+            font-size: 28px;
+            font-weight: bold;
+            cursor: pointer;
+        }
+    </style>
+</head>
+<body class="bg-spring">
+<div class="container text-center">
+    <h1 class="title">Comprehensive Filter Orders</h1>
+    <p>Fill out the filters below to view complete order history.</p>
+
+    <!-- Filter Form -->
+    <form id="filterOrdersForm">
+        <div class="grid-container">
+            <!-- User Filters -->
+            <div class="grid-item">
+                <label for="userName">User Name:</label>
+                <input type="text" id="userName" class="form-control" placeholder="User Name">
+            </div>
+            <div class="grid-item">
+                <label for="firstName">First Name:</label>
+                <input type="text" id="firstName" class="form-control" placeholder="First Name">
+            </div>
+            <div class="grid-item">
+                <label for="lastName">Last Name:</label>
+                <input type="text" id="lastName" class="form-control" placeholder="Last Name">
+            </div>
+            <div class="grid-item">
+                <label for="email">Email:</label>
+                <input type="email" id="email" class="form-control" placeholder="Email">
+            </div>
+            <div class="grid-item">
+                <label for="address">Address:</label>
+                <input type="text" id="address" class="form-control" placeholder="Address">
+            </div>
+            <div class="grid-item">
+                <label for="userStatus">User Status:</label>
+                <select id="userStatus" class="form-control">
+                    <option value="">Any</option>
+                    <option value="NEW">NEW</option>
+                    <option value="ACTIVE">ACTIVE</option>
+                    <option value="INACTIVE">INACTIVE</option>
+                </select>
+            </div>
+            <div class="grid-item">
+                <label for="userType">User Type:</label>
+                <select id="userType" class="form-control">
+                    <option value="">Any</option>
+                    <option value="CUSTOMER">CUSTOMER</option>
+                    <option value="EXPERT">EXPERT</option>
+                </select>
+            </div>
+            <div class="grid-item">
+                <label for="role">Role:</label>
+                <select id="role" class="form-control">
+                    <option value="">Any</option>
+                    <option value="USER">USER</option>
+                    <option value="ADMIN">ADMIN</option>
+                </select>
+            </div>
+
+            <!-- Order Filters -->
+            <div class="grid-item">
+                <label for="orderNumber">Order Number:</label>
+                <input type="number" id="orderNumber" class="form-control" placeholder="Order Number">
+            </div>
+            <div class="grid-item">
+                <label for="finalPrice">Final Price:</label>
+                <input type="number" id="finalPrice" class="form-control" placeholder="Final Price">
+            </div>
+            <div class="grid-item">
+                <label for="orderStartDate">Order Start Date:</label>
+                <input type="date" id="orderStartDate" class="form-control">
+            </div>
+            <div class="grid-item">
+                <label for="orderEndDate">Order End Date:</label>
+                <input type="date" id="orderEndDate" class="form-control">
+            </div>
+            <div class="grid-item">
+                <label for="executionDate">Execution Date:</label>
+                <input type="date" id="executionDate" class="form-control">
+            </div>
+            <div class="grid-item">
+                <label for="orderAddress">Order Address:</label>
+                <input type="text" id="orderAddress" class="form-control" placeholder="Order Address">
+            </div>
+            <div class="grid-item">
+                <label for="orderDescription">Order Description:</label>
+                <input type="text" id="orderDescription" class="form-control" placeholder="Order Description">
+            </div>
+            <div class="grid-item">
+                <label for="orderStatusField">Order Status:</label>
+                <select id="orderStatusField" class="form-control">
+                    <option value="">Any</option>
+                    <option value="WAITING_FOR_EXPERT_PROPOSALS">WAITING_FOR_EXPERT_PROPOSALS</option>
+                    <option value="COMPLETED">COMPLETED</option>
+                    <option value="PAID">PAID</option>
+                </select>
+            </div>
+            <div class="grid-item">
+                <label for="offerCustomerPrice">Offer Customer Price:</label>
+                <input type="number" id="offerCustomerPrice" class="form-control" placeholder="Offer Customer Price">
+            </div>
+            <div class="grid-item">
+                <label for="startWorkingTime">Start Working Time:</label>
+                <input type="datetime-local" id="startWorkingTime" class="form-control">
+            </div>
+            <div class="grid-item">
+                <label for="endWorkingTime">End Working Time:</label>
+                <input type="datetime-local" id="endWorkingTime" class="form-control">
+            </div>
+            <div class="grid-item">
+                <label for="startWorkingDate">Start Working Date:</label>
+                <input type="date" id="startWorkingDate" class="form-control">
+            </div>
+            <div class="grid-item">
+                <label for="endWorkingDate">End Working Date:</label>
+                <input type="date" id="endWorkingDate" class="form-control">
+            </div>
+
+            <!-- Offer Filters -->
+            <div class="grid-item">
+                <label for="proposedPrice">Proposed Price:</label>
+                <input type="number" id="proposedPrice" class="form-control" placeholder="Proposed Price">
+            </div>
+            <div class="grid-item">
+                <label for="estimatedTime">Estimated Time:</label>
+                <input type="number" id="estimatedTime" class="form-control" placeholder="Estimated Time">
+            </div>
+            <div class="grid-item">
+                <label for="startTime">Start Time:</label>
+                <input type="datetime-local" id="startTime" class="form-control">
+            </div>
+            <div class="grid-item">
+                <label for="expertRatingField">Expert Rating:</label>
+                <input type="number" id="expertRatingField" class="form-control" placeholder="Expert Rating">
+            </div>
+
+            <!-- Category Filters -->
+            <div class="grid-item">
+                <label for="categoryNameField">Category Name:</label>
+                <input type="text" id="categoryNameField" class="form-control" placeholder="Category Name">
+            </div>
+            <div class="grid-item">
+                <label for="categoryDescription">Category Description:</label>
+                <input type="text" id="categoryDescription" class="form-control" placeholder="Category Description">
+            </div>
+            <div class="grid-item">
+                <label for="categoryBasePrice">Category Base Price:</label>
+                <input type="number" id="categoryBasePrice" class="form-control" placeholder="Category Base Price">
+            </div>
+            <div class="grid-item">
+                <label for="parentCategoryNameField">Parent Category Name:</label>
+                <input type="text" id="parentCategoryNameField" class="form-control" placeholder="Parent Category Name">
+            </div>
+
+            <!-- Review Filters -->
+            <div class="grid-item">
+                <label for="reviewRating">Review Rating:</label>
+                <input type="number" id="reviewRating" class="form-control" placeholder="Review Rating">
+            </div>
+            <div class="grid-item">
+                <label for="reviewComment">Review Comment:</label>
+                <input type="text" id="reviewComment" class="form-control" placeholder="Review Comment">
+            </div>
+
+            <!-- Timestamp Filters -->
+            <div class="grid-item">
+                <label for="createdAtStart">Created At Start:</label>
+                <input type="datetime-local" id="createdAtStart" class="form-control">
+            </div>
+            <div class="grid-item">
+                <label for="createdAtEnd">Created At End:</label>
+                <input type="datetime-local" id="createdAtEnd" class="form-control">
+            </div>
+            <div class="grid-item">
+                <label for="updatedAtStart">Updated At Start:</label>
+                <input type="datetime-local" id="updatedAtStart" class="form-control">
+            </div>
+            <div class="grid-item">
+                <label for="updatedAtEnd">Updated At End:</label>
+                <input type="datetime-local" id="updatedAtEnd" class="form-control">
+            </div>
+        </div>
+        <!-- End grid-container -->
+
+        <!-- Submit Button -->
+        <button type="submit" class="btn btn-main btn-lg mt-3">Filter Orders</button>
+    </form>
+
+    <!-- Results Table -->
+    <table class="table table-striped mt-4" style="margin-bottom: 40px;">
+        <thead>
+        <tr>
+            <th>User Name</th>
+            <th>Email</th>
+            <th>Order Number</th>
+            <th>Order Status</th>
+            <th>Category Name</th>
+            <th>Parent Category</th>
+<!--            <th>Expert Rating</th>-->
+            <th>Details</th>
+        </tr>
+        </thead>
+        <tbody id="resultsTableBody">
+        <!-- Filtered results will appear here -->
+        </tbody>
+    </table>
+</div>
+
+<!-- Modal for detailed view -->
+<div id="detailsModal" class="modal">
+    <div class="modal-content">
+        <span class="close-modal" id="closeModal">&times;</span>
+        <pre id="detailsContent"></pre>
+    </div>
+</div>
+
+<script>
+    // Show modal with order details
+    function viewDetails(order) {
+        const detailsContent = document.getElementById("detailsContent");
+        detailsContent.textContent = JSON.stringify(order, null, 2);
+        document.getElementById("detailsModal").style.display = "block";
+    }
+
+    // Close modal events
+    document.getElementById("closeModal").addEventListener("click", () => {
+        document.getElementById("detailsModal").style.display = "none";
+    });
+    window.addEventListener("click", (event) => {
+        if (event.target === document.getElementById("detailsModal")) {
+            document.getElementById("detailsModal").style.display = "none";
+        }
+    });
+
+    // Form submit handler
+    document.getElementById("filterOrdersForm").addEventListener("submit", async (event) => {
+        event.preventDefault();
+        const filterData = {
+            userName: document.getElementById("userName").value || null,
+            firstName: document.getElementById("firstName").value || null,
+            lastName: document.getElementById("lastName").value || null,
+            email: document.getElementById("email").value || null,
+            address: document.getElementById("address").value || null,
+            userStatus: document.getElementById("userStatus").value || null,
+            userType: document.getElementById("userType").value || null,
+            role: document.getElementById("role").value || null,
+            orderNumber: document.getElementById("orderNumber").value || null,
+            finalPrice: document.getElementById("finalPrice").value || null,
+            orderStartDate: document.getElementById("orderStartDate").value || null,
+            orderEndDate: document.getElementById("orderEndDate").value || null,
+            executionDate: document.getElementById("executionDate").value || null,
+            orderAddress: document.getElementById("orderAddress").value || null,
+            orderDescription: document.getElementById("orderDescription").value || null,
+            orderStatus: document.getElementById("orderStatusField").value || null,
+            offerCustomerPrice: document.getElementById("offerCustomerPrice").value || null,
+            startWorkingTime: document.getElementById("startWorkingTime").value || null,
+            endWorkingTime: document.getElementById("endWorkingTime").value || null,
+            startWorkingDate: document.getElementById("startWorkingDate").value || null,
+            endWorkingDate: document.getElementById("endWorkingDate").value || null,
+            proposedPrice: document.getElementById("proposedPrice").value || null,
+            estimatedTime: document.getElementById("estimatedTime").value || null,
+            startTime: document.getElementById("startTime").value || null,
+            expertRating: document.getElementById("expertRatingField").value || null,
+            categoryName: document.getElementById("categoryNameField").value || null,
+            categoryDescription: document.getElementById("categoryDescription").value || null,
+            categoryBasePrice: document.getElementById("categoryBasePrice").value || null,
+            parentCategoryName: document.getElementById("parentCategoryNameField").value || null,
+            reviewRating: document.getElementById("reviewRating").value || null,
+            reviewComment: document.getElementById("reviewComment").value || null,
+            createdAtStart: document.getElementById("createdAtStart").value || null,
+            createdAtEnd: document.getElementById("createdAtEnd").value || null,
+            updatedAtStart: document.getElementById("updatedAtStart").value || null,
+            updatedAtEnd: document.getElementById("updatedAtEnd").value || null
+        };
+
+        try {
+            const token = localStorage.getItem("jwtToken");
+            if (!token) {
+                displayMessage("Authentication token is missing. Please log in again.", "error");
+                throw new Error("Token is missing");
+            }
+            const response = await fetch('http://localhost:8080/v1/orders/filter-comprehensive-orders?pageNumber=0&size=10&sortBy=createdAt&sortDir=asc', {
+                method: 'POST',
+                headers: {
+                    'Authorization': `Bearer ${token}`,
+                    'Content-Type': 'application/json'
+                },
+                body: JSON.stringify(filterData)
+            });
+
+            if (!response.ok) {
+                const errorData = await response.json();
+                console.error("Error filtering orders:", errorData);
+                throw new Error(errorData.message || "Failed to fetch filtered orders.");
+            }
+
+            const orders = await response.json();
+            console.log("Filtered Orders:", orders);
+            const resultsTableBody = document.getElementById("resultsTableBody");
+            resultsTableBody.innerHTML = "";
+
+            if (!orders || !orders.length) {
+                resultsTableBody.innerHTML = "<tr><td colspan='8'>No matching orders found.</td></tr>";
+                displayMessage("No orders match the provided filters.", "error");
+                return;
+            }
+
+            orders.forEach(order => {
+                const row = `
+          <tr>
+            <td>${order.userName || "-"}</td>
+            <td>${order.email || "-"}</td>
+            <td>${order.orderNumber || "-"}</td>
+            <td>${order.orderStatus || "-"}</td>
+            <td>${order.categoryName || "-"}</td>
+            <td>${order.parentCategoryName || "-"}</td>
+            <td>${order.expertRating !== null ? order.expertRating : "-"}</td>
+            <td>
+              <button class="btn btn-main btn-sm" onclick='viewDetails(${JSON.stringify(order)})'>View Details</button>
+            </td>
+          </tr>
+        `;
+                resultsTableBody.innerHTML += row;
+            });
+
+            displayMessage("Orders filtered successfully!", "success");
+        } catch (error) {
+            console.error("Error:", error);
+            displayMessage(`Error: ${error.message}`, "error");
+        }
+    });
+
+    function displayMessage(message, type) {
+        const statusMessage = document.getElementById("statusMessage");
+        statusMessage.className = `status-message ${type === "success" ? "status-success" : "status-error"}`;
+        statusMessage.textContent = message;
+        statusMessage.classList.remove("d-none");
+        setTimeout(() => {
+            statusMessage.className = "status-message d-none";
+            statusMessage.textContent = "";
+        }, 3000);
+    }
+</script>
+</body>
+</html>

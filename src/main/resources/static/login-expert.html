@@ -25,6 +25,12 @@
     function navigateBack() {
         window.history.back(); // بازگشت به صفحه قبلی
     }
+
+    function showMessage(message, isSuccess = true) {
+        const statusMessage = document.getElementById('status-message');
+        statusMessage.className = isSuccess ? 'status-success status-message' : 'status-error status-message';
+        statusMessage.innerHTML = message;
+    }
 </script>
 
 <!-- Title and Form -->
@@ -45,33 +51,52 @@
 </div>
 
 <script>
-    document.getElementById('login-btn').addEventListener('click', () => {
+    document.getElementById('login-btn').addEventListener('click', async () => {
         const email = document.getElementById('email').value;
         const password = document.getElementById('password').value;
+        const statusMessage = document.getElementById('status-message');
 
-        const loginData = {email, password};
+        const loginData = { email, password };
 
-        fetch('http://localhost:8080/v1/users/login', {
-            method: 'POST',
-            headers: {
-                'Accept': '*/*',
-                'Content-Type': 'application/json'
-            },
-            body: JSON.stringify(loginData)
-        })
-            .then(data => {
-                const token = data.token;
-                localStorage.setItem("jwtToken", token);
-                document.getElementById('status-message').className = 'status-message status-success';
-                document.getElementById('status-message').innerHTML = `<div class="alert alert-success">Welcome back!</div>`;
-                setTimeout(() => {
-                    window.location.href = "/expert-dashboard.html";
-                }, 3000); // 2-second delay
-            })
-            .catch(error => {
-                document.getElementById('status-message').className = 'status-message status-error';
-                document.getElementById('status-message').innerHTML = `<div class="alert alert-danger">Error: ${error.message}</div>`;
+        try {
+            const response = await fetch('http://localhost:8080/v1/users/login', {
+                method: 'POST',
+                headers: {
+                    'Accept': '*/*',
+                    'Content-Type': 'application/json'
+                },
+                body: JSON.stringify(loginData)
             });
+
+            if (!response.ok) {
+                const errorData = await response.json();
+                if (errorData.errorCode === 75) {
+                    // نمایش پیام تایید نشده بودن حساب کاربری
+                    statusMessage.className = 'status-message status-error';
+                    statusMessage.innerHTML = `<div class="alert alert-danger">
+                        Error: ${errorData.errorMessage} <br>
+                        Please check your email for the verification link after signing up. Verify your email and wait for the admin to approve your account.
+                    </div>`;
+                } else {
+                    throw new Error(errorData.errorMessage || "An error occurred during login.");
+                }
+                return;
+            }
+
+            const data = await response.json();
+            const token = data.token;
+            localStorage.setItem("jwtToken", token);
+
+            statusMessage.className = 'status-message status-success';
+            statusMessage.innerHTML = `<div class="alert alert-success">Welcome back!</div>`;
+            setTimeout(() => {
+                window.location.href = "/expert-dashboard.html";
+            }, 2000);
+
+        } catch (error) {
+            statusMessage.className = 'status-message status-error';
+            statusMessage.innerHTML = `<div class="alert alert-danger">Error: ${error.message}</div>`;
+        }
     });
 </script>
 </body>

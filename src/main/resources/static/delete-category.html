@@ -52,6 +52,16 @@
 </div>
 
 <script>
+    // Function to get the token from localStorage
+    function getToken() {
+        const token = localStorage.getItem("jwtToken");
+        if (!token) {
+            alert("Authentication token is missing. Please log in again.");
+            throw new Error("Token is missing");
+        }
+        return token;
+    }
+
     // Show Sub-Category Section
     document.getElementById('deleteSubCategoryBtn').addEventListener('click', () => {
         document.getElementById('subCategorySection').classList.remove('d-none');
@@ -65,67 +75,75 @@
     });
 
     // Handle Sub-Category Deletion
-    document.getElementById('confirmDeleteSubCategoryBtn').addEventListener('click', () => {
+    document.getElementById('confirmDeleteSubCategoryBtn').addEventListener('click', async () => {
         const subCategoryName = document.getElementById('subCategoryName').value.trim();
+
         if (!subCategoryName) {
             alert('Please enter a Sub-Category Name.');
             return;
         }
 
-        // Call backend API for deleting sub-category
-        fetch(`http://localhost:8080/v1/categories/delete-sub-category?subCategoryName=${subCategoryName}`, {
-            method: 'DELETE'
-        })
-            .then(response => {
-                if (!response.ok) {
-                    return response.text().then(text => {
-                        throw new Error(text);
-                    });
+        const token = getToken(); // Get the token
+
+        try {
+            const response = await fetch(`http://localhost:8080/v1/categories/delete-sub-category?subCategoryName=${subCategoryName}`, {
+                method: 'DELETE',
+                headers: {
+                    'Authorization': `Bearer ${token}`, // Send token in header
+                    'Accept': '*/*'
                 }
-                return response.text();
-            })
-            .then(message => {
-                const statusMessage = document.getElementById('statusMessage');
-                statusMessage.className = 'status-message status-success';
-                statusMessage.textContent = message;
-            })
-            .catch(error => {
-                const statusMessage = document.getElementById('statusMessage');
-                statusMessage.className = 'status-message status-error';
-                statusMessage.textContent = `Error: ${error.message}`;
             });
+
+            if (!response.ok) {
+                const data = await response.json();
+                throw new Error(data.errorMessage || "Failed to delete sub-category");
+            }
+
+            const message = await response.text();
+            const statusMessage = document.getElementById('statusMessage');
+            statusMessage.className = 'status-message status-success';
+            statusMessage.textContent = message;
+        } catch (error) {
+            const statusMessage = document.getElementById('statusMessage');
+            statusMessage.className = 'status-message status-error';
+            statusMessage.textContent = `Error: ${error.message}`;
+        }
     });
 
     // Handle Main Category Deletion
-    document.getElementById('confirmDeleteMainCategoryBtn').addEventListener('click', () => {
+    document.getElementById('confirmDeleteMainCategoryBtn').addEventListener('click', async () => {
         const mainCategoryName = document.getElementById('mainCategoryName').value.trim();
+
         if (!mainCategoryName) {
             alert('Please enter a Main Category Name.');
             return;
         }
 
-        // Call backend API for deleting main-category
-        fetch(`http://localhost:8080/v1/categories/delete-main-category?mainCategoryName=${mainCategoryName}`, {
-            method: 'DELETE'
-        })
-            .then(response => {
-                if (!response.ok) {
-                    return response.text().then(text => {
-                        throw new Error(text);
-                    });
+        const token = getToken(); // Get the token
+
+        try {
+            const response = await fetch(`http://localhost:8080/v1/categories/delete-main-category?mainCategoryName=${mainCategoryName}`, {
+                method: 'DELETE',
+                headers: {
+                    'Authorization': `Bearer ${token}`, // Send token in header
+                    'Accept': '*/*'
                 }
-                return response.text();
-            })
-            .then(message => {
-                const statusMessage = document.getElementById('statusMessage');
-                statusMessage.className = 'status-message status-success';
-                statusMessage.textContent = message;
-            })
-            .catch(error => {
-                const statusMessage = document.getElementById('statusMessage');
-                statusMessage.className = 'status-message status-error';
-                statusMessage.textContent = `Error: ${error.message}`;
             });
+
+            if (!response.ok) {
+                const data = await response.json();
+                throw new Error(data.errorMessage || "Failed to delete main-category");
+            }
+
+            const message = await response.text();
+            const statusMessage = document.getElementById('statusMessage');
+            statusMessage.className = 'status-message status-success';
+            statusMessage.textContent = message;
+        } catch (error) {
+            const statusMessage = document.getElementById('statusMessage');
+            statusMessage.className = 'status-message status-error';
+            statusMessage.textContent = `Error: ${error.message}`;
+        }
     });
 </script>
 </body>

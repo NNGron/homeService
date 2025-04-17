@@ -78,61 +78,21 @@
 </div>
 
 <script>
-    document.addEventListener("DOMContentLoaded", () => {
-        // Fetch users from the backend
-        fetch('http://localhost:8080/v1/users/all-user?pageNumber=0&size=10&sortBy=firstName&sortDir=asc')
-            .then(response => {
-                if (!response.ok) {
-                    return response.text().then(text => {
-                        throw new Error(text);
-                    });
-                }
-                return response.json();
-            })
-            .then(users => {
-                const userTableBody = document.getElementById("userTableBody");
-                const datesTableBody = document.getElementById("datesTableBody");
+    document.addEventListener("DOMContentLoaded", async () => {
+        const statusMessage = document.getElementById("statusMessage");
 
-                userTableBody.innerHTML = ""; // Clear user table
-                datesTableBody.innerHTML = ""; // Clear dates table
+        // Retrieve token from localStorage
+        function getToken() {
+            const token = localStorage.getItem("jwtToken");
+            if (!token) {
+                displayMessage("Authentication token is missing. Please log in again.", "error");
+                throw new Error("Token is missing");
+            }
+            return token;
+        }
 
-                if (users.length === 0) {
-                    displayMessage("No users found!", "error");
-                    return;
-                }
-
-                users.forEach((user, index) => {
-                    const userRow = `
-                        <tr>
-                            <td>${index + 1}</td>
-                            <td>${user.userType || "N/A"}</td>
-                            <td>${user.firstName}</td>
-                            <td>${user.lastName}</td>
-                            <td>${user.email}</td>
-                            <td>${user.balance || 0}</td>
-                            <td>${user.status}</td>
-                        </tr>
-                    `;
-
-                    const datesRow = `
-                        <tr>
-                            <td>${user.createdAt || "N/A"}</td>
-                            <td>${user.updatedAt || "N/A"}</td>
-                        </tr>
-                    `;
-
-                    userTableBody.innerHTML += userRow;
-                    datesTableBody.innerHTML += datesRow;
-                });
-
-                displayMessage("Users fetched successfully!", "success");
-            })
-            .catch(error => {
-                displayMessage(`Error fetching users: ${error.message}`, "error");
-            });
-
+        // Display message helper
         function displayMessage(message, type) {
-            const statusMessage = document.getElementById("statusMessage");
             statusMessage.className = `status-message ${type === "success" ? "status-success" : "status-error"}`;
             statusMessage.textContent = message;
 
@@ -141,6 +101,68 @@
                 statusMessage.className = '';
                 statusMessage.textContent = '';
             }, 2000);
+        }
+
+        try {
+            const token = getToken(); // Retrieve token
+
+            // Fetch users from the backend
+            const response = await fetch('http://localhost:8080/v1/users/all-user?pageNumber=0&size=10&sortBy=firstName&sortDir=asc', {
+                method: 'GET',
+                headers: {
+                    'Authorization': `Bearer ${token}`, // Add token to Authorization header
+                    'Accept': '*/*'
+                }
+            });
+
+            if (!response.ok) {
+                const errorData = await response.json();
+                if (errorData.errorCode === 401 && errorData.errorMessage === "Invalid token") {
+                    alert("Your session has expired or your token is invalid. Please log in again.");
+                    window.location.href = "/login-admin.html"; // Redirect to login
+                }
+                throw new Error(errorData.errorMessage || "An error occurred while fetching users.");
+            }
+
+            const users = await response.json();
+            const userTableBody = document.getElementById("userTableBody");
+            const datesTableBody = document.getElementById("datesTableBody");
+
+            userTableBody.innerHTML = ""; // Clear user table
+            datesTableBody.innerHTML = ""; // Clear dates table
+
+            if (users.length === 0) {
+                displayMessage("No users found!", "error");
+                return;
+            }
+
+            users.forEach((user, index) => {
+                const userRow = `
+                    <tr>
+                        <td>${index + 1}</td>
+                        <td>${user.userType || "N/A"}</td>
+                        <td>${user.firstName}</td>
+                        <td>${user.lastName}</td>
+                        <td>${user.email}</td>
+                        <td>${user.balance || 0}</td>
+                        <td>${user.status}</td>
+                    </tr>
+                `;
+
+                const datesRow = `
+                    <tr>
+                        <td>${user.createdAt || "N/A"}</td>
+                        <td>${user.updatedAt || "N/A"}</td>
+                    </tr>
+                `;
+
+                userTableBody.innerHTML += userRow;
+                datesTableBody.innerHTML += datesRow;
+            });
+
+            displayMessage("Users fetched successfully!", "success");
+        } catch (error) {
+            displayMessage(`Error fetching users: ${error.message}`, "error");
         }
     });
 </script>

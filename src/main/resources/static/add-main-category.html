@@ -89,10 +89,16 @@
 <script>
     document.getElementById("addCategoryBtn").addEventListener("click", async () => {
         const token = localStorage.getItem("jwtToken");
+
+        if (!token) {
+            displayMessage("Authentication token is missing. Please log in again.", "error");
+            return;
+        }
+
         const newCategoryName = document.getElementById("newCategoryName").value.trim();
         const selectedCategories = Array.from(document.querySelectorAll('input[name="categories"]:checked')).map(input => input.value);
-
         const categoriesToAdd = [...selectedCategories];
+
         if (newCategoryName) {
             categoriesToAdd.push(newCategoryName);
         }
@@ -101,7 +107,6 @@
 
         try {
             for (const category of categoriesToAdd) {
-                // بررسی عدم تکرار در لیست Added Categories
                 const existingItems = Array.from(addedCategoriesList.children).map(item => item.textContent);
                 if (existingItems.includes(category)) {
                     displayMessage(`The category "${category}" is already in the list.`, "error");
@@ -115,14 +120,13 @@
                         'Content-Type': 'application/json',
                         'Authorization': `Bearer ${token}`
                     },
-                    body: JSON.stringify({name: category})
+                    body: JSON.stringify({ name: category })
                 });
 
-                // بررسی پاسخ خطا از بک‌اند
                 if (!response.ok) {
                     const errorData = await response.json();
-                    if (errorData.errorCode === 42 && errorData.errorMessage === "Main category is already exist") {
-                        displayMessage(`Error: The category "${category}" already exists!`, "error");
+                    if (response.status === 401) {
+                        displayMessage("Invalid token. Please log in again.", "error");
                     } else if (errorData.errorMessage) {
                         displayMessage(`Error: ${errorData.errorMessage}`, "error");
                     } else {

@@ -47,6 +47,16 @@
 <script>
     let approvalType = ""; // Track which type of approval is selected
 
+    // Function to retrieve token from localStorage
+    function getToken() {
+        const token = localStorage.getItem("jwtToken");
+        if (!token) {
+            alert("Authentication token is missing. Please log in again.");
+            throw new Error("Token is missing");
+        }
+        return token;
+    }
+
     // Event listener for "Approve Customer"
     document.getElementById('approveCustomerBtn').addEventListener('click', () => {
         approvalType = "CUSTOMER";
@@ -60,7 +70,7 @@
     });
 
     // Handle Approve User
-    document.getElementById('approveUserBtn').addEventListener('click', () => {
+    document.getElementById('approveUserBtn').addEventListener('click', async () => {
         const userEmail = document.getElementById('userEmail').value.trim();
 
         if (!userEmail) {
@@ -68,33 +78,39 @@
             return;
         }
 
-        // Make API call to approve the user
-        fetch(`http://localhost:8080/v1/users/approve-user?email=${userEmail}`, {
-            method: 'PUT',
-            headers: {
-                'accept': '*/*'
-            }
-        })
-            .then(response => {
-                if (!response.ok) {
-                    return response.text().then(text => {
-                        throw new Error(text);
-                    });
+        try {
+            const token = getToken(); // Retrieve the token
+
+            // Make API call to approve the user
+            const response = await fetch(`http://localhost:8080/v1/users/approve-user?email=${userEmail}`, {
+                method: 'PUT',
+                headers: {
+                    'accept': '*/*',
+                    'Authorization': `Bearer ${token}` // Add token to Authorization header
                 }
-                return response.json();
-            })
-            .then(data => {
-                const statusMessage = document.getElementById('statusMessage');
-                statusMessage.className = 'status-message status-success';
-                statusMessage.textContent = `User successfully approved as ${approvalType.toLowerCase()}!`;
-                document.getElementById('emailSection').classList.add('d-none'); // Hide email input
-                document.getElementById('userEmail').value = ""; // Clear email input
-            })
-            .catch(error => {
-                const statusMessage = document.getElementById('statusMessage');
-                statusMessage.className = 'status-message status-error';
-                statusMessage.textContent = `Error: ${error.message}`;
             });
+
+            if (!response.ok) {
+                const errorText = await response.text();
+                const errorData = JSON.parse(errorText);
+                if (errorData.errorCode === 401 && errorData.errorMessage === "Invalid token") {
+                    alert("Your session has expired or your token is invalid. Please log in again.");
+                    window.location.href = "/login-admin.html"; // Redirect to login
+                }
+                throw new Error(errorData.errorMessage || "An error occurred during approval.");
+            }
+
+            const data = await response.json();
+            const statusMessage = document.getElementById('statusMessage');
+            statusMessage.className = 'status-message status-success';
+            statusMessage.textContent = `User successfully approved as ${approvalType.toLowerCase()}!`;
+            document.getElementById('emailSection').classList.add('d-none'); // Hide email input
+            document.getElementById('userEmail').value = ""; // Clear email input
+        } catch (error) {
+            const statusMessage = document.getElementById('statusMessage');
+            statusMessage.className = 'status-message status-error';
+            statusMessage.textContent = `Error: ${error.message}`;
+        }
     });
 </script>
 </body>

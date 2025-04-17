@@ -131,12 +131,25 @@
         const sortingForm = document.getElementById("sortingForm");
         const tableContainer = document.querySelector(".table-container");
 
+        // Retrieve token from localStorage
+        function getToken() {
+            const token = localStorage.getItem("jwtToken");
+            if (!token) {
+                displayMessage("Authentication token is missing. Please log in again.", "error");
+                throw new Error("Token is missing");
+            }
+            return token;
+        }
+
         // Fetch categories based on user input
         async function fetchCategories(pageNumber, pageSize, sortBy, sortDir) {
             try {
+                const token = getToken(); // Get token
+
                 const response = await fetch(`http://localhost:8080/v1/categories/pageable-sort?pageNumber=${pageNumber}&size=${pageSize}&sortBy=${sortBy}&sortDir=${sortDir}`, {
                     method: 'GET',
                     headers: {
+                        'Authorization': `Bearer ${token}`, // Send token in header
                         'Accept': '*/*'
                     }
                 });
@@ -157,7 +170,7 @@
                     const row = `
                     <tr>
                         <td>${category.name}</td>
-                        <td>${category.description || "No description provided"}</td>
+                        <td>${category.description || "-"}</td>
                         <td>${category.basePrice ? `$${category.basePrice}` : "-"}</td>
                         <td>${category.parentCategory ? category.parentCategory.name : "-"}</td>
                     </tr>

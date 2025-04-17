@@ -1,7 +1,7 @@
 {
 	"info": {
 		"_postman_id": "951806e6-e8d6-430a-8244-ff11737f030d",
-		"name": "home_service_api",
+		"name": "ALL",
 		"schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json",
 		"_exporter_id": "41967057"
 	},
@@ -22,7 +22,7 @@
 				],
 				"body": {
 					"mode": "raw",
-					"raw": "{\n  \"userName\": \"admin1\",\n  \"password\": \"admin123\",\n  \"firstName\": \"admin1\",\n  \"lastName\": \"admin1\",\n  \"email\": \"admin1@yahoo.com\",\n  \"address\": \"Tehran\",\n  \"userType\": \"ADMIN\"\n}",
+					"raw": "{\n  \"userName\": \"Admin11@\",\n  \"password\": \"Admin11@\",\n  \"firstName\": \"Admin11@\",\n  \"lastName\": \"Admin11@\",\n  \"email\": \"Admin11@yahoo.com\",\n  \"address\": \"Tehran\",\n  \"userType\": \"ADMIN\"\n}",
 					"options": {
 						"raw": {
 							"language": "json"
@@ -49,16 +49,6 @@
 		{
 			"name": "F-02-login-admin",
 			"request": {
-				"auth": {
-					"type": "bearer",
-					"bearer": [
-						{
-							"key": "token",
-							"value": "eyJhbGciOiJIUzI1NiJ9.eyJzdWIiOiJhZG1pbjEiLCJpYXQiOjE3NDQwMDY5OTIsImV4cCI6MTc0NDA5MzM5Mn0.UcuDs1oFcLIdXh0MuA7scLvRSpHDM5A8ZyuU-szI7Eg",
-							"type": "string"
-						}
-					]
-				},
 				"method": "POST",
 				"header": [
 					{
@@ -72,7 +62,7 @@
 				],
 				"body": {
 					"mode": "raw",
-					"raw": "{\n  \"email\": \"admin1@yahoo.com\",\n  \"password\": \"admin123\"\n}",
+					"raw": "{\n  \"email\": \"Admin11@yahoo.com\",\n  \"password\": \"Admin11@\"\n}",
 					"options": {
 						"raw": {
 							"language": "json"
@@ -112,7 +102,7 @@
 				],
 				"body": {
 					"mode": "raw",
-					"raw": "{\n  \"userName\": \"customer1\",\n  \"password\": \"customer1\",\n  \"firstName\": \"customer1\",\n  \"lastName\": \"customer1\",\n  \"email\": \"customer1@yahoo.com\",\n  \"address\": \"customer1\",\n  \"credit\": 0,\n  \"userType\": \"CUSTOMER\"\n}\n{\n  \"userName\": \"customer2\",\n  \"password\": \"customer2\",\n  \"firstName\": \"customer2\",\n  \"lastName\": \"customer2\",\n  \"email\": \"customer2@yahoo.com\",\n  \"address\": \"customer2\",\n  \"credit\": 0,\n  \"userType\": \"CUSTOMER\"\n}\n{\n  \"userName\": \"DEleteCustomer\",\n  \"password\": \"DEleteCustomer1\",\n  \"firstName\": \"DEleteCustomer\",\n  \"lastName\": \"DEleteCustomer\",\n  \"email\": \"DEleteCustomer@yahoo.com\",\n  \"address\": \"DEleteCustomer\",\n  \"credit\": 0,\n  \"userType\": \"CUSTOMER\"\n}",
+					"raw": "{\n  \"userName\": \"Customer1@\",\n  \"password\": \"Customer1@\",\n  \"firstName\": \"Customer1@\",\n  \"lastName\": \"Customer1@\",\n  \"email\": \"sanaz.seyedin@yahoo.com\",\n  \"address\": \"Customer1@\",\n  \"credit\": 0,\n  \"userType\": \"CUSTOMER\"\n}",
 					"options": {
 						"raw": {
 							"language": "json"
@@ -140,16 +130,11 @@
 			"name": "F-04-login-customer",
 			"request": {
 				"auth": {
-					"type": "basic",
-					"basic": [
+					"type": "bearer",
+					"bearer": [
 						{
-							"key": "password",
-							"value": "049fb113-a728-4a25-b755-ab66ac88e881",
-							"type": "string"
-						},
-						{
-							"key": "username",
-							"value": "user",
+							"key": "token",
+							"value": "",
 							"type": "string"
 						}
 					]
@@ -167,7 +152,7 @@
 				],
 				"body": {
 					"mode": "raw",
-					"raw": "{\n  \"email\": \"customer1@yahoo.com\",\n  \"password\": \"customer1\"\n}\n{\n  \"email\": \"customer2@yahoo.com\",\n  \"password\": \"customer2\"\n}",
+					"raw": "{\n  \"email\": \"sanaz.seyedin@yahoo.com\",\n  \"password\": \"Customer1@\"\n}\n",
 					"options": {
 						"raw": {
 							"language": "json"
@@ -199,7 +184,7 @@
 					"bearer": [
 						{
 							"key": "token",
-							"value": "eyJhbGciOiJIUzI1NiJ9.eyJzdWIiOiJhZG1pbjEiLCJpYXQiOjE3NDM5Mzc0MTEsImV4cCI6MTc0NDAyMzgxMX0.NQQYK4WQMbcjZsr0jfrmFP9jo8fsVZJ01Yg405n8t3A",
+							"value": "eyJhbGciOiJIUzI1NiJ9.eyJzdWIiOiJBZG1pbjExQCIsImlhdCI6MTc0NDYyMjIxMCwiZXhwIjoxNzQ0NzA4NjEwfQ.J_4rMEYHFiPugpOHbFbBKkKGC0paoH5BW4K_MdBenHU",
 							"type": "string"
 						}
 					]
@@ -249,7 +234,7 @@
 					"bearer": [
 						{
 							"key": "token",
-							"value": "eyJhbGciOiJIUzI1NiJ9.eyJzdWIiOiJhZG1pbjEiLCJpYXQiOjE3NDQwMzMxMDYsImV4cCI6MTc0NDExOTUwNn0.yOySv5kGDEza99XIrBxIZ9NZGqbcw17HrCKf8xdPxCk",
+							"value": "eyJhbGciOiJIUzI1NiJ9.eyJzdWIiOiJBZG1pbjExQCIsImlhdCI6MTc0NDYyMjIxMCwiZXhwIjoxNzQ0NzA4NjEwfQ.J_4rMEYHFiPugpOHbFbBKkKGC0paoH5BW4K_MdBenHU",
 							"type": "string"
 						}
 					]
@@ -307,7 +292,7 @@
 				],
 				"body": {
 					"mode": "raw",
-					"raw": "{\n  \"userName\": \"expert1\",\n  \"password\": \"expert11\",\n  \"firstName\": \"expert1\",\n  \"lastName\": \"expert1\",\n  \"email\": \"expert1@yahoo.com\",\n  \"address\": \"expert1\",\n  \"subCategoryNames\": [\n    \"Designer\"\n  ],\n  \"userType\": \"EXPERT\"\n}\n{\n  \"userName\": \"expert2\",\n  \"password\": \"expert22\",\n  \"firstName\": \"expert2\",\n  \"lastName\": \"expert2\",\n  \"email\": \"expert2@yahoo.com\",\n  \"address\": \"expert2\",\n  \"subCategoryNames\": [\n    \"For delete\"\n  ],\n  \"userType\": \"EXPERT\"\n}\n{\n  \"userName\": \"expert4\",\n  \"password\": \"expert44\",\n  \"firstName\": \"expert4\",\n  \"lastName\": \"expert4\",\n  \"email\": \"expert4@yahoo.com\",\n  \"address\": \"expert4\",\n  \"subCategoryNames\": [\n    \"تعمیر خودرو\"\n  ],\n  \"userType\": \"EXPERT\"\n}",
+					"raw": "{\n  \"userName\": \"Expert1@\",\n  \"password\": \"Expert1@\",\n  \"firstName\": \"Expert1@\",\n  \"lastName\": \"Expert1@\",\n  \"email\": \"s.s.seyedein@outlook.com\",\n  \"address\": \"Expert1@\",\n  \"subCategoryNames\": [\n    \"Designer\"\n  ],\n  \"userType\": \"EXPERT\"\n}",
 					"options": {
 						"raw": {
 							"language": "json"
@@ -362,7 +347,7 @@
 				],
 				"body": {
 					"mode": "raw",
-					"raw": "{\n  \"email\": \"expert1@yahoo.com\",\n  \"password\": \"expert11\"\n}\n{\n  \"email\": \"expert2@yahoo.com\",\n  \"password\": \"expert22\"\n}",
+					"raw": "{\n  \"email\": \"s.s.seyedein@outlook.com\",\n  \"password\": \"Expert1@\"\n}",
 					"options": {
 						"raw": {
 							"language": "json"
@@ -394,7 +379,7 @@
 					"bearer": [
 						{
 							"key": "token",
-							"value": "eyJhbGciOiJIUzI1NiJ9.eyJzdWIiOiJhZG1pbjEiLCJpYXQiOjE3NDQwMzMxMDYsImV4cCI6MTc0NDExOTUwNn0.yOySv5kGDEza99XIrBxIZ9NZGqbcw17HrCKf8xdPxCk",
+							"value": "eyJhbGciOiJIUzI1NiJ9.eyJzdWIiOiJBZG1pbjExQCIsImlhdCI6MTc0NDg4Mjk5NiwiZXhwIjoxNzQ0OTY5Mzk2fQ.eMN_JBoeevbiyWqSogTIh07caLtt6zyet1k9ot4O-IM",
 							"type": "string"
 						}
 					]
@@ -449,7 +434,7 @@
 					"bearer": [
 						{
 							"key": "token",
-							"value": "eyJhbGciOiJIUzI1NiJ9.eyJzdWIiOiJhZG1pbjEiLCJpYXQiOjE3NDM5Mzc0MTEsImV4cCI6MTc0NDAyMzgxMX0.NQQYK4WQMbcjZsr0jfrmFP9jo8fsVZJ01Yg405n8t3A",
+							"value": "eyJhbGciOiJIUzI1NiJ9.eyJzdWIiOiJBZG1pbjExQCIsImlhdCI6MTc0NDYyMjIxMCwiZXhwIjoxNzQ0NzA4NjEwfQ.J_4rMEYHFiPugpOHbFbBKkKGC0paoH5BW4K_MdBenHU",
 							"type": "string"
 						}
 					]
@@ -462,7 +447,7 @@
 					}
 				],
 				"url": {
-					"raw": "http://localhost:8080/v1/users/approve-user?email=customer1@yahoo.com",
+					"raw": "http://localhost:8080/v1/users/approve-user?email=s.s.seyedein@outlook.com",
 					"protocol": "http",
 					"host": [
 						"localhost"
@@ -476,7 +461,7 @@
 					"query": [
 						{
 							"key": "email",
-							"value": "customer1@yahoo.com"
+							"value": "s.s.seyedein@outlook.com"
 						}
 					]
 				},
@@ -492,7 +477,7 @@
 					"bearer": [
 						{
 							"key": "token",
-							"value": "eyJhbGciOiJIUzI1NiJ9.eyJzdWIiOiJjdXN0b21lcjEiLCJpYXQiOjE3NDQwMzMyNTksImV4cCI6MTc0NDExOTY1OX0.Ync-RAOq6W6Nl-uxSpCNx8RnCwV4go6mXUChaR_BoVQ",
+							"value": "eyJhbGciOiJIUzI1NiJ9.eyJzdWIiOiJDdXN0b21lcjFAIiwiaWF0IjoxNzQ0NjE4NTU5LCJleHAiOjE3NDQ3MDQ5NTl9.4yvUsR9dy78ooaKyQlpgXh6-IoeczP4HaPJaJOi2ncc",
 							"type": "string"
 						}
 					]
@@ -510,7 +495,7 @@
 				],
 				"body": {
 					"mode": "raw",
-					"raw": "{\n  \"mainCategoryName\": \"دکوراسیون ساختمان\",\n  \"subCategoryName\": \"Designer\",\n  \"offerCustomerPrice\": 2000,\n  \"orderDate\": \"2025-04-07\",\n  \"orderDescription\": \"2طراح2 طراح2 طراح\",\n  \"executionDate\": \"2025-04-07\",\n  \"orderAddress\": \"tehran\"\n}\n{\n  \"mainCategoryName\": \"تاسسیات ساختمان\",\n  \"subCategoryName\": \"Designer\",\n  \"offerCustomerPrice\": 70,\n  \"orderDate\": \"2025-04-06\",\n  \"orderDescription\": \"Designer Designer Designer\",\n  \"executionDate\": \"2025-04-06\",\n  \"orderAddress\": \"tehran\"\n}",
+					"raw": "{\n  \"mainCategoryName\": \"دکوراسیون ساختمان\",\n  \"subCategoryName\": \"Designer\",\n  \"offerCustomerPrice\": 2000,\n  \"orderDate\": \"2026-04-07\",\n  \"orderDescription\": \"طراح طراح طراح\",\n  \"executionDate\": \"2026-04-07\",\n  \"orderAddress\": \"tehran\"\n}",
 					"options": {
 						"raw": {
 							"language": "json"
@@ -542,7 +527,7 @@
 					"bearer": [
 						{
 							"key": "token",
-							"value": "eyJhbGciOiJIUzI1NiJ9.eyJzdWIiOiJleHBlcnQxIiwiaWF0IjoxNzQzOTM3OTk0LCJleHAiOjE3NDQwMjQzOTR9.mmpYgAIE26uNEoPQbsg1NfFEooXbiABikDB-S3pQjGs",
+							"value": "eyJhbGciOiJIUzI1NiJ9.eyJzdWIiOiJFeHBlcnQxQCIsImlhdCI6MTc0NDYyMjUxMSwiZXhwIjoxNzQ0NzA4OTExfQ.8I24gnOf96AvSF7Rg4RPCEZLTzsvU7xXvH7YTpvj83M",
 							"type": "string"
 						}
 					]
@@ -579,7 +564,7 @@
 					"bearer": [
 						{
 							"key": "token",
-							"value": "eyJhbGciOiJIUzI1NiJ9.eyJzdWIiOiJleHBlcnQxIiwiaWF0IjoxNzQ0MDMzMjk3LCJleHAiOjE3NDQxMTk2OTd9.TD180rFQ3BO_OqtSvBV3mb426Z8i3cn9A5zjkoBJlO8",
+							"value": "eyJhbGciOiJIUzI1NiJ9.eyJzdWIiOiJFeHBlcnQxQCIsImlhdCI6MTc0NDYxODU5MCwiZXhwIjoxNzQ0NzA0OTkwfQ.7ykazFoOsiaqMWebK8JgLj4tiujIOz-HAgY8hv2PBHo",
 							"type": "string"
 						}
 					]
@@ -597,7 +582,7 @@
 				],
 				"body": {
 					"mode": "raw",
-					"raw": "{\n  \"orderNumber\": 1,\n  \"proposedPrice\": 220,\n  \"estimatedTime\": 22,\n  \"startTime\": \"22:00\"\n}",
+					"raw": "{\n  \"orderNumber\": 1,\n  \"proposedPrice\": 1000,\n  \"estimatedTime\": 2,\n  \"availableTime\": \"Tomorrow at 11:00\"\n}",
 					"options": {
 						"raw": {
 							"language": "json"
@@ -629,7 +614,7 @@
 					"bearer": [
 						{
 							"key": "token",
-							"value": "eyJhbGciOiJIUzI1NiJ9.eyJzdWIiOiJjdXN0b21lcjEiLCJpYXQiOjE3NDQwNDU3NDQsImV4cCI6MTc0NDEzMjE0NH0.WJcFoHutLNHV791ds39LpSoEtdssQxiGTQyUDHEaXLA",
+							"value": "eyJhbGciOiJIUzI1NiJ9.eyJzdWIiOiJDdXN0b21lcjFAIiwiaWF0IjoxNzQ0NjIyMzM3LCJleHAiOjE3NDQ3MDg3Mzd9.xLLR4d-ppOyfgplCFkPlkzM102_fMAz6bFgNTNy9FAY",
 							"type": "string"
 						}
 					]
@@ -642,7 +627,7 @@
 					}
 				],
 				"url": {
-					"raw": "http://localhost:8080/v1/customers/order-offers?pageNumber=0&size=10&sortBy=proposedPrice&sortDir=asc",
+					"raw": "http://localhost:8080/v1/customers/order-offers?pageNumber=0&size=10&sortBy=expert.rating&sortDir=asc",
 					"protocol": "http",
 					"host": [
 						"localhost"
@@ -664,7 +649,7 @@
 						},
 						{
 							"key": "sortBy",
-							"value": "proposedPrice"
+							"value": "expert.rating"
 						},
 						{
 							"key": "sortDir",
@@ -677,6 +662,43 @@
 			"response": []
 		},
 		{
+			"name": "j-F-15-1-all-orders-offers(customer)..........",
+			"request": {
+				"auth": {
+					"type": "bearer",
+					"bearer": [
+						{
+							"key": "token",
+							"value": "eyJhbGciOiJIUzI1NiJ9.eyJzdWIiOiJDdXN0b21lcjFAIiwiaWF0IjoxNzQ0NjIyMzM3LCJleHAiOjE3NDQ3MDg3Mzd9.xLLR4d-ppOyfgplCFkPlkzM102_fMAz6bFgNTNy9FAY",
+							"type": "string"
+						}
+					]
+				},
+				"method": "GET",
+				"header": [
+					{
+						"key": "accept",
+						"value": "*/*"
+					}
+				],
+				"url": {
+					"raw": "http://localhost:8080/v1/customers/order-offers",
+					"protocol": "http",
+					"host": [
+						"localhost"
+					],
+					"port": "8080",
+					"path": [
+						"v1",
+						"customers",
+						"order-offers"
+					]
+				},
+				"description": "Generated from cURL: curl -X 'GET' \\\n  'http://localhost:8080/v1/customers/order-offers?email=customer1%40yahoo.com&password=123' \\\n  -H 'accept: */*'"
+			},
+			"response": []
+		},
+		{
 			"name": "j-F-15-approve-offer(customer)",
 			"request": {
 				"auth": {
@@ -684,7 +706,7 @@
 					"bearer": [
 						{
 							"key": "token",
-							"value": "eyJhbGciOiJIUzI1NiJ9.eyJzdWIiOiJjdXN0b21lcjEiLCJpYXQiOjE3NDQwMzMyNTksImV4cCI6MTc0NDExOTY1OX0.Ync-RAOq6W6Nl-uxSpCNx8RnCwV4go6mXUChaR_BoVQ",
+							"value": "eyJhbGciOiJIUzI1NiJ9.eyJzdWIiOiJDdXN0b21lcjFAIiwiaWF0IjoxNzQ0NjE4NTU5LCJleHAiOjE3NDQ3MDQ5NTl9.4yvUsR9dy78ooaKyQlpgXh6-IoeczP4HaPJaJOi2ncc",
 							"type": "string"
 						}
 					]
@@ -728,14 +750,14 @@
 			"response": []
 		},
 		{
-			"name": "j-16-expert-start-working",
+			"name": "j-16-start-working(expert)",
 			"request": {
 				"auth": {
 					"type": "bearer",
 					"bearer": [
 						{
 							"key": "token",
-							"value": "eyJhbGciOiJIUzI1NiJ9.eyJzdWIiOiJleHBlcnQxIiwiaWF0IjoxNzQ0MDMzMjk3LCJleHAiOjE3NDQxMTk2OTd9.TD180rFQ3BO_OqtSvBV3mb426Z8i3cn9A5zjkoBJlO8",
+							"value": "eyJhbGciOiJIUzI1NiJ9.eyJzdWIiOiJFeHBlcnQxQCIsImlhdCI6MTc0NDYxODU5MCwiZXhwIjoxNzQ0NzA0OTkwfQ.7ykazFoOsiaqMWebK8JgLj4tiujIOz-HAgY8hv2PBHo",
 							"type": "string"
 						}
 					]
@@ -786,7 +808,7 @@
 					"bearer": [
 						{
 							"key": "token",
-							"value": "eyJhbGciOiJIUzI1NiJ9.eyJzdWIiOiJleHBlcnQxIiwiaWF0IjoxNzQ0MDMzMjk3LCJleHAiOjE3NDQxMTk2OTd9.TD180rFQ3BO_OqtSvBV3mb426Z8i3cn9A5zjkoBJlO8",
+							"value": "eyJhbGciOiJIUzI1NiJ9.eyJzdWIiOiJFeHBlcnQxQCIsImlhdCI6MTc0NDYxODU5MCwiZXhwIjoxNzQ0NzA0OTkwfQ.7ykazFoOsiaqMWebK8JgLj4tiujIOz-HAgY8hv2PBHo",
 							"type": "string"
 						}
 					]
@@ -837,7 +859,7 @@
 					"bearer": [
 						{
 							"key": "token",
-							"value": "eyJhbGciOiJIUzI1NiJ9.eyJzdWIiOiJhZG1pbjEiLCJpYXQiOjE3NDQwMDY5OTIsImV4cCI6MTc0NDA5MzM5Mn0.UcuDs1oFcLIdXh0MuA7scLvRSpHDM5A8ZyuU-szI7Eg",
+							"value": "eyJhbGciOiJIUzI1NiJ9.eyJzdWIiOiJBZG1pbjExQCIsImlhdCI6MTc0NDYxODMxOSwiZXhwIjoxNzQ0NzA0NzE5fQ.arxvthYbujMSuvB8jmnqp7YNb-jublq-i1mM-Ly7DSE",
 							"type": "string"
 						}
 					]
@@ -850,7 +872,7 @@
 					}
 				],
 				"url": {
-					"raw": "http://localhost:8080/v1/credits/add-balance?email=customer1@yahoo.com&balance=2000",
+					"raw": "http://localhost:8080/v1/credits/add-balance?email=sanaz.seyedin@yahoo.com&balance=2000",
 					"protocol": "http",
 					"host": [
 						"localhost"
@@ -864,7 +886,7 @@
 					"query": [
 						{
 							"key": "email",
-							"value": "customer1@yahoo.com"
+							"value": "sanaz.seyedin@yahoo.com"
 						},
 						{
 							"key": "balance",
@@ -884,7 +906,7 @@
 					"bearer": [
 						{
 							"key": "token",
-							"value": "eyJhbGciOiJIUzI1NiJ9.eyJzdWIiOiJjdXN0b21lcjEiLCJpYXQiOjE3NDQwMzUyNDUsImV4cCI6MTc0NDEyMTY0NX0.5DBeDMo2M0eYrIW0Oh0nOYa73LvjqjeiY3Yq_JFqZsc",
+							"value": "eyJhbGciOiJIUzI1NiJ9.eyJzdWIiOiJDdXN0b21lcjFAIiwiaWF0IjoxNzQ0NjE4NTU5LCJleHAiOjE3NDQ3MDQ5NTl9.4yvUsR9dy78ooaKyQlpgXh6-IoeczP4HaPJaJOi2ncc",
 							"type": "string"
 						}
 					]
@@ -931,7 +953,7 @@
 					"bearer": [
 						{
 							"key": "token",
-							"value": "eyJhbGciOiJIUzI1NiJ9.eyJzdWIiOiJjdXN0b21lcjEiLCJpYXQiOjE3NDQwMzUyNDUsImV4cCI6MTc0NDEyMTY0NX0.5DBeDMo2M0eYrIW0Oh0nOYa73LvjqjeiY3Yq_JFqZsc",
+							"value": "eyJhbGciOiJIUzI1NiJ9.eyJzdWIiOiJDdXN0b21lcjFAIiwiaWF0IjoxNzQ0NjE4NTU5LCJleHAiOjE3NDQ3MDQ5NTl9.4yvUsR9dy78ooaKyQlpgXh6-IoeczP4HaPJaJOi2ncc",
 							"type": "string"
 						}
 					]
@@ -1009,7 +1031,7 @@
 					"bearer": [
 						{
 							"key": "token",
-							"value": "eyJhbGciOiJIUzI1NiJ9.eyJzdWIiOiJjdXN0b21lcjEiLCJpYXQiOjE3NDQwMzUyNDUsImV4cCI6MTc0NDEyMTY0NX0.5DBeDMo2M0eYrIW0Oh0nOYa73LvjqjeiY3Yq_JFqZsc",
+							"value": "eyJhbGciOiJIUzI1NiJ9.eyJzdWIiOiJDdXN0b21lcjFAIiwiaWF0IjoxNzQ0NjE4NTU5LCJleHAiOjE3NDQ3MDQ5NTl9.4yvUsR9dy78ooaKyQlpgXh6-IoeczP4HaPJaJOi2ncc",
 							"type": "string"
 						}
 					]
@@ -1027,7 +1049,7 @@
 				],
 				"body": {
 					"mode": "raw",
-					"raw": "{\n  \"cardNumber\": \"2666666666666666\",\n  \"cardHolderName\": \"customer1\",\n  \"expiryDate\": \"2028-04-07\",\n  \"cvv2\": 111,\n  \"password\": \"1111\"\n}",
+					"raw": "{\n  \"cardNumber\": \"1666666666666666\",\n  \"cardHolderName\": \"customer1\",\n  \"expiryDate\": \"2028-04-07\",\n  \"cvv2\": 111,\n  \"password\": \"1111\"\n}",
 					"options": {
 						"raw": {
 							"language": "json"
@@ -1035,7 +1057,7 @@
 					}
 				},
 				"url": {
-					"raw": "http://localhost:8080/v1/orders/paid/online?orderNumber=1&offerNumber=1&captchaId=af17960c-a06a-43d6-afe8-f80a5a568c3a&captchaCode=2116",
+					"raw": "http://localhost:8080/v1/orders/paid/online?orderNumber=1&offerNumber=1&captchaId=71bcf043-21f9-4268-a4f9-544c4925df63&captchaCode=5050",
 					"protocol": "http",
 					"host": [
 						"localhost"
@@ -1058,11 +1080,11 @@
 						},
 						{
 							"key": "captchaId",
-							"value": "af17960c-a06a-43d6-afe8-f80a5a568c3a"
+							"value": "71bcf043-21f9-4268-a4f9-544c4925df63"
 						},
 						{
 							"key": "captchaCode",
-							"value": "2116"
+							"value": "5050"
 						}
 					]
 				},
@@ -1078,7 +1100,7 @@
 					"bearer": [
 						{
 							"key": "token",
-							"value": "eyJhbGciOiJIUzI1NiJ9.eyJzdWIiOiJjdXN0b21lcjEiLCJpYXQiOjE3NDQwNDM3OTgsImV4cCI6MTc0NDEzMDE5OH0.9naQW0TlGxeaqPfrayVYKCQeCc9xb7etlES_TN0oSt8",
+							"value": "eyJhbGciOiJIUzI1NiJ9.eyJzdWIiOiJleHBlcnQxIiwiaWF0IjoxNzQ0MTEwNzE2LCJleHAiOjE3NDQxOTcxMTZ9.oyZyrKVML_g7Xl_FLN4whNj1_r2nh5qasuHuwpSE2hI",
 							"type": "string"
 						}
 					]
@@ -1108,90 +1130,6 @@
 			"response": []
 		},
 		{
-			"name": "j-F-19-paid-money(customer)",
-			"request": {
-				"auth": {
-					"type": "bearer",
-					"bearer": [
-						{
-							"key": "token",
-							"value": "eyJhbGciOiJIUzI1NiJ9.eyJzdWIiOiJleHBlcnQxIiwiaWF0IjoxNzQzOTU3NDY2LCJleHAiOjE3NDQwNDM4NjZ9.rDEq4-O3oYWNicVdyvWthtCjP1YQBwwtVAN3E442UAk",
-							"type": "string"
-						}
-					]
-				},
-				"method": "PUT",
-				"header": [
-					{
-						"key": "accept",
-						"value": "*/*"
-					}
-				],
-				"url": {
-					"raw": "http://localhost:8080/v1/orders/paid?orderNumber=1&offerNumber=1",
-					"protocol": "http",
-					"host": [
-						"localhost"
-					],
-					"port": "8080",
-					"path": [
-						"v1",
-						"orders",
-						"paid"
-					],
-					"query": [
-						{
-							"key": "orderNumber",
-							"value": "1"
-						},
-						{
-							"key": "offerNumber",
-							"value": "1"
-						}
-					]
-				},
-				"description": "Generated from cURL: curl -X 'PUT' \\\r\n  'http://localhost:8080/v1/orders/paid?email=customer1%40yahoo.com&password=123&orderNumber=1&offerNumber=1' \\\r\n  -H 'accept: */*'"
-			},
-			"response": []
-		},
-		{
-			"name": "j-F-20-show-credit(customer & expert)",
-			"request": {
-				"auth": {
-					"type": "bearer",
-					"bearer": [
-						{
-							"key": "token",
-							"value": "eyJhbGciOiJIUzI1NiJ9.eyJzdWIiOiJhZG1pbjEiLCJpYXQiOjE3NDM5NTY4MDUsImV4cCI6MTc0NDA0MzIwNX0.EBAZWBfEu_w5CBUQFdAOmidVJ1vmrw2P_G999NUSWf8",
-							"type": "string"
-						}
-					]
-				},
-				"method": "GET",
-				"header": [
-					{
-						"key": "accept",
-						"value": "*/*"
-					}
-				],
-				"url": {
-					"raw": "http://localhost:8080/v1/credits/show-credit",
-					"protocol": "http",
-					"host": [
-						"localhost"
-					],
-					"port": "8080",
-					"path": [
-						"v1",
-						"credits",
-						"show-credit"
-					]
-				},
-				"description": "Generated from cURL: curl -X 'GET' \\\n  'http://localhost:8080/v1/credits/show-credit?email=customer1%40yahoo.com&password=customer1' \\\n  -H 'accept: */*'"
-			},
-			"response": []
-		},
-		{
 			"name": "j-F-21-add-comment-and-rate(customer)",
 			"request": {
 				"auth": {
@@ -1199,7 +1137,7 @@
 					"bearer": [
 						{
 							"key": "token",
-							"value": "eyJhbGciOiJIUzI1NiJ9.eyJzdWIiOiJjdXN0b21lcjEiLCJpYXQiOjE3NDQwNDQ1NjUsImV4cCI6MTc0NDEzMDk2NX0.WooENKkdE6Vojg0xLifxMq64yoj6ZlTfqIgA6Ic4rsg",
+							"value": "eyJhbGciOiJIUzI1NiJ9.eyJzdWIiOiJDdXN0b21lcjFAIiwiaWF0IjoxNzQ0NjE4NTU5LCJleHAiOjE3NDQ3MDQ5NTl9.4yvUsR9dy78ooaKyQlpgXh6-IoeczP4HaPJaJOi2ncc",
 							"type": "string"
 						}
 					]
@@ -1249,7 +1187,7 @@
 					"bearer": [
 						{
 							"key": "token",
-							"value": "eyJhbGciOiJIUzI1NiJ9.eyJzdWIiOiJleHBlcnQxIiwiaWF0IjoxNzQ0MDQzNzU1LCJleHAiOjE3NDQxMzAxNTV9.xrecoKUfhYMRT96rKlFpzL7y9b8JUpz2_FW4_SvTuHM",
+							"value": "eyJhbGciOiJIUzI1NiJ9.eyJzdWIiOiJFeHBlcnQxQCIsImlhdCI6MTc0NDYxODU5MCwiZXhwIjoxNzQ0NzA0OTkwfQ.7ykazFoOsiaqMWebK8JgLj4tiujIOz-HAgY8hv2PBHo",
 							"type": "string"
 						}
 					]
@@ -1286,7 +1224,7 @@
 					"bearer": [
 						{
 							"key": "token",
-							"value": "eyJhbGciOiJIUzI1NiJ9.eyJzdWIiOiJleHBlcnQxIiwiaWF0IjoxNzQ0MDQ1OTU1LCJleHAiOjE3NDQxMzIzNTV9.CQrPnmFh_4pfluuy2ouzfGNHaf9Z9NIip7fDrrmvTfU",
+							"value": "eyJhbGciOiJIUzI1NiJ9.eyJzdWIiOiJFeHBlcnQxQCIsImlhdCI6MTc0NDYxODU5MCwiZXhwIjoxNzQ0NzA0OTkwfQ.7ykazFoOsiaqMWebK8JgLj4tiujIOz-HAgY8hv2PBHo",
 							"type": "string"
 						}
 					]
@@ -1334,7 +1272,7 @@
 					"bearer": [
 						{
 							"key": "token",
-							"value": "eyJhbGciOiJIUzI1NiJ9.eyJzdWIiOiJhZG1pbjEiLCJpYXQiOjE3NDM5NDE3MTAsImV4cCI6MTc0NDAyODExMH0.65PycwVKklQIdvwL4ARPbDSNAPefJbjrpe9Jqtb6RJI",
+							"value": "eyJhbGciOiJIUzI1NiJ9.eyJzdWIiOiJBZG1pbjExQCIsImlhdCI6MTc0NDYxODMxOSwiZXhwIjoxNzQ0NzA0NzE5fQ.arxvthYbujMSuvB8jmnqp7YNb-jublq-i1mM-Ly7DSE",
 							"type": "string"
 						}
 					]
@@ -1402,7 +1340,7 @@
 					"bearer": [
 						{
 							"key": "token",
-							"value": "eyJhbGciOiJIUzI1NiJ9.eyJzdWIiOiJhZG1pbjEiLCJpYXQiOjE3NDQwNDg1MDUsImV4cCI6MTc0NDEzNDkwNX0.UHXRKo6EJB2tTH_PQM02S8XfXq0RczGrhKbn9xeCqEM",
+							"value": "eyJhbGciOiJIUzI1NiJ9.eyJzdWIiOiJBZG1pbjExQCIsImlhdCI6MTc0NDYzMDkyNywiZXhwIjoxNzQ0NzE3MzI3fQ.yi-mMpGXuzPvSKBNMbNostx9OQNkuLKn4GFFBdzACiw",
 							"type": "string"
 						}
 					]
@@ -1439,7 +1377,7 @@
 					"bearer": [
 						{
 							"key": "token",
-							"value": "eyJhbGciOiJIUzI1NiJ9.eyJzdWIiOiJhZG1pbjEiLCJpYXQiOjE3NDQwNDg1MDUsImV4cCI6MTc0NDEzNDkwNX0.UHXRKo6EJB2tTH_PQM02S8XfXq0RczGrhKbn9xeCqEM",
+							"value": "eyJhbGciOiJIUzI1NiJ9.eyJzdWIiOiJBZG1pbjExQCIsImlhdCI6MTc0NDYzMDkyNywiZXhwIjoxNzQ0NzE3MzI3fQ.yi-mMpGXuzPvSKBNMbNostx9OQNkuLKn4GFFBdzACiw",
 							"type": "string"
 						}
 					]
@@ -1476,7 +1414,7 @@
 					"bearer": [
 						{
 							"key": "token",
-							"value": "eyJhbGciOiJIUzI1NiJ9.eyJzdWIiOiJhZG1pbjEiLCJpYXQiOjE3NDQwNDg1MDUsImV4cCI6MTc0NDEzNDkwNX0.UHXRKo6EJB2tTH_PQM02S8XfXq0RczGrhKbn9xeCqEM",
+							"value": "eyJhbGciOiJIUzI1NiJ9.eyJzdWIiOiJBZG1pbjExQCIsImlhdCI6MTc0NDYzMDkyNywiZXhwIjoxNzQ0NzE3MzI3fQ.yi-mMpGXuzPvSKBNMbNostx9OQNkuLKn4GFFBdzACiw",
 							"type": "string"
 						}
 					]
@@ -1523,7 +1461,7 @@
 					"bearer": [
 						{
 							"key": "token",
-							"value": "eyJhbGciOiJIUzI1NiJ9.eyJzdWIiOiJleHBlcnQxIiwiaWF0IjoxNzQzOTU3NDY2LCJleHAiOjE3NDQwNDM4NjZ9.rDEq4-O3oYWNicVdyvWthtCjP1YQBwwtVAN3E442UAk",
+							"value": "eyJhbGciOiJIUzI1NiJ9.eyJzdWIiOiJBZG1pbjExQCIsImlhdCI6MTc0NDYzMDkyNywiZXhwIjoxNzQ0NzE3MzI3fQ.yi-mMpGXuzPvSKBNMbNostx9OQNkuLKn4GFFBdzACiw",
 							"type": "string"
 						}
 					]
@@ -1571,43 +1509,6 @@
 			"response": []
 		},
 		{
-			"name": "j-F-107-all-orders-offers(customer)",
-			"request": {
-				"auth": {
-					"type": "bearer",
-					"bearer": [
-						{
-							"key": "token",
-							"value": "eyJhbGciOiJIUzI1NiJ9.eyJzdWIiOiJjdXN0b21lcjEiLCJpYXQiOjE3NDQwNDU3NDQsImV4cCI6MTc0NDEzMjE0NH0.WJcFoHutLNHV791ds39LpSoEtdssQxiGTQyUDHEaXLA",
-							"type": "string"
-						}
-					]
-				},
-				"method": "GET",
-				"header": [
-					{
-						"key": "accept",
-						"value": "*/*"
-					}
-				],
-				"url": {
-					"raw": "http://localhost:8080/v1/customers/order-offers",
-					"protocol": "http",
-					"host": [
-						"localhost"
-					],
-					"port": "8080",
-					"path": [
-						"v1",
-						"customers",
-						"order-offers"
-					]
-				},
-				"description": "Generated from cURL: curl -X 'GET' \\\n  'http://localhost:8080/v1/customers/order-offers?email=customer1%40yahoo.com&password=123' \\\n  -H 'accept: */*'"
-			},
-			"response": []
-		},
-		{
 			"name": "F-108-deleted-category-from-expert(admin-expert)",
 			"request": {
 				"auth": {
@@ -1615,7 +1516,7 @@
 					"bearer": [
 						{
 							"key": "token",
-							"value": "eyJhbGciOiJIUzI1NiJ9.eyJzdWIiOiJhZG1pbjEiLCJpYXQiOjE3NDQwNDg1MDUsImV4cCI6MTc0NDEzNDkwNX0.UHXRKo6EJB2tTH_PQM02S8XfXq0RczGrhKbn9xeCqEM",
+							"value": "eyJhbGciOiJIUzI1NiJ9.eyJzdWIiOiJBZG1pbjExQCIsImlhdCI6MTc0NDc0OTIyNywiZXhwIjoxNzQ0ODM1NjI3fQ.bF-FcLXW6GVodPuX4LYMvpJDATWAcHvF_5bBmV_66i4",
 							"type": "string"
 						}
 					]
@@ -1628,7 +1529,7 @@
 					}
 				],
 				"url": {
-					"raw": "http://localhost:8080/v1/users/expert-category?email=expert1@yahoo.com&categoryNames=Desi",
+					"raw": "http://localhost:8080/v1/users/expert-category?email=s.s.seyedein@outlook.com&categoryNames=Designer",
 					"protocol": "http",
 					"host": [
 						"localhost"
@@ -1642,11 +1543,11 @@
 					"query": [
 						{
 							"key": "email",
-							"value": "expert1@yahoo.com"
+							"value": "s.s.seyedein@outlook.com"
 						},
 						{
 							"key": "categoryNames",
-							"value": "Desi"
+							"value": "Designer"
 						}
 					]
 				},
@@ -1662,7 +1563,7 @@
 					"bearer": [
 						{
 							"key": "token",
-							"value": "eyJhbGciOiJIUzI1NiJ9.eyJzdWIiOiJleHBlcnQxIiwiaWF0IjoxNzQ0MDQ1OTU1LCJleHAiOjE3NDQxMzIzNTV9.CQrPnmFh_4pfluuy2ouzfGNHaf9Z9NIip7fDrrmvTfU",
+							"value": "eyJhbGciOiJIUzI1NiJ9.eyJzdWIiOiJleHBlcnQxIiwiaWF0IjoxNzQ0MTEwNzE2LCJleHAiOjE3NDQxOTcxMTZ9.oyZyrKVML_g7Xl_FLN4whNj1_r2nh5qasuHuwpSE2hI",
 							"type": "string"
 						}
 					]
@@ -1675,7 +1576,7 @@
 					}
 				],
 				"url": {
-					"raw": "http://localhost:8080/v1/users/add-expert-categories?categoryNames=Desi",
+					"raw": "http://localhost:8080/v1/users/add-expert-categories?categoryNames=Designer1",
 					"protocol": "http",
 					"host": [
 						"localhost"
@@ -1689,7 +1590,7 @@
 					"query": [
 						{
 							"key": "categoryNames",
-							"value": "Desi"
+							"value": "Designer1"
 						}
 					]
 				},
@@ -1705,7 +1606,7 @@
 					"bearer": [
 						{
 							"key": "token",
-							"value": "eyJhbGciOiJIUzI1NiJ9.eyJzdWIiOiJhZG1pbjEiLCJpYXQiOjE3NDQwNDg1MDUsImV4cCI6MTc0NDEzNDkwNX0.UHXRKo6EJB2tTH_PQM02S8XfXq0RczGrhKbn9xeCqEM",
+							"value": "eyJhbGciOiJIUzI1NiJ9.eyJzdWIiOiJBZG1pbjExQCIsImlhdCI6MTc0NDc0OTIyNywiZXhwIjoxNzQ0ODM1NjI3fQ.bF-FcLXW6GVodPuX4LYMvpJDATWAcHvF_5bBmV_66i4",
 							"type": "string"
 						}
 					]
@@ -1723,7 +1624,7 @@
 				],
 				"body": {
 					"mode": "raw",
-					"raw": "[\n  \"Desi\"\n]",
+					"raw": "[\n  \"Designer\"\n]",
 					"options": {
 						"raw": {
 							"language": "json"
@@ -1731,7 +1632,7 @@
 					}
 				},
 				"url": {
-					"raw": "http://localhost:8080/v1/admin/add-expert-subcategories?expertEmail=expert1@yahoo.com",
+					"raw": "http://localhost:8080/v1/admin/add-expert-subcategories?expertEmail=s.s.seyedein@outlook.com",
 					"protocol": "http",
 					"host": [
 						"localhost"
@@ -1745,7 +1646,7 @@
 					"query": [
 						{
 							"key": "expertEmail",
-							"value": "expert1@yahoo.com"
+							"value": "s.s.seyedein@outlook.com"
 						}
 					]
 				},
@@ -1761,7 +1662,7 @@
 					"bearer": [
 						{
 							"key": "token",
-							"value": "eyJhbGciOiJIUzI1NiJ9.eyJzdWIiOiJjdXN0b21lcjEiLCJpYXQiOjE3NDQwNDU3NDQsImV4cCI6MTc0NDEzMjE0NH0.WJcFoHutLNHV791ds39LpSoEtdssQxiGTQyUDHEaXLA",
+							"value": "eyJhbGciOiJIUzI1NiJ9.eyJzdWIiOiJjdXN0b21lcjEiLCJpYXQiOjE3NDQxMTA2NTQsImV4cCI6MTc0NDE5NzA1NH0.NLxNUdGlP3nXIYet3UahtuCfD1DAoX19oqmcJbO5fnQ",
 							"type": "string"
 						}
 					]
@@ -1779,7 +1680,7 @@
 				],
 				"body": {
 					"mode": "raw",
-					"raw": "{\n  \"mainCategoryName\": \"دکوراسیون ساختمان\",\n  \"subCategoryName\": \"طراح\",\n  \"offerCustomerPrice\": 100,\n  \"orderDate\": \"2026-04-06\",\n  \"orderDescription\": \"ssssss\",\n  \"executionDate\": \"2026-04-06\",\n  \"orderAddress\": \"tehran\"\n}\n{\n  \"offerCustomerPrice\": 6000,\n  \"orderDate\": \"2025-04-04\",\n  \"orderDescription\": \"update\",\n  \"executionDate\": \"2025-04-04\",\n  \"orderAddress\": \"teh\",\n  \"subCategoryName\": \"طراح\"\n}",
+					"raw": "{\n  \"mainCategoryName\": \"دکوراسیون ساختمان\",\n  \"subCategoryName\": \"Designer1\",\n  \"offerCustomerPrice\": 100,\n  \"orderDate\": \"2026-04-06\",\n  \"orderDescription\": \"ssssss\",\n  \"executionDate\": \"2026-04-06\",\n  \"orderAddress\": \"tehran\"\n}\n{\n  \"offerCustomerPrice\": 6000,\n  \"orderDate\": \"2025-04-04\",\n  \"orderDescription\": \"update\",\n  \"executionDate\": \"2025-04-04\",\n  \"orderAddress\": \"teh\",\n  \"subCategoryName\": \"طراح\"\n}",
 					"options": {
 						"raw": {
 							"language": "json"
@@ -1853,14 +1754,14 @@
 			"response": []
 		},
 		{
-			"name": "j-F-113-order-history(customer)",
+			"name": "j-F-113-order-history(customer)..........",
 			"request": {
 				"auth": {
 					"type": "bearer",
 					"bearer": [
 						{
 							"key": "token",
-							"value": "eyJhbGciOiJIUzI1NiJ9.eyJzdWIiOiJjdXN0b21lcjEiLCJpYXQiOjE3NDQwNDU3NDQsImV4cCI6MTc0NDEzMjE0NH0.WJcFoHutLNHV791ds39LpSoEtdssQxiGTQyUDHEaXLA",
+							"value": "eyJhbGciOiJIUzI1NiJ9.eyJzdWIiOiJDdXN0b21lcjFAIiwiaWF0IjoxNzQ0NjE4NTU5LCJleHAiOjE3NDQ3MDQ5NTl9.4yvUsR9dy78ooaKyQlpgXh6-IoeczP4HaPJaJOi2ncc",
 							"type": "string"
 						}
 					]
@@ -2096,7 +1997,7 @@
 					}
 				],
 				"url": {
-					"raw": "http://localhost:8080/v1/categories/delete-sub-category?subCategoryName=Desi",
+					"raw": "http://localhost:8080/v1/categories/delete-sub-category?subCategoryName=Designer",
 					"protocol": "http",
 					"host": [
 						"localhost"
@@ -2110,7 +2011,7 @@
 					"query": [
 						{
 							"key": "subCategoryName",
-							"value": "Desi"
+							"value": "Designer"
 						}
 					]
 				},
@@ -2126,7 +2027,7 @@
 					"bearer": [
 						{
 							"key": "token",
-							"value": "eyJhbGciOiJIUzI1NiJ9.eyJzdWIiOiJhZG1pbjEiLCJpYXQiOjE3NDQwNDg1MDUsImV4cCI6MTc0NDEzNDkwNX0.UHXRKo6EJB2tTH_PQM02S8XfXq0RczGrhKbn9xeCqEM",
+							"value": "eyJhbGciOiJIUzI1NiJ9.eyJzdWIiOiJhZG1pbjEiLCJpYXQiOjE3NDQxMTA2NDgsImV4cCI6MTc0NDE5NzA0OH0.ZNuNus6keF3WA4-O3kpKQGChFCDQSXKcZBBal7E2p5s",
 							"type": "string"
 						}
 					]
@@ -2139,7 +2040,7 @@
 					}
 				],
 				"url": {
-					"raw": "http://localhost:8080/v1/categories/delete-main-category?mainCategoryName=دکوراسیون",
+					"raw": "http://localhost:8080/v1/categories/delete-main-category?mainCategoryName=دکوراسیون ساختمان",
 					"protocol": "http",
 					"host": [
 						"localhost"
@@ -2153,7 +2054,7 @@
 					"query": [
 						{
 							"key": "mainCategoryName",
-							"value": "دکوراسیون"
+							"value": "دکوراسیون ساختمان"
 						}
 					]
 				},
@@ -2205,7 +2106,7 @@
 			"response": []
 		},
 		{
-			"name": "captcha-verify",
+			"name": "............................captcha-verify.............................",
 			"request": {
 				"method": "POST",
 				"header": [
@@ -2238,6 +2139,981 @@
 					]
 				},
 				"description": "Generated from cURL: curl -X 'POST' \\\n  'http://localhost:8080/v1/captcha/verify?id=f0232394-a5a9-4c17-b355-037ef85d1dff&code=6807' \\\n  -H 'accept: */*' \\\n  -d ''"
+			},
+			"response": []
+		},
+		{
+			"name": "filter-users(admin)",
+			"request": {
+				"auth": {
+					"type": "bearer",
+					"bearer": [
+						{
+							"key": "token",
+							"value": "eyJhbGciOiJIUzI1NiJ9.eyJzdWIiOiJBZG1pbjExQCIsImlhdCI6MTc0NDYxODMxOSwiZXhwIjoxNzQ0NzA0NzE5fQ.arxvthYbujMSuvB8jmnqp7YNb-jublq-i1mM-Ly7DSE",
+							"type": "string"
+						}
+					]
+				},
+				"method": "POST",
+				"header": [
+					{
+						"key": "accept",
+						"value": "*/*"
+					},
+					{
+						"key": "Content-Type",
+						"value": "application/json"
+					}
+				],
+				"body": {
+					"mode": "raw",
+					"raw": "{\n  \"userType\": \"CUSTOMER\",\n  \"rating\": 0,\n  \"firstName\": \"string\",\n  \"lastName\": \"string\",\n  \"email\": \"string\",\n  \"categoryNames\": [\n    \"string\"\n  ],\n  \"registrationStartDate\": \"2025-04-07T21:25:04.347Z\",\n  \"orderStatus\": \"WAITING_FOR_EXPERT_PROPOSALS\",\n  \"orderStartDate\": \"2025-04-07T21:25:04.347Z\",\n  \"orderEndDate\": \"2025-04-07T21:25:04.347Z\",\n  \"subCategoryName\": \"string\"\n}",
+					"options": {
+						"raw": {
+							"language": "json"
+						}
+					}
+				},
+				"url": {
+					"raw": "http://localhost:8080/v1/users/filter-users?pageNumber=0&size=10&sortBy=firstName&sortDir=asc",
+					"protocol": "http",
+					"host": [
+						"localhost"
+					],
+					"port": "8080",
+					"path": [
+						"v1",
+						"users",
+						"filter-users"
+					],
+					"query": [
+						{
+							"key": "pageNumber",
+							"value": "0"
+						},
+						{
+							"key": "size",
+							"value": "10"
+						},
+						{
+							"key": "sortBy",
+							"value": "firstName"
+						},
+						{
+							"key": "sortDir",
+							"value": "asc"
+						}
+					]
+				},
+				"description": "Generated from cURL: curl -X 'POST' \\\n  'http://localhost:8080/v1/users/filter-users?pageNumber=0&size=10&sortBy=firstName&sortDir=asc' \\\n  -H 'accept: */*' \\\n  -H 'Content-Type: application/json' \\\n  -d '{\n  \"userType\": \"CUSTOMER\",\n  \"rating\": 0,\n  \"firstName\": \"string\",\n  \"lastName\": \"string\",\n  \"email\": \"string\",\n  \"categoryNames\": [\n    \"string\"\n  ],\n  \"registrationStartDate\": \"2025-04-07T21:25:04.347Z\",\n  \"orderStatus\": \"WAITING_FOR_EXPERT_PROPOSALS\",\n  \"orderStartDate\": \"2025-04-07T21:25:04.347Z\",\n  \"orderEndDate\": \"2025-04-07T21:25:04.347Z\",\n  \"subCategoryName\": \"string\"\n}'"
+			},
+			"response": []
+		},
+		{
+			"name": "filter-comprehensive-orders",
+			"request": {
+				"auth": {
+					"type": "bearer",
+					"bearer": [
+						{
+							"key": "token",
+							"value": "eyJhbGciOiJIUzI1NiJ9.eyJzdWIiOiJBZG1pbjExQCIsImlhdCI6MTc0NDc4NzgzMSwiZXhwIjoxNzQ0ODc0MjMxfQ.SwG50XZlLjY0q3O9ZbEHscPL3tX8N4IaCy3QS0eBfhg",
+							"type": "string"
+						}
+					]
+				},
+				"method": "POST",
+				"header": [
+					{
+						"key": "accept",
+						"value": "*/*"
+					},
+					{
+						"key": "Content-Type",
+						"value": "application/json"
+					}
+				],
+				"body": {
+					"mode": "raw",
+					"raw": "{\n  \"userName\": \"string\",\n  \"firstName\": \"string\",\n  \"lastName\": \"string\",\n  \"email\": \"string\",\n  \"address\": \"string\",\n  \"userStatus\": \"NEW\",\n  \"userType\": \"CUSTOMER\",\n  \"role\": \"USER\",\n  \"orderNumber\": 0,\n  \"finalPrice\": 0,\n  \"orderStartDate\": \"2025-04-14\",\n  \"orderEndDate\": \"2025-04-14\",\n  \"executionDate\": \"2025-04-14\",\n  \"orderAddress\": \"string\",\n  \"orderDescription\": \"string\",\n  \"orderStatus\": \"WAITING_FOR_EXPERT_PROPOSALS\",\n  \"offerCustomerPrice\": 0,\n  \"startWorkingTime\": \"2025-04-14T16:01:59.063Z\",\n  \"endWorkingTime\": \"2025-04-14T16:01:59.063Z\",\n  \"startWorkingDate\": \"2025-04-14\",\n  \"endWorkingDate\": \"2025-04-14\",\n  \"proposedPrice\": 0,\n  \"estimatedTime\": 0,\n  \"startTime\": \"2025-04-14T16:01:59.063Z\",\n  \"expertRating\": 0,\n  \"categoryName\": \"Designer\",\n  \"categoryDescription\": \"string\",\n  \"categoryBasePrice\": 0,\n  \"parentCategoryName\": \"دکوراسیون ساختمان\",\n  \"reviewRating\": 0,\n  \"reviewComment\": \"string\",\n  \"createdAtStart\": \"2025-04-14T16:01:59.063Z\",\n  \"createdAtEnd\": \"2025-04-14T16:01:59.063Z\",\n  \"updatedAtStart\": \"2025-04-14T16:01:59.063Z\",\n  \"updatedAtEnd\": \"2025-04-14T16:01:59.063Z\"\n}",
+					"options": {
+						"raw": {
+							"language": "json"
+						}
+					}
+				},
+				"url": {
+					"raw": "http://localhost:8080/v1/orders/filter-comprehensive-orders?pageNumber=0&size=10&sortBy=createdAt&sortDir=asc",
+					"protocol": "http",
+					"host": [
+						"localhost"
+					],
+					"port": "8080",
+					"path": [
+						"v1",
+						"orders",
+						"filter-comprehensive-orders"
+					],
+					"query": [
+						{
+							"key": "pageNumber",
+							"value": "0"
+						},
+						{
+							"key": "size",
+							"value": "10"
+						},
+						{
+							"key": "sortBy",
+							"value": "createdAt"
+						},
+						{
+							"key": "sortDir",
+							"value": "asc"
+						}
+					]
+				},
+				"description": "Generated from cURL: curl -X 'POST' \\\n  'http://localhost:8080/v1/orders/filter-comprehensive-orders?pageNumber=0&size=10&sortBy=createdAt&sortDir=asc' \\\n  -H 'accept: */*' \\\n  -H 'Content-Type: application/json' \\\n  -d '{\n  \"userName\": \"string\",\n  \"firstName\": \"string\",\n  \"lastName\": \"string\",\n  \"email\": \"string\",\n  \"address\": \"string\",\n  \"userStatus\": \"NEW\",\n  \"userType\": \"CUSTOMER\",\n  \"role\": \"USER\",\n  \"finalPrice\": 0,\n  \"orderStartDate\": \"2025-04-08\",\n  \"orderEndDate\": \"2025-04-08\",\n  \"executionDate\": \"2025-04-08\",\n  \"orderAddress\": \"string\",\n  \"orderDescription\": \"string\",\n  \"orderStatus\": \"WAITING_FOR_EXPERT_PROPOSALS\",\n  \"offerCustomerPrice\": 0,\n  \"proposedPrice\": 0,\n  \"estimatedTime\": 0,\n  \"startTime\": \"string\",\n  \"expertRating\": 0,\n  \"categoryName\": \"string\",\n  \"categoryDescription\": \"string\",\n  \"categoryBasePrice\": 0,\n  \"parentCategoryName\": \"string\",\n  \"reviewRating\": 0,\n  \"reviewComment\": \"string\",\n  \"createdAtStart\": \"2025-04-08T09:12:01.203Z\",\n  \"createdAtEnd\": \"2025-04-08T09:12:01.203Z\",\n  \"updatedAtStart\": \"2025-04-08T09:12:01.203Z\",\n  \"updatedAtEnd\": \"2025-04-08T09:12:01.203Z\"\n}'"
+			},
+			"response": []
+		},
+		{
+			"name": "filter-date-range(admin)",
+			"request": {
+				"auth": {
+					"type": "bearer",
+					"bearer": [
+						{
+							"key": "token",
+							"value": "eyJhbGciOiJIUzI1NiJ9.eyJzdWIiOiJBZG1pbjExQCIsImlhdCI6MTc0NDY0OTkxMiwiZXhwIjoxNzQ0NzM2MzEyfQ.-j4h3cPy4t2YLvirn6rZqacIX-UIBxoXg35x86FShNg",
+							"type": "string"
+						}
+					]
+				},
+				"method": "POST",
+				"header": [
+					{
+						"key": "accept",
+						"value": "*/*"
+					},
+					{
+						"key": "Content-Type",
+						"value": "application/json"
+					}
+				],
+				"body": {
+					"mode": "raw",
+					"raw": "{\n  \"startWorkingDate\": \"2025-04-14\",\n  \"endWorkingDate\": \"2025-04-14\"\n}",
+					"options": {
+						"raw": {
+							"language": "json"
+						}
+					}
+				},
+				"url": {
+					"raw": "http://localhost:8080/v1/orders/orders/working-date",
+					"protocol": "http",
+					"host": [
+						"localhost"
+					],
+					"port": "8080",
+					"path": [
+						"v1",
+						"orders",
+						"orders",
+						"working-date"
+					]
+				},
+				"description": "Generated from cURL: curl -X 'POST' \\\n  'http://localhost:8080/v1/orders/orders/working-date' \\\n  -H 'accept: */*' \\\n  -H 'Content-Type: application/json' \\\n  -d '{\n  \"startWorkingDate\": \"2025-04-14\",\n  \"endWorkingDate\": \"2025-04-14\"\n}'"
+			},
+			"response": []
+		},
+		{
+			"name": "get-Order-Report(admin)",
+			"request": {
+				"auth": {
+					"type": "bearer",
+					"bearer": [
+						{
+							"key": "token",
+							"value": "eyJhbGciOiJIUzI1NiJ9.eyJzdWIiOiJBZG1pbjExQCIsImlhdCI6MTc0NDY0OTkxMiwiZXhwIjoxNzQ0NzM2MzEyfQ.-j4h3cPy4t2YLvirn6rZqacIX-UIBxoXg35x86FShNg",
+							"type": "string"
+						}
+					]
+				},
+				"method": "GET",
+				"header": [
+					{
+						"key": "accept",
+						"value": "*/*"
+					}
+				],
+				"url": {
+					"raw": "http://localhost:8080/v1/orders/orders-status",
+					"protocol": "http",
+					"host": [
+						"localhost"
+					],
+					"port": "8080",
+					"path": [
+						"v1",
+						"orders",
+						"orders-status"
+					]
+				},
+				"description": "Generated from cURL: curl -X 'GET' \\\n  'http://localhost:8080/v1/orders/orders-status' \\\n  -H 'accept: */*'"
+			},
+			"response": []
+		},
+		{
+			"name": "filter-users-by-registrationStartDate(admin)",
+			"request": {
+				"auth": {
+					"type": "bearer",
+					"bearer": [
+						{
+							"key": "token",
+							"value": "eyJhbGciOiJIUzI1NiJ9.eyJzdWIiOiJBZG1pbjExQCIsImlhdCI6MTc0NDYxODMxOSwiZXhwIjoxNzQ0NzA0NzE5fQ.arxvthYbujMSuvB8jmnqp7YNb-jublq-i1mM-Ly7DSE",
+							"type": "string"
+						}
+					]
+				},
+				"method": "POST",
+				"header": [
+					{
+						"key": "accept",
+						"value": "*/*"
+					},
+					{
+						"key": "Content-Type",
+						"value": "application/json"
+					}
+				],
+				"body": {
+					"mode": "raw",
+					"raw": "{\n  \"registrationStartDate\": \"2025-04-07T21:25:04.347Z\"\n}",
+					"options": {
+						"raw": {
+							"language": "json"
+						}
+					}
+				},
+				"url": {
+					"raw": "http://localhost:8080/v1/users/filter-users?pageNumber=0&size=10&sortBy=firstName&sortDir=asc",
+					"protocol": "http",
+					"host": [
+						"localhost"
+					],
+					"port": "8080",
+					"path": [
+						"v1",
+						"users",
+						"filter-users"
+					],
+					"query": [
+						{
+							"key": "pageNumber",
+							"value": "0"
+						},
+						{
+							"key": "size",
+							"value": "10"
+						},
+						{
+							"key": "sortBy",
+							"value": "firstName"
+						},
+						{
+							"key": "sortDir",
+							"value": "asc"
+						}
+					]
+				},
+				"description": "Generated from cURL: curl -X 'POST' \\\n  'http://localhost:8080/v1/users/filter-users?pageNumber=0&size=10&sortBy=firstName&sortDir=asc' \\\n  -H 'accept: */*' \\\n  -H 'Content-Type: application/json' \\\n  -d '{\n  \"userType\": \"CUSTOMER\",\n  \"rating\": 0,\n  \"firstName\": \"string\",\n  \"lastName\": \"string\",\n  \"email\": \"string\",\n  \"categoryNames\": [\n    \"string\"\n  ],\n  \"registrationStartDate\": \"2025-04-07T21:25:04.347Z\",\n  \"orderStatus\": \"WAITING_FOR_EXPERT_PROPOSALS\",\n  \"orderStartDate\": \"2025-04-07T21:25:04.347Z\",\n  \"orderEndDate\": \"2025-04-07T21:25:04.347Z\",\n  \"subCategoryName\": \"string\"\n}'"
+			},
+			"response": []
+		},
+		{
+			"name": "get-Registration-Report(admin)",
+			"request": {
+				"auth": {
+					"type": "bearer",
+					"bearer": [
+						{
+							"key": "token",
+							"value": "eyJhbGciOiJIUzI1NiJ9.eyJzdWIiOiJBZG1pbjExQCIsImlhdCI6MTc0NDY0OTkxMiwiZXhwIjoxNzQ0NzM2MzEyfQ.-j4h3cPy4t2YLvirn6rZqacIX-UIBxoXg35x86FShNg",
+							"type": "string"
+						}
+					]
+				},
+				"method": "GET",
+				"header": [
+					{
+						"key": "accept",
+						"value": "*/*"
+					}
+				],
+				"url": {
+					"raw": "http://localhost:8080/v1/users/registrations?startDate=2025-04-13T21:25:04.347Z&endDate=2025-04-14T21:25:04.347Z",
+					"protocol": "http",
+					"host": [
+						"localhost"
+					],
+					"port": "8080",
+					"path": [
+						"v1",
+						"users",
+						"registrations"
+					],
+					"query": [
+						{
+							"key": "startDate",
+							"value": "2025-04-13T21:25:04.347Z"
+						},
+						{
+							"key": "endDate",
+							"value": "2025-04-14T21:25:04.347Z"
+						}
+					]
+				},
+				"description": "Generated from cURL: curl -X 'GET' \\\n  'http://localhost:8080/v1/users/registrations?startDate=2025-04-07T21%3A25%3A04.347Z&endDate=2025-04-07T21%3A25%3A04.347Z' \\\n  -H 'accept: */*'"
+			},
+			"response": []
+		},
+		{
+			"name": "get-Expert-&-Customer->Order-Report(admin)",
+			"request": {
+				"auth": {
+					"type": "bearer",
+					"bearer": [
+						{
+							"key": "token",
+							"value": "eyJhbGciOiJIUzI1NiJ9.eyJzdWIiOiJBZG1pbjExQCIsImlhdCI6MTc0NDcwOTMwMiwiZXhwIjoxNzQ0Nzk1NzAyfQ.0gWYdfLe3dCV7bJHmDjEQZeCAkRUVFcb061oCgmgrdI",
+							"type": "string"
+						}
+					]
+				},
+				"method": "GET",
+				"header": [
+					{
+						"key": "accept",
+						"value": "*/*"
+					}
+				],
+				"url": {
+					"raw": "http://localhost:8080/v1/users/users-summary?registrationStartDate=2025-04-07T21%3A25%3A04.347Z&registrationEndDate=2025-04-07T21%3A25%3A04.347Z",
+					"protocol": "http",
+					"host": [
+						"localhost"
+					],
+					"port": "8080",
+					"path": [
+						"v1",
+						"users",
+						"users-summary"
+					],
+					"query": [
+						{
+							"key": "registrationStartDate",
+							"value": "2025-04-07T21%3A25%3A04.347Z"
+						},
+						{
+							"key": "registrationEndDate",
+							"value": "2025-04-07T21%3A25%3A04.347Z"
+						}
+					]
+				},
+				"description": "Generated from cURL: curl -X 'GET' \\\n  'http://localhost:8080/v1/users/users-summary?registrationStartDate=2025-04-07&registrationEndDate=2025-04-07' \\\n  -H 'accept: */*'"
+			},
+			"response": []
+		},
+		{
+			"name": "resend-verification",
+			"request": {
+				"method": "POST",
+				"header": [
+					{
+						"key": "accept",
+						"value": "*/*"
+					}
+				],
+				"url": {
+					"raw": "http://localhost:8080/v1/users/resend-verification?email=s.s.seyedein@outlook.com",
+					"protocol": "http",
+					"host": [
+						"localhost"
+					],
+					"port": "8080",
+					"path": [
+						"v1",
+						"users",
+						"resend-verification"
+					],
+					"query": [
+						{
+							"key": "email",
+							"value": "s.s.seyedein@outlook.com"
+						}
+					]
+				},
+				"description": "Generated from cURL: curl -X 'POST' \\\n  'http://localhost:8080/v1/users/resend-verification?email=s.s.seyedein%40outlook.com' \\\n  -H 'accept: */*' \\\n  -d ''"
+			},
+			"response": []
+		},
+		{
+			"name": "لیست تمامی مشتریان و متخصصان - فیلتر(admin) Copy",
+			"request": {
+				"auth": {
+					"type": "bearer",
+					"bearer": [
+						{
+							"key": "token",
+							"value": "eyJhbGciOiJIUzI1NiJ9.eyJzdWIiOiJBZG1pbjExQCIsImlhdCI6MTc0NDg5MjYxMiwiZXhwIjoxNzQ0OTc5MDEyfQ.PGsq729vTjMGZThcetvz2E9POwy4hkDrAlukMDFCrfs",
+							"type": "string"
+						}
+					]
+				},
+				"method": "POST",
+				"header": [
+					{
+						"key": "accept",
+						"value": "*/*"
+					},
+					{
+						"key": "Content-Type",
+						"value": "application/json"
+					}
+				],
+				"body": {
+					"mode": "raw",
+					"raw": "{\n  \"userType\": \"EXPERT\",\n  \"rating\": 0,\n  \"firstName\": \"string\",\n  \"lastName\": \"string\",\n  \"email\": \"string\",\n  \"categoryNames\": [\n    \"Designer\"\n  ]\n}",
+					"options": {
+						"raw": {
+							"language": "json"
+						}
+					}
+				},
+				"url": {
+					"raw": "http://localhost:8080/v1/users/filter-users?pageNumber=0&size=10&sortBy=firstName&sortDir=asc",
+					"protocol": "http",
+					"host": [
+						"localhost"
+					],
+					"port": "8080",
+					"path": [
+						"v1",
+						"users",
+						"filter-users"
+					],
+					"query": [
+						{
+							"key": "pageNumber",
+							"value": "0"
+						},
+						{
+							"key": "size",
+							"value": "10"
+						},
+						{
+							"key": "sortBy",
+							"value": "firstName"
+						},
+						{
+							"key": "sortDir",
+							"value": "asc"
+						}
+					]
+				},
+				"description": "Generated from cURL: curl -X 'POST' \\\n  'http://localhost:8080/v1/users/filter-users?pageNumber=0&size=10&sortBy=firstName&sortDir=asc' \\\n  -H 'accept: */*' \\\n  -H 'Content-Type: application/json' \\\n  -d '{\n  \"userType\": \"CUSTOMER\",\n  \"rating\": 0,\n  \"firstName\": \"string\",\n  \"lastName\": \"string\",\n  \"email\": \"string\",\n  \"categoryNames\": [\n    \"string\"\n  ],\n  \"registrationStartDate\": \"2025-04-07T21:25:04.347Z\",\n  \"orderStatus\": \"WAITING_FOR_EXPERT_PROPOSALS\",\n  \"orderStartDate\": \"2025-04-07T21:25:04.347Z\",\n  \"orderEndDate\": \"2025-04-07T21:25:04.347Z\",\n  \"subCategoryName\": \"string\"\n}'"
+			},
+			"response": []
+		},
+		{
+			"name": "تاریخچه کاملی از خدمات گرفته شده و انجام شده با جزئیات(admin) Copy",
+			"request": {
+				"auth": {
+					"type": "bearer",
+					"bearer": [
+						{
+							"key": "token",
+							"value": "eyJhbGciOiJIUzI1NiJ9.eyJzdWIiOiJBZG1pbjExQCIsImlhdCI6MTc0NDg5MTQ1OSwiZXhwIjoxNzQ0OTc3ODU5fQ.QYkkPixFkQiBMdqbFRY3neAGHkz_oqGsQlg70xWBxP4",
+							"type": "string"
+						}
+					]
+				},
+				"method": "POST",
+				"header": [
+					{
+						"key": "accept",
+						"value": "*/*"
+					},
+					{
+						"key": "Content-Type",
+						"value": "application/json"
+					}
+				],
+				"body": {
+					"mode": "raw",
+					"raw": "{\n  \"userName\": \"Customer1@\",\n  \"firstName\": \"Customer1@\",\n  \"lastName\": \"Customer1@\",\n  \"email\": \"sanaz.seyedin@yahoo.com\",\n  \"address\": \"Customer1@\",\n  \"userStatus\": \"NEW\",\n  \"userType\": \"CUSTOMER\",\n  \"role\": \"USER\",\n  \"orderNumber\": 0,\n  \"finalPrice\": 0,\n  \"orderStartDate\": \"2025-04-17\",\n  \"orderEndDate\": \"2025-04-17\",\n  \"executionDate\": \"2025-04-17\",\n  \"orderAddress\": \"string\",\n  \"orderDescription\": \"string\",\n  \"orderStatus\": \"WAITING_FOR_EXPERT_PROPOSALS\",\n  \"offerCustomerPrice\": 0,\n  \"startWorkingTime\": \"2025-04-17T12:13:17.287Z\",\n  \"endWorkingTime\": \"2025-04-17T12:13:17.287Z\",\n  \"startWorkingDate\": \"2025-04-17\",\n  \"endWorkingDate\": \"2025-04-17\",\n  \"proposedPrice\": 0,\n  \"estimatedTime\": 0,\n  \"startTime\": \"2025-04-17T12:13:17.287Z\",\n  \"expertRating\": 0,\n  \"categoryName\": \"Designer\",\n  \"categoryDescription\": \"string\",\n  \"categoryBasePrice\": 0,\n  \"parentCategoryName\": \"دکوراسیون ساختمان\",\n  \"reviewRating\": 0,\n  \"reviewComment\": \"good\",\n  \"createdAtStart\": \"2025-04-17T12:13:17.287Z\",\n  \"createdAtEnd\": \"2025-04-17T12:13:17.287Z\",\n  \"updatedAtStart\": \"2025-04-17T12:13:17.287Z\",\n  \"updatedAtEnd\": \"2025-04-17T12:13:17.287Z\"\n}",
+					"options": {
+						"raw": {
+							"language": "json"
+						}
+					}
+				},
+				"url": {
+					"raw": "http://localhost:8080/v1/orders/filter-comprehensive-orders?pageNumber=0&size=10&sortBy=createdAt&sortDir=asc",
+					"protocol": "http",
+					"host": [
+						"localhost"
+					],
+					"port": "8080",
+					"path": [
+						"v1",
+						"orders",
+						"filter-comprehensive-orders"
+					],
+					"query": [
+						{
+							"key": "pageNumber",
+							"value": "0"
+						},
+						{
+							"key": "size",
+							"value": "10"
+						},
+						{
+							"key": "sortBy",
+							"value": "createdAt"
+						},
+						{
+							"key": "sortDir",
+							"value": "asc"
+						}
+					]
+				},
+				"description": "Generated from cURL: curl -X 'POST' \\\n  'http://localhost:8080/v1/orders/filter-comprehensive-orders?pageNumber=0&size=10&sortBy=createdAt&sortDir=asc' \\\n  -H 'accept: */*' \\\n  -H 'Content-Type: application/json' \\\n  -d '{\n  \"orderNumber\": 0,\n  \"userName\": \"string\",\n  \"firstName\": \"string\",\n  \"lastName\": \"string\",\n  \"email\": \"string\",\n  \"address\": \"string\",\n  \"userStatus\": \"NEW\",\n  \"userType\": \"EXPE\",\n  \"role\": \"USER\",\n  \"finalPrice\": 0,\n  \"orderStartDate\": \"2025-04-17\",\n  \"orderEndDate\": \"2025-04-17\",\n  \"executionDate\": \"2025-04-17\",\n  \"orderAddress\": \"string\",\n  \"orderDescription\": \"string\",\n  \"orderStatus\": \"WAITING_FOR_EXPERT_PROPOSALS\",\n  \"offerCustomerPrice\": 0,\n  \"startWorkingTime\": \"2025-04-17T12:03:12.257Z\",\n  \"endWorkingTime\": \"2025-04-17T12:03:12.257Z\",\n  \"startWorkingDate\": \"2025-04-17\",\n  \"endWorkingDate\": \"2025-04-17\",\n  \"proposedPrice\": 0,\n  \"estimatedTime\": 0,\n  \"startTime\": \"2025-04-17T12:03:12.257Z\",\n  \"expertRating\": 0,\n  \"categoryName\": \"string\",\n  \"categoryDescription\": \"string\",\n  \"categoryBasePrice\": 0,\n  \"parentCategoryName\": \"string\",\n  \"reviewRating\": 0,\n  \"reviewComment\": \"string\",\n  \"createdAtStart\": \"2025-04-17T12:03:12.257Z\",\n  \"createdAtEnd\": \"2025-04-17T12:03:12.257Z\",\n  \"updatedAtStart\": \"2025-04-17T12:03:12.257Z\",\n  \"updatedAtEnd\": \"2025-04-17T12:03:12.257Z\"\n}'"
+			},
+			"response": []
+		},
+		{
+			"name": "تعداد سفارشات کامل شده & ثبت شده(admin) Copy",
+			"request": {
+				"auth": {
+					"type": "bearer",
+					"bearer": [
+						{
+							"key": "token",
+							"value": "eyJhbGciOiJIUzI1NiJ9.eyJzdWIiOiJBZG1pbjExQCIsImlhdCI6MTc0NDcwOTMwMiwiZXhwIjoxNzQ0Nzk1NzAyfQ.0gWYdfLe3dCV7bJHmDjEQZeCAkRUVFcb061oCgmgrdI",
+							"type": "string"
+						}
+					]
+				},
+				"method": "GET",
+				"header": [
+					{
+						"key": "accept",
+						"value": "*/*"
+					}
+				],
+				"url": {
+					"raw": "http://localhost:8080/v1/orders/orders-status",
+					"protocol": "http",
+					"host": [
+						"localhost"
+					],
+					"port": "8080",
+					"path": [
+						"v1",
+						"orders",
+						"orders-status"
+					]
+				},
+				"description": "Generated from cURL: curl -X 'GET' \\\n  'http://localhost:8080/v1/orders/orders-status' \\\n  -H 'accept: */*'"
+			},
+			"response": []
+		},
+		{
+			"name": "تاریخچه تمامی سفارشات بر اساس بازه زمانی(admin) Copy",
+			"request": {
+				"auth": {
+					"type": "bearer",
+					"bearer": [
+						{
+							"key": "token",
+							"value": "eyJhbGciOiJIUzI1NiJ9.eyJzdWIiOiJBZG1pbjExQCIsImlhdCI6MTc0NDg5MTQ1OSwiZXhwIjoxNzQ0OTc3ODU5fQ.QYkkPixFkQiBMdqbFRY3neAGHkz_oqGsQlg70xWBxP4",
+							"type": "string"
+						}
+					]
+				},
+				"method": "POST",
+				"header": [
+					{
+						"key": "accept",
+						"value": "*/*"
+					},
+					{
+						"key": "Content-Type",
+						"value": "application/json"
+					}
+				],
+				"body": {
+					"mode": "raw",
+					"raw": "{\n  \"startWorkingDate\": \"2025-04-16\",\n  \"endWorkingDate\": \"2025-04-16\"\n}",
+					"options": {
+						"raw": {
+							"language": "json"
+						}
+					}
+				},
+				"url": {
+					"raw": "http://localhost:8080/v1/orders/orders/working-date",
+					"protocol": "http",
+					"host": [
+						"localhost"
+					],
+					"port": "8080",
+					"path": [
+						"v1",
+						"orders",
+						"orders",
+						"working-date"
+					]
+				},
+				"description": "Generated from cURL: curl -X 'POST' \\\n  'http://localhost:8080/v1/orders/orders/working-date' \\\n  -H 'accept: */*' \\\n  -H 'Content-Type: application/json' \\\n  -d '{\n  \"startWorkingDate\": \"2025-04-14\",\n  \"endWorkingDate\": \"2025-04-14\"\n}'"
+			},
+			"response": []
+		},
+		{
+			"name": "تاریخچه تمامی سفارشات بر اساس وضعیت سفارش(admin) Copy",
+			"request": {
+				"auth": {
+					"type": "bearer",
+					"bearer": [
+						{
+							"key": "token",
+							"value": "eyJhbGciOiJIUzI1NiJ9.eyJzdWIiOiJBZG1pbjExQCIsImlhdCI6MTc0NDg5MTQ1OSwiZXhwIjoxNzQ0OTc3ODU5fQ.QYkkPixFkQiBMdqbFRY3neAGHkz_oqGsQlg70xWBxP4",
+							"type": "string"
+						}
+					]
+				},
+				"method": "POST",
+				"header": [
+					{
+						"key": "accept",
+						"value": "*/*"
+					},
+					{
+						"key": "Content-Type",
+						"value": "application/json"
+					}
+				],
+				"body": {
+					"mode": "raw",
+					"raw": "{\n  \"orderStatus\": \"WAITING_FOR_EXPERT_PROPOSALS\",\n  \"orderStatus\": \"WAITING_FOR_EXPERT_SELECTION_BY_CUSTOMER\",\n  \"orderStatus\": \"WAITING_FOR_EXPERT_ARRIVAL\",\n  \"orderStatus\": \"STARTED\",\n  \"orderStatus\": \"COMPLETED\",\n  \"orderStatus\": \"PAID\"\n}",
+					"options": {
+						"raw": {
+							"language": "json"
+						}
+					}
+				},
+				"url": {
+					"raw": "http://localhost:8080/v1/orders/filter-comprehensive-orders?pageNumber=0&size=10&sortBy=createdAt&sortDir=asc",
+					"protocol": "http",
+					"host": [
+						"localhost"
+					],
+					"port": "8080",
+					"path": [
+						"v1",
+						"orders",
+						"filter-comprehensive-orders"
+					],
+					"query": [
+						{
+							"key": "pageNumber",
+							"value": "0"
+						},
+						{
+							"key": "size",
+							"value": "10"
+						},
+						{
+							"key": "sortBy",
+							"value": "createdAt"
+						},
+						{
+							"key": "sortDir",
+							"value": "asc"
+						}
+					]
+				},
+				"description": "Generated from cURL: curl -X 'POST' \\\n  'http://localhost:8080/v1/orders/filter-comprehensive-orders?pageNumber=0&size=10&sortBy=createdAt&sortDir=asc' \\\n  -H 'accept: */*' \\\n  -H 'Content-Type: application/json' \\\n  -d '{\n  \"userName\": \"string\",\n  \"firstName\": \"string\",\n  \"lastName\": \"string\",\n  \"email\": \"string\",\n  \"address\": \"string\",\n  \"userStatus\": \"NEW\",\n  \"userType\": \"CUSTOMER\",\n  \"role\": \"USER\",\n  \"finalPrice\": 0,\n  \"orderStartDate\": \"2025-04-08\",\n  \"orderEndDate\": \"2025-04-08\",\n  \"executionDate\": \"2025-04-08\",\n  \"orderAddress\": \"string\",\n  \"orderDescription\": \"string\",\n  \"orderStatus\": \"WAITING_FOR_EXPERT_PROPOSALS\",\n  \"offerCustomerPrice\": 0,\n  \"proposedPrice\": 0,\n  \"estimatedTime\": 0,\n  \"startTime\": \"string\",\n  \"expertRating\": 0,\n  \"categoryName\": \"string\",\n  \"categoryDescription\": \"string\",\n  \"categoryBasePrice\": 0,\n  \"parentCategoryName\": \"string\",\n  \"reviewRating\": 0,\n  \"reviewComment\": \"string\",\n  \"createdAtStart\": \"2025-04-08T09:12:01.203Z\",\n  \"createdAtEnd\": \"2025-04-08T09:12:01.203Z\",\n  \"updatedAtStart\": \"2025-04-08T09:12:01.203Z\",\n  \"updatedAtEnd\": \"2025-04-08T09:12:01.203Z\"\n}'"
+			},
+			"response": []
+		},
+		{
+			"name": "تاریخچه تمامی سفارشات بر اساس خدمت و زیرخدمت(admin) Copy",
+			"request": {
+				"auth": {
+					"type": "bearer",
+					"bearer": [
+						{
+							"key": "token",
+							"value": "eyJhbGciOiJIUzI1NiJ9.eyJzdWIiOiJBZG1pbjExQCIsImlhdCI6MTc0NDg5MTQ1OSwiZXhwIjoxNzQ0OTc3ODU5fQ.QYkkPixFkQiBMdqbFRY3neAGHkz_oqGsQlg70xWBxP4",
+							"type": "string"
+						}
+					]
+				},
+				"method": "POST",
+				"header": [
+					{
+						"key": "accept",
+						"value": "*/*"
+					},
+					{
+						"key": "Content-Type",
+						"value": "application/json"
+					}
+				],
+				"body": {
+					"mode": "raw",
+					"raw": "{\n  \"categoryName\": \"Designer\",\n  \"parentCategoryName\": \"دکوراسیون ساختمان\"\n}",
+					"options": {
+						"raw": {
+							"language": "json"
+						}
+					}
+				},
+				"url": {
+					"raw": "http://localhost:8080/v1/orders/filter-comprehensive-orders?pageNumber=0&size=10&sortBy=createdAt&sortDir=asc",
+					"protocol": "http",
+					"host": [
+						"localhost"
+					],
+					"port": "8080",
+					"path": [
+						"v1",
+						"orders",
+						"filter-comprehensive-orders"
+					],
+					"query": [
+						{
+							"key": "pageNumber",
+							"value": "0"
+						},
+						{
+							"key": "size",
+							"value": "10"
+						},
+						{
+							"key": "sortBy",
+							"value": "createdAt"
+						},
+						{
+							"key": "sortDir",
+							"value": "asc"
+						}
+					]
+				},
+				"description": "Generated from cURL: curl -X 'POST' \\\n  'http://localhost:8080/v1/orders/filter-comprehensive-orders?pageNumber=0&size=10&sortBy=createdAt&sortDir=asc' \\\n  -H 'accept: */*' \\\n  -H 'Content-Type: application/json' \\\n  -d '{\n  \"userName\": \"string\",\n  \"firstName\": \"string\",\n  \"lastName\": \"string\",\n  \"email\": \"string\",\n  \"address\": \"string\",\n  \"userStatus\": \"NEW\",\n  \"userType\": \"CUSTOMER\",\n  \"role\": \"USER\",\n  \"finalPrice\": 0,\n  \"orderStartDate\": \"2025-04-08\",\n  \"orderEndDate\": \"2025-04-08\",\n  \"executionDate\": \"2025-04-08\",\n  \"orderAddress\": \"string\",\n  \"orderDescription\": \"string\",\n  \"orderStatus\": \"WAITING_FOR_EXPERT_PROPOSALS\",\n  \"offerCustomerPrice\": 0,\n  \"proposedPrice\": 0,\n  \"estimatedTime\": 0,\n  \"startTime\": \"string\",\n  \"expertRating\": 0,\n  \"categoryName\": \"string\",\n  \"categoryDescription\": \"string\",\n  \"categoryBasePrice\": 0,\n  \"parentCategoryName\": \"string\",\n  \"reviewRating\": 0,\n  \"reviewComment\": \"string\",\n  \"createdAtStart\": \"2025-04-08T09:12:01.203Z\",\n  \"createdAtEnd\": \"2025-04-08T09:12:01.203Z\",\n  \"updatedAtStart\": \"2025-04-08T09:12:01.203Z\",\n  \"updatedAtEnd\": \"2025-04-08T09:12:01.203Z\"\n}'"
+			},
+			"response": []
+		},
+		{
+			"name": "گزارشگیری از متخصصان و مشتریان بر اساس زمان ثبت نام(admin) Copy",
+			"request": {
+				"auth": {
+					"type": "bearer",
+					"bearer": [
+						{
+							"key": "token",
+							"value": "eyJhbGciOiJIUzI1NiJ9.eyJzdWIiOiJBZG1pbjExQCIsImlhdCI6MTc0NDg5MjYxMiwiZXhwIjoxNzQ0OTc5MDEyfQ.PGsq729vTjMGZThcetvz2E9POwy4hkDrAlukMDFCrfs",
+							"type": "string"
+						}
+					]
+				},
+				"method": "GET",
+				"header": [
+					{
+						"key": "accept",
+						"value": "*/*"
+					}
+				],
+				"url": {
+					"raw": "http://localhost:8080/v1/users/registrations?startDate=2025-04-13T21:25:04.347Z&endDate=2025-05-14T21:25:04.347Z",
+					"protocol": "http",
+					"host": [
+						"localhost"
+					],
+					"port": "8080",
+					"path": [
+						"v1",
+						"users",
+						"registrations"
+					],
+					"query": [
+						{
+							"key": "startDate",
+							"value": "2025-04-13T21:25:04.347Z"
+						},
+						{
+							"key": "endDate",
+							"value": "2025-05-14T21:25:04.347Z"
+						}
+					]
+				},
+				"description": "Generated from cURL: curl -X 'GET' \\\n  'http://localhost:8080/v1/users/registrations?startDate=2025-04-07T21%3A25%3A04.347Z&endDate=2025-04-07T21%3A25%3A04.347Z' \\\n  -H 'accept: */*'"
+			},
+			"response": []
+		},
+		{
+			"name": "گزارشگیری از متخصصان بر اساس تعداد درخواستهای ثبت کرده(admin) Copy",
+			"request": {
+				"auth": {
+					"type": "bearer",
+					"bearer": [
+						{
+							"key": "token",
+							"value": "eyJhbGciOiJIUzI1NiJ9.eyJzdWIiOiJBZG1pbjExQCIsImlhdCI6MTc0NDg5MjYxMiwiZXhwIjoxNzQ0OTc5MDEyfQ.PGsq729vTjMGZThcetvz2E9POwy4hkDrAlukMDFCrfs",
+							"type": "string"
+						}
+					]
+				},
+				"method": "GET",
+				"header": [
+					{
+						"key": "accept",
+						"value": "*/*"
+					}
+				],
+				"url": {
+					"raw": "http://localhost:8080/v1/users/users-summary-by-email?email=s.s.seyedein@outlook.com&registrationStartDate=2025-04-13T21%3A25%3A04.347Z&registrationEndDate=2025-05-14T21%3A25%3A04.347Z",
+					"protocol": "http",
+					"host": [
+						"localhost"
+					],
+					"port": "8080",
+					"path": [
+						"v1",
+						"users",
+						"users-summary-by-email"
+					],
+					"query": [
+						{
+							"key": "email",
+							"value": "s.s.seyedein@outlook.com"
+						},
+						{
+							"key": "registrationStartDate",
+							"value": "2025-04-13T21%3A25%3A04.347Z"
+						},
+						{
+							"key": "registrationEndDate",
+							"value": "2025-05-14T21%3A25%3A04.347Z"
+						}
+					]
+				},
+				"description": "Generated from cURL: curl -X 'GET' \\\n  'http://localhost:8080/v1/users/users-summary-by-email?email=sanaz.seyedin%40yahoo.com&registrationStartDate=2025-04-13T21%3A25%3A04.347Z&registrationEndDate=2025-04-13T21%3A25%3A04.347Z' \\\n  -H 'accept: */*'"
+			},
+			"response": []
+		},
+		{
+			"name": "گزارشگیری از متخصصان و مشتریان بر اساس تعداد(admin) Copy",
+			"request": {
+				"auth": {
+					"type": "bearer",
+					"bearer": [
+						{
+							"key": "token",
+							"value": "eyJhbGciOiJIUzI1NiJ9.eyJzdWIiOiJBZG1pbjExQCIsImlhdCI6MTc0NDcwOTMwMiwiZXhwIjoxNzQ0Nzk1NzAyfQ.0gWYdfLe3dCV7bJHmDjEQZeCAkRUVFcb061oCgmgrdI",
+							"type": "string"
+						}
+					]
+				},
+				"method": "GET",
+				"header": [
+					{
+						"key": "accept",
+						"value": "*/*"
+					}
+				],
+				"url": {
+					"raw": "http://localhost:8080/v1/users/users-summary?registrationStartDate=2025-04-13T21:25:04.347Z&registrationEndDate=2025-04-13T21:25:04.347Z",
+					"protocol": "http",
+					"host": [
+						"localhost"
+					],
+					"port": "8080",
+					"path": [
+						"v1",
+						"users",
+						"users-summary"
+					],
+					"query": [
+						{
+							"key": "registrationStartDate",
+							"value": "2025-04-13T21:25:04.347Z"
+						},
+						{
+							"key": "registrationEndDate",
+							"value": "2025-04-13T21:25:04.347Z"
+						}
+					]
+				},
+				"description": "Generated from cURL: curl -X 'GET' \\\n  'http://localhost:8080/v1/users/users-summary?registrationStartDate=2025-04-07&registrationEndDate=2025-04-07' \\\n  -H 'accept: */*'"
+			},
+			"response": []
+		},
+		{
+			"name": "گزارشگیری ازمشتریان بر اساس تعداد  سفارشات انجام داده شده(admin) Copy",
+			"request": {
+				"auth": {
+					"type": "bearer",
+					"bearer": [
+						{
+							"key": "token",
+							"value": "eyJhbGciOiJIUzI1NiJ9.eyJzdWIiOiJBZG1pbjExQCIsImlhdCI6MTc0NDg5MjYxMiwiZXhwIjoxNzQ0OTc5MDEyfQ.PGsq729vTjMGZThcetvz2E9POwy4hkDrAlukMDFCrfs",
+							"type": "string"
+						}
+					]
+				},
+				"method": "GET",
+				"header": [
+					{
+						"key": "accept",
+						"value": "*/*"
+					}
+				],
+				"url": {
+					"raw": "http://localhost:8080/v1/users/users-summary-by-email?email=sanaz.seyedin@yahoo.com&registrationStartDate=2025-04-13T21%3A25%3A04.347Z&registrationEndDate=2025-05-14T21%3A25%3A04.347Z",
+					"protocol": "http",
+					"host": [
+						"localhost"
+					],
+					"port": "8080",
+					"path": [
+						"v1",
+						"users",
+						"users-summary-by-email"
+					],
+					"query": [
+						{
+							"key": "email",
+							"value": "sanaz.seyedin@yahoo.com"
+						},
+						{
+							"key": "registrationStartDate",
+							"value": "2025-04-13T21%3A25%3A04.347Z"
+						},
+						{
+							"key": "registrationEndDate",
+							"value": "2025-05-14T21%3A25%3A04.347Z"
+						}
+					]
+				},
+				"description": "Generated from cURL: curl -X 'GET' \\\n  'http://localhost:8080/v1/users/users-summary-by-email?email=sanaz.seyedin%40yahoo.com&registrationStartDate=2025-04-13T21%3A25%3A04.347Z&registrationEndDate=2025-04-13T21%3A25%3A04.347Z' \\\n  -H 'accept: */*'"
 			},
 			"response": []
 		}
