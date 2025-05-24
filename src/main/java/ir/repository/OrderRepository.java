@@ -15,5 +15,6 @@ public interface OrderRepository extends JpaRepository<Order, Long>, JpaSpecific
     Optional<List<Order>> findAllByCategoryIn(List<Category> categories);
     List<Order> findAllByCustomerEmail(String customerEmail);
     List<Order> findByCustomer_UserName(String username);
-    long countByStatus(OrderStatus status);
+    // Count all orders with statuses COMPLETED or PAID
+    long countByStatusIn(List<OrderStatus> statuses);
 }

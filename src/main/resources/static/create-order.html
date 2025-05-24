@@ -275,32 +275,48 @@
                     latitude,
                     longitude
                 })
+
             })
-                .then(response => {
-                    if (!response.ok) {
-                        return response.json().then(error => {
-                            throw new Error(error.message || "An unknown error occurred");
-                        });
-                    }
-                    return response.json();
-                })
                 .then(data => {
-                    displayMessage(`Order created successfully! Order Number: ${data.orderNumber}`, "success");
-                    setTimeout(() => window.location.href = "/order-management.html", 2000);
+                    displayMessage("Order created successfully!", "success");
+                    setTimeout(() => {
+                        window.location.href = "http://localhost:8080/order-management.html";
+                    }, 3000);
                 })
-                .catch(error => {
-                    displayMessage(`Error creating order: ${error.message}`, "error");
+                .catch(async error => {
+                    let finalMessage = "An unknown error occurred.";
+                    if (error instanceof Error) {
+                        try {
+                            const errJson = JSON.parse(error.message);
+                            finalMessage = `❌ Error: ${errJson.errorMessage || errJson.message || error.message}`;
+                        } catch {
+                            finalMessage = `❌ Error: ${error.message}`;
+                        }
+                    } else {
+                        finalMessage = `❌ Error: ${await error.text()}`;
+                    }
+                    displayMessage(finalMessage, "error");
                 });
+
         });
 
         function displayMessage(message, type) {
             const statusMessage = document.getElementById("statusMessage");
-            statusMessage.className = type === "success" ? "text-success" : "text-danger";
+
+            // پاکسازی کلاس‌ها
+            statusMessage.classList.remove("text-success", "text-danger");
+            statusMessage.classList.add(type === "success" ? "text-success" : "text-danger");
+
+            // پیام را تنظیم و نمایش بده
             statusMessage.textContent = message;
+            statusMessage.style.display = "block";
+
+            // بعد از چند ثانیه مخفیش کن
             setTimeout(() => {
-                statusMessage.textContent = "";
+                statusMessage.style.display = "none";
             }, 3000);
         }
+
     });
 </script>
 </body>

@@ -577,15 +577,15 @@ public class OrderServiceImpl implements OrderService {
     public Map<String, Long> getOrderReport() {
         Map<String, Long> report = new HashMap<>();
 
-        // تعداد سفارش‌های با وضعیت WAITING_FOR_EXPERT_PROPOSALS
-        long waitingForProposalsCount = orderRepository.countByStatus(OrderStatus.WAITING_FOR_EXPERT_PROPOSALS);
+        // Count all requests submitted (orders with any status)
+        long totalRequestsCount = orderRepository.count();
 
-        // تعداد سفارش‌های با وضعیت COMPLETED
-        long completedCount = orderRepository.countByStatus(OrderStatus.COMPLETED);
+        // Count orders that are COMPLETED or PAID
+        long completedOrPaidCount = orderRepository.countByStatusIn(List.of(OrderStatus.COMPLETED, OrderStatus.PAID));
 
-        // افزودن داده‌ها به گزارش
-        report.put("Number of requests submitted", waitingForProposalsCount);
-        report.put("Number of orders completed", completedCount);
+        // Add data to the report
+        report.put("Number of requests submitted", totalRequestsCount);
+        report.put("Number of orders completed", completedOrPaidCount);
 
         return report;
     }
