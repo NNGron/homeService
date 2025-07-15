@@ -48,7 +48,7 @@ This project is developed in Java 23 using a layered architecture and RESTful AP
 - Uses Criteria API, pagination, and sorting mechanisms
 
 ## Technologies Used  
-- Java 17
+- Java 23
 - Spring Boot 3.4.3
 - Spring Web, Spring Security + JWT
 - Hibernate, JPA, PostgreSQL, H2
